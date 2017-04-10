@@ -8,12 +8,15 @@ namespace asparserations {
   namespace table {
     class Item_Set
     {
+      friend bool operator<(const Item_Set&, const Item_Set&);
     public:
       Item_Set(const std::set<Item>&);
       const std::set<Item>& items() const;
     private:
       std::set<Item> _items;
     };
+
+    bool operator<(const Item_Set&, const Item_Set&);
   }
 }
 

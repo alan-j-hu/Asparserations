@@ -9,12 +9,12 @@ namespace asparserations {
   namespace table {
     struct Item
     {
-      Item(const asparserations::grammar::Production&, int,
+      Item(const asparserations::grammar::Production&, unsigned short int,
 	   const asparserations::grammar::Token&);
       const asparserations::grammar::Symbol* next() const;
       const asparserations::grammar::Symbol* peek() const;
       const asparserations::grammar::Production& production;
-      const int marker;
+      const unsigned short int marker;
       const asparserations::grammar::Token& lookahead;
     };
 

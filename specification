@@ -51,15 +51,15 @@ namespace asparserations
 
 
 
-    class Generator
+    class Table
       const std::set<State>& states() const = 0;
 
 
-    class LR_Generator : Generator
+    class LR_Table : public Table
       const std::set<State>& states() const;
 
 
-    class LALR_Generator : Generator
+    class LALR_Table : public Table
       const std::set<State>& states() const;
 
 

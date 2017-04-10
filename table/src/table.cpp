@@ -1,11 +1,11 @@
-#include "../include/generator.hpp"
+#include "../include/table.hpp"
 #include <list>
 
 using namespace asparserations;
 using namespace grammar;
 using namespace table;
 
-std::set<Item> Generator::_closure(const Item_Set& item_set) const
+std::set<Item> Table::_closure(const Item_Set& item_set) const
 {
   std::set<Item> items(item_set.items());
   std::list<const Item*> queue;
@@ -34,17 +34,18 @@ std::set<Item> Generator::_closure(const Item_Set& item_set) const
   return items;
 }
 
-std::map<const Symbol*,std::set<Item>>
-Generator::_goto(const std::set<Item>& items) const
+std::map<const Symbol*,std::pair<std::set<Item>,std::set<const Production*>>>
+Table::_goto(const std::set<Item>& items) const
 {
-  std::map<const Symbol*,std::set<Item>> ret;
+  std::map<const Symbol*,
+	   std::pair<std::set<Item>,std::set<const Production*>>> ret;
   for(const Item& item : items) {
     if(item.marker < item.production.symbols().size() - 1) {
-      ret[item.next()].emplace(item.production,
-			       item.marker + 1,
-			       item.lookahead);
+      ret[item.next()].first.emplace(item.production,
+			             item.marker + 1,
+			             item.lookahead);
     } else {
-
+      ret[&item.lookahead].second.insert(&item.production);
     }
   }
 
