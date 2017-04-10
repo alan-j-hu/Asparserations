@@ -1,0 +1,106 @@
+namespace asparserations
+
+  //Namespace for grammar API
+  namespace grammar
+    class Grammar
+
+
+    class Symbol
+      std::set<Token*>& first_set() = 0;
+      
+ 
+    class Token : public Symbol
+
+
+    class Nonterminal : public Symbol
+      DATA
+      std::set<Token> first_set
+      std::vector<Production> productions
+
+      METHODS
+      getter for first set
+      getter for productions
+
+
+
+
+    class Production
+      std::vector<const Symbol*> symbols
+
+
+
+
+  //Namespace for generating the state machine
+  namespace table
+
+    class Item
+      DATA
+      const Production& production
+      int marker
+      const Symbol& lookahead
+
+      METHODS
+
+    class Item_Set
+      std::set<Item> items
+
+
+    class State
+      std::map<Symbol*, State*>
+
+
+
+
+    class Generator
+      const std::set<State>& states() const = 0;
+
+
+    class LR_Generator : Generator
+      const std::set<State>& states() const;
+
+
+    class LALR_Generator : Generator
+      const std::set<State>& states() const;
+
+
+
+
+
+
+  //Namespace for code generation
+  namespace codegen
+
+
+    class Template
+      // Used for OUTPUT
+      
+      //Change the function definitions to create different stubs
+      //1. Make them virtual and inherit from the class
+      //   -Downside: each class only needs one instance, bad design (singleton)
+      //2. Use std::function and let different instances mutate functions
+      //   -Downside: ugly functors
+
+      std::string generate_state_transition(const Symbol&, int)
+      std::string generate_state(const State&)
+      std::string generate_state_machine()
+
+
+
+
+
+    class Generator
+      Generator(which_algo, const Nonterminal&, const Template&)
+      const std::string& output();
+
+
+// User
+
+
+   template.generate_state_machine_transition = [](const Symbol& symbol,
+                                                   int state_index)
+   {
+     return "case " + symbol.name() + ": state = " + state_index + "; break;";
+   };
+
+
+   codegen::Generator my_gen(root, template);
