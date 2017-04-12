@@ -1,4 +1,5 @@
 #include "../include/item.hpp"
+#include "../../grammar/include/production.hpp"
 
 using namespace asparserations;
 using namespace grammar;
@@ -17,15 +18,26 @@ const Symbol* Item::peek() const
   return production.symbols().at(marker + 1);
 }
 
+bool Item::compare_cores(const Item& rhs) const
+{
+  if(marker < rhs.marker) {
+    return true;
+  }
+  if(&production < &rhs.production) {
+    return true;
+  }
+  return false;
+}
+
 bool table::operator<(const Item& lhs, const Item& rhs)
 {
   if(lhs.marker < rhs.marker) {
     return true;
   }
-  if(&lhs.lookahead < &rhs.lookahead) {
+  if(&lhs.production < &rhs.production) {
     return true;
   }
-  if(&lhs.production < &rhs.production) {
+  if(&lhs.lookahead < &rhs.lookahead) {
     return true;
   }
   return false;

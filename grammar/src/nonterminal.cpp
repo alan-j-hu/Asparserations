@@ -3,18 +3,26 @@
 using namespace asparserations;
 using namespace grammar;
 
-Nonterminal::Nonterminal(const std::vector<Production>& productions)
-  : _productions(productions)
+Nonterminal::Nonterminal(Grammar& g)
+  : _grammar(g)
+{}
+
+bool Nonterminal::derives_empty_string() const
 {
-  for(Production& production : _productions) {
-    auto first = production.symbols().front()->first_set();
-    for(const Token* token : first) {
-      _first_set.insert(token);
+  for(const Production& p : _productions) {
+    if(p.symbols().empty()) {
+      return true;
     }
   }
+  return false;
 }
 
-const std::vector<Production>& Nonterminal::productions() const
+bool Nonterminal::has_empty_string_in_first_set() const
+{
+  return _has_empty_string_in_first_set;
+}
+
+const std::list<Production>& Nonterminal::productions() const
 {
   return _productions;
 }
@@ -22,4 +30,10 @@ const std::vector<Production>& Nonterminal::productions() const
 const std::set<const Token*>& Nonterminal::first_set() const
 {
   return _first_set;
+}
+
+Production& Nonterminal::add_production(std::vector<const Symbol*> symbols)
+{
+  _productions.emplace_back(*this, symbols);
+  return _productions.back();
 }

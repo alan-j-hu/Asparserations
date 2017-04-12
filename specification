@@ -42,8 +42,11 @@ namespace asparserations
       METHODS
 
     class Item_Set
+      DATA
       std::set<Item> items
 
+      METHODS
+      bool merge(const tem_Set&)
 
     class State
       std::map<Symbol*, State*>

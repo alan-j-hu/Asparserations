@@ -1,12 +1,13 @@
 #include "../include/production.hpp"
 
 using namespace asparserations;
-using namespace symbol;
+using namespace grammar;
 
-Production::Production(const std::vector<Symbol*>& symbols)
-  : _symbols(symbols) {}
+Production::Production(Nonterminal& nt,
+		       const std::vector<const Symbol*>& symbols)
+  : _nonterminal(nt), _symbols(symbols) {}
 
-const std::vector<Symbol*>& Production::symbols() const
+const std::vector<const Symbol*>& Production::symbols() const
 {
   return _symbols;
 }

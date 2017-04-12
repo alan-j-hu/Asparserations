@@ -9,7 +9,7 @@ namespace asparserations{
     struct Template
     {
       std::function<std::string(const grammar::Symbol*)> shift_code;
-      std::function<std::string(unsigned short int)> reduce_code;
+      std::function<std::string(const std::string&)> reduce_code;
       std::function<std::string(const std::string&)> state_code;
       std::function<std::string(const std::string&)> state_machine_code;
     };

@@ -1,15 +1,28 @@
+#include "../../grammar/include/nonterminal.hpp"
+#include "../../grammar/include/production.hpp"
+#include "../../grammar/include/token.hpp"
 #include "../include/lr_table.hpp"
 #include "../include/state.hpp"
-#include <list>
 #include <map>
 
 using namespace asparserations;
 using namespace grammar;
 using namespace table;
 
-LR_Table::LR_Table()
+LR_Table::LR_Table(const Nonterminal& root)
 {
+  std::map<Item_Set,State*> item_sets;
   std::list<std::pair<const Item_Set,State>*> queue;
+
+  Token empty_string;
+
+  Nonterminal s(std::vector<Production>({Production({&root, &empty_string})}));
+
+
+  Item_Set start_set({Item(s.productions().front(), 0, empty_string)});
+  _states.emplace_back();
+  _item_sets.insert(std::make_pair(start_set, &_states.back()));
+  queue.push_back(&*_states.begin());
 
   //For each element in the queue of item sets...
   for(auto elem : queue) {
@@ -19,24 +32,26 @@ LR_Table::LR_Table()
     for(auto transition : transitions) {
       //Try to add a new item set to the state machine
       if(!transition.second.first.empty()) {
-        auto result =
-	  _states.insert(std::make_pair(Item_Set(transition.second.first),
-				        State()));
+	_states.emplace_back();
+        auto result = _item_sets.insert(
+	  std::make_pair(Item_Set(transition.second.first), &_states.back()));
 
         //If the item set doesn't already exist, queue it for processing
         if(result.second) {
 	  queue.push_back(&*result.first);
-        }
-        elem->second.add_transition(transition.first, &result.first->second);
+        } else {
+	  _states.pop_back();
+	}
+        elem->second->add_transition(transition.first, &result.first->second);
       }
 
       //Register the reductions
-      elem->second.add_reduction(transition.first, transition.second.second);
+      elem->second->add_reduction(transition.first, transition.second.second);
     }
   }
 }
 
-const std::map<Item_Set,State>& LR_Table::states() const
+const std::list<State>& LR_Table::states() const
 {
   return _states;
 }

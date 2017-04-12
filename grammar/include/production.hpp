@@ -1,18 +1,19 @@
 #ifndef _ASPARSERATIONS_GRAMMAR_PRODUCTION_H_
 #define _ASPARSERATIONS_GRAMMAR_PRODUCTION_H_
 
-#include <initializer_list>
 #include <vector>
 
 namespace asparserations {
   namespace grammar {
+    class Nonterminal;
     class Symbol;
     class Production
     {
     public:
-      Production(const std::vector<Symbol*>&);
+      Production(Nonterminal&, const std::vector<const Symbol*>&);
       const std::vector<const Symbol*>& symbols() const;
     private:
+      Nonterminal& _nonterminal;
       std::vector<const Symbol*> _symbols;
     };
   }
