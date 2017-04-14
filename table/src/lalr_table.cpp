@@ -8,7 +8,7 @@ using namespace table;
 
 LALR_Table::LALR_Table()
 {
-  std::map<Item_Set,State*,Item_Set::Compare_Cores> _item_sets;  
+  std::map<Item_Set,State*,Item_Set::Compare_Cores> item_sets;  
   std::list<std::pair<const Item_Set,State*>*> queue;
 
   //For each element in the queue of item sets...
@@ -20,8 +20,8 @@ LALR_Table::LALR_Table()
 	//Try to add the new item set and state pair to the map
 	Item_Set new_item_set(transition.second.first);
 	_states.emplace_back();
-        auto result = _item_sets.insert(std::make_pair(new_item_set,
-						       &_states.back()));
+        auto result = item_sets.insert(std::make_pair(new_item_set,
+						      &_states.back()));
 
         //If the item set doesn't already exist, queue it for processing
         if(result.second) {
@@ -31,8 +31,8 @@ LALR_Table::LALR_Table()
 	  //If the cores were the same, but the items sets were not:
 	  if(was_merged) {
 	    State* state = result.first->second;
-	    _item_sets.erase(result.first);
-	    queue.push_back(&*_item_sets.insert
+	    item_sets.erase(result.first);
+	    queue.push_back(&*item_sets.insert
 			    (std::make_pair(new_item_set, state)).first);
 	  }
 	  _states.pop_back();

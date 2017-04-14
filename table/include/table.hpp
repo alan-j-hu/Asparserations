@@ -3,6 +3,8 @@
 
 #include "../../grammar/include/production.hpp"
 #include "../../grammar/include/symbol.hpp"
+#include "../../grammar/include/token.hpp"
+#include "state.hpp"
 #include "item_set.hpp"
 #include <map>
 #include <set>
@@ -12,6 +14,7 @@ namespace asparserations {
     class Table
     {
     public:
+      virtual const std::list<State>& states() const=0;
     protected:
       /**
 	 Computes the closed set of items
@@ -24,7 +27,8 @@ namespace asparserations {
 	 Shifts the marker over by one for each item, or reduces it
 	 if the marker has reached the end
 	 @param  items the set of items to process
-	 @return a map of symbol pointers to shifted items and reductions
+	 @return a map of pointers to Symbols to pairs consisting of shifted
+         items and productions for reductions
        */
       std::map<const asparserations::grammar::Symbol*,
 	       std::pair<std::set<Item>,

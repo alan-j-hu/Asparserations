@@ -5,8 +5,7 @@
 #include "production.hpp"
 #include "symbol.hpp"
 #include "token.hpp"
-#include <map>
-#include <string>
+#include <list>
 
 namespace asparserations {
   namespace grammar {
@@ -15,10 +14,12 @@ namespace asparserations {
     public:
       Token& add_token();
       Nonterminal& add_nonterminal();
-      void compute_first_set();
+      void compute_first_sets();
     private:
-      std::list<Token> _tokens;
-      std::list<Nonterminal> _nonterminals;
+      class TokenImp;
+      class NonterminalImp;
+      std::list<TokenImp> _tokens;
+      std::list<NonterminalImp> _nonterminals;
     };
   }
 }

@@ -37,10 +37,10 @@ std::set<Item> Table::_closure(const Item_Set& item_set) const
 std::map<const Symbol*,std::pair<std::set<Item>,std::set<const Production*>>>
 Table::_goto(const std::set<Item>& items) const
 {
-  std::map<const Symbol*,
-	   std::pair<std::set<Item>,std::set<const Production*>>> ret;
+  std::map<const Symbol*,std::pair<std::set<Item>,std::set<const Production*>>>
+    ret;
   for(const Item& item : items) {
-    if(item.marker < item.production.symbols().size() - 1) {
+    if(item.marker < item.production.symbols().size()) {
       ret[item.next()].first.emplace(item.production,
 			             item.marker + 1,
 			             item.lookahead);

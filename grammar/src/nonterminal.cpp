@@ -7,6 +7,16 @@ Nonterminal::Nonterminal(Grammar& g)
   : _grammar(g)
 {}
 
+Grammar& Nonterminal::grammar()
+{
+  return _grammar;
+}
+
+const Grammar& Nonterminal::grammar() const
+{
+  return _grammar;
+}
+
 bool Nonterminal::derives_empty_string() const
 {
   for(const Production& p : _productions) {
@@ -17,19 +27,9 @@ bool Nonterminal::derives_empty_string() const
   return false;
 }
 
-bool Nonterminal::has_empty_string_in_first_set() const
-{
-  return _has_empty_string_in_first_set;
-}
-
 const std::list<Production>& Nonterminal::productions() const
 {
   return _productions;
-}
-
-const std::set<const Token*>& Nonterminal::first_set() const
-{
-  return _first_set;
 }
 
 Production& Nonterminal::add_production(std::vector<const Symbol*> symbols)

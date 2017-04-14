@@ -13,23 +13,19 @@ namespace asparserations {
     class Grammar;
     class Nonterminal : public Symbol
     {
-      friend class Grammar;
     public:
-      Nonterminal(Grammar&);
       const std::list<Production>& productions() const;
-      const std::set<const Token*>& first_set() const;
+      Grammar& grammar();
+      const Grammar& grammar() const;
+      virtual const std::set<const Token*>& first_set() const=0;
       bool derives_empty_string() const;
-      bool has_empty_string_in_first_set() const;
+      virtual bool has_empty_string_in_first_set() const=0;
       Production& add_production(std::vector<const Symbol*>);
+    protected:
+      Nonterminal(Grammar&);
     private:
-      void _compute_first_set(std::set<Symbol*>);
-      bool _has_empty_string_in_first_set;
-      std::set<Symbol*> _visited;
-      std::set<Symbol*> _unfulfilled_promises;
-
       Grammar& _grammar;
       std::list<Production> _productions;
-      std::set<const Token*> _first_set;
     };
   }
 }

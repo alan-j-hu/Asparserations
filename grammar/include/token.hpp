@@ -8,15 +8,20 @@
 
 namespace asparserations {
   namespace grammar {
+    class Grammar;
     class Token : public Symbol
     {
     public:
-      Token();
+      Grammar& grammar();
+      const Grammar& grammar() const;
       const std::set<const Token*>& first_set() const;
       const std::list<Production>& productions() const;
       bool derives_empty_string() const;
       bool has_empty_string_in_first_set() const;
+    protected:
+      Token(Grammar&);
     private:
+      Grammar& _grammar;
       std::set<const Token*> _first_set;
       const std::list<Production> _productions;
     };
