@@ -3,9 +3,14 @@
 using namespace asparserations;
 using namespace grammar;
 
-Token::Token(Grammar& g)
-  : _grammar(g), _first_set{this}
+Token::Token(Grammar& g, const std::string& id)
+  : _grammar(g), _id(id), _first_set{this}
 {}
+
+const std::string& Token::id() const
+{
+  return _id;
+}
 
 Grammar& Token::grammar()
 {

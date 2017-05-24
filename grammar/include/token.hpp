@@ -3,8 +3,6 @@
 
 #include "production.hpp"
 #include "symbol.hpp"
-#include <list>
-#include <set>
 
 namespace asparserations {
   namespace grammar {
@@ -12,6 +10,7 @@ namespace asparserations {
     class Token : public Symbol
     {
     public:
+      const std::string& id() const;
       Grammar& grammar();
       const Grammar& grammar() const;
       const std::set<const Token*>& first_set() const;
@@ -19,8 +18,9 @@ namespace asparserations {
       bool derives_empty_string() const;
       bool has_empty_string_in_first_set() const;
     protected:
-      Token(Grammar&);
+      Token(Grammar&, const std::string&);
     private:
+      const std::string _id;
       Grammar& _grammar;
       std::set<const Token*> _first_set;
       const std::list<Production> _productions;

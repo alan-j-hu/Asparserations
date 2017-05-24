@@ -18,3 +18,16 @@ void State::add_reduction(const Symbol* const input,
     ref.insert(p);
   }
 }
+
+const std::map<const asparserations::grammar::Symbol*,const State*>&
+State::transitions()
+{
+  return _transitions;
+}
+
+const std::map<const asparserations::grammar::Symbol*,
+               std::set<const asparserations::grammar::Production*>>&
+State::reductions()
+{
+  return _reductions;
+}

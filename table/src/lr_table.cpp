@@ -14,8 +14,8 @@ LR_Table::LR_Table(Grammar& grammar, const Nonterminal& root)
   std::map<Item_Set,State*> item_sets;
   std::list<std::pair<const Item_Set,State*>*> queue;
 
-  Token& empty_string = grammar.add_token();
-  Nonterminal& s = grammar.add_nonterminal();
+  Token& empty_string = grammar.add_token("_$");
+  Nonterminal& s = grammar.add_nonterminal("_root");
   s.add_production({&root, &empty_string});
   grammar.compute_first_sets();
 

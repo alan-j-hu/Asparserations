@@ -3,9 +3,14 @@
 using namespace asparserations;
 using namespace grammar;
 
-Nonterminal::Nonterminal(Grammar& g)
-  : _grammar(g)
+Nonterminal::Nonterminal(Grammar& g, const std::string& id)
+  : _grammar(g), _id(id)
 {}
+
+const std::string& Nonterminal::id() const
+{
+  return _id;
+}
 
 Grammar& Nonterminal::grammar()
 {
@@ -32,8 +37,9 @@ const std::list<Production>& Nonterminal::productions() const
   return _productions;
 }
 
-Production& Nonterminal::add_production(std::vector<const Symbol*> symbols)
+Production& Nonterminal::add_production(const std::string& id,
+					std::vector<const Symbol*> symbols)
 {
-  _productions.emplace_back(*this, symbols);
+  _productions.emplace_back(*this, id, symbols);
   return _productions.back();
 }

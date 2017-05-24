@@ -4,6 +4,7 @@
 #include "production.hpp"
 #include <list>
 #include <set>
+#include <string>
 
 namespace asparserations {
   namespace grammar {
@@ -12,6 +13,7 @@ namespace asparserations {
     class Symbol
     {
     public:
+      virtual const std::string& id() const=0;
       virtual Grammar& grammar()=0;
       virtual const Grammar& grammar() const=0;
       virtual const std::set<const Token*>& first_set() const=0;

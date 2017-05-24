@@ -15,6 +15,11 @@ namespace asparserations {
 			  const State*);
       void add_reduction(const asparserations::grammar::Symbol* const,
 	     const std::set<const asparserations::grammar::Production*>&);
+      const std::map<const asparserations::grammar::Symbol*,const State*>&
+      transitions();
+      const std::map<const asparserations::grammar::Symbol*,
+	       std::set<const asparserations::grammar::Production*>>&
+      reductions();
     private:
       std::map<const asparserations::grammar::Symbol*,const State*>
       _transitions;
@@ -26,4 +31,3 @@ namespace asparserations {
 }
 
 #endif
-

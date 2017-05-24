@@ -1,4 +1,6 @@
+#include "../include/item_set.hpp"
 #include "../include/table.hpp"
+#include "../../grammar/include/token.hpp"
 #include <list>
 
 using namespace asparserations;

@@ -1,16 +1,18 @@
 #ifndef _ASPARSERATIONS_TABLE_GENERATOR_H_
 #define _ASPARSERATIONS_TABLE_GENERATOR_H_
 
-#include "../../grammar/include/production.hpp"
-#include "../../grammar/include/symbol.hpp"
-#include "../../grammar/include/token.hpp"
 #include "state.hpp"
-#include "item_set.hpp"
+#include "item.hpp"
 #include <map>
 #include <set>
 
 namespace asparserations {
+  namespace grammar {
+    class Production;
+    class Symbol;
+  }
   namespace table {
+    class Item_Set;
     class Table
     {
     public:
