@@ -16,7 +16,7 @@ LR_Table::LR_Table(Grammar& grammar, const Nonterminal& root)
 
   Token& empty_string = grammar.add_token("_$");
   Nonterminal& s = grammar.add_nonterminal("_root");
-  s.add_production({&root, &empty_string});
+  s.add_production("_rootprod", {&root, &empty_string});
   grammar.compute_first_sets();
 
   Item_Set start_set({Item(s.productions().front(), 0, empty_string)});
