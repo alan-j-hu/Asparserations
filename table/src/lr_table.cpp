@@ -1,6 +1,7 @@
+#include "../../grammar/include/grammar.hpp"
 #include "../../grammar/include/nonterminal.hpp"
-#include "../../grammar/include/production.hpp"
 #include "../../grammar/include/token.hpp"
+#include "../include/item_set.hpp"
 #include "../include/lr_table.hpp"
 #include "../include/state.hpp"
 #include <map>
@@ -20,10 +21,11 @@ LR_Table::LR_Table(Grammar& grammar, const Nonterminal& root)
   grammar.compute_first_sets();
 
   Item_Set start_set({Item(s.productions().front(), 0, empty_string)});
-  _states.emplace_back();
+  _states.emplace_back(0);
   item_sets.insert(std::make_pair(start_set, &_states.back()));
   queue.push_back(&*item_sets.begin());
 
+  unsigned int index = 0;
   //For each element in the queue of item sets...
   for(auto elem : queue) {
     //Get the kernel items of its transitions
@@ -32,13 +34,14 @@ LR_Table::LR_Table(Grammar& grammar, const Nonterminal& root)
     for(auto transition : transitions) {
       //Try to add a new item set to the state machine
       if(!transition.second.first.empty()) {
-	_states.emplace_back();
+	_states.emplace_back(index);
         auto result = item_sets.insert(
 	  std::make_pair(Item_Set(transition.second.first), &_states.back()));
 
         //If the item set doesn't already exist, queue it for processing
         if(result.second) {
 	  queue.push_back(&*result.first);
+	  ++index;
         } else {
 	  _states.pop_back();
 	}

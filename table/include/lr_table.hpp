@@ -1,14 +1,15 @@
 #ifndef _ASPARSERATIONS_TABLE_LR_GENERATOR_H_
 #define _ASPARSERATIONS_TABLE_LR_GENERATOR_H_
 
-#include "../../grammar/include/grammar.hpp"
-#include "../../grammar/include/nonterminal.hpp"
-#include "item_set.hpp"
 #include "table.hpp"
 #include "state.hpp"
 #include <list>
 
 namespace asparserations {
+  namespace grammar {
+    class Grammar;
+    class Nonterminal;
+  }
   namespace table {
     class LR_Table : public Table
     {

@@ -1,4 +1,3 @@
-#include "item_set.hpp"
 #include "state.hpp"
 #include "table.hpp"
 #include <list>

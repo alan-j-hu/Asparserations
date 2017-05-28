@@ -3,6 +3,7 @@
 
 #include "state.hpp"
 #include "item.hpp"
+#include <list>
 #include <map>
 #include <set>
 

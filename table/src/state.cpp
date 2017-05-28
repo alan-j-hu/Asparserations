@@ -1,9 +1,19 @@
 #include "../include/state.hpp"
+#include "../../grammar/include/production.hpp"
+#include "../../grammar/include/symbol.hpp"
 #include <utility>
 
 using namespace asparserations;
 using namespace grammar;
 using namespace table;
+
+State::State(unsigned int index)
+  : _index(index) {}
+
+unsigned int State::index() const
+{
+  return _index;
+}
 
 void State::add_transition(const Symbol* const input, const State* state)
 {
