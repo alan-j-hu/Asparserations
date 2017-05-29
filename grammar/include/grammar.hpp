@@ -4,6 +4,8 @@
 #include "nonterminal.hpp"
 #include "token.hpp"
 #include <list>
+#include <map>
+#include <set>
 #include <string>
 
 namespace asparserations {
@@ -14,6 +16,10 @@ namespace asparserations {
       Grammar();
       Token& add_token(const std::string&);
       Nonterminal& add_nonterminal(const std::string&);
+      Token& token_at(const std::string&);
+      const Token& token_at(const std::string&) const;
+      Nonterminal& nonterminal_at(const std::string&);
+      const Nonterminal& nonterminal_at(const std::string&) const;
       Nonterminal* start_symbol();
       const Nonterminal* start_symbol() const;
       void set_start_symbol(Nonterminal*);
@@ -32,8 +38,8 @@ namespace asparserations {
         const std::set<const Token*>& first_set() const;
       };
 
-      std::list<TokenImp> _tokens;
-      std::list<NonterminalImp> _nonterminals;
+      std::map<std::string,TokenImp> _tokens;
+      std::map<std::string,NonterminalImp> _nonterminals;
       Nonterminal* _start_symbol;
     };
   }

@@ -1,5 +1,6 @@
 #include "../include/grammar.hpp"
 #include "../include/production.hpp"
+#include <utility>
 
 using namespace asparserations;
 using namespace grammar;
@@ -25,14 +26,36 @@ Grammar::Grammar()
 
 Token& Grammar::add_token(const std::string& id)
 {
-  _tokens.emplace_back(*this, id);
-  return _tokens.back();
+  return _tokens.emplace(std::piecewise_construct,
+			 std::forward_as_tuple(id),
+			 std::forward_as_tuple(*this, id)).first->second;
 }
 
 Nonterminal& Grammar::add_nonterminal(const std::string& id)
 {
-  _nonterminals.emplace_back(*this, id);
-  return _nonterminals.back();
+  return _nonterminals.emplace(std::piecewise_construct,
+			       std::forward_as_tuple(id),
+			       std::forward_as_tuple(*this, id)).first->second;
+}
+
+Token& Grammar::token_at(const std::string& id)
+{
+  return _tokens.at(id);
+}
+
+const Token& Grammar::token_at(const std::string& id) const
+{
+  return _tokens.at(id);
+}
+
+Nonterminal& Grammar::nonterminal_at(const std::string& id)
+{
+  return _nonterminals.at(id);
+}
+
+const Nonterminal& Grammar::nonterminal_at(const std::string& id) const
+{
+  return _nonterminals.at(id);
 }
 
 Nonterminal* Grammar::start_symbol()
@@ -58,7 +81,9 @@ void Grammar::compute_first_sets()
   while(needs_update) {
     needs_update = false;
 
-    for(Grammar::NonterminalImp& nonterminal : _nonterminals) {
+    for(std::pair<const std::string,Grammar::NonterminalImp>& pair
+	  : _nonterminals) {
+      Grammar::NonterminalImp& nonterminal = pair.second;
       for(const Production& production : nonterminal.productions()) {
         nonterminal._has_empty_string_in_first_set = true;
 	//Repeat until first set does not have empty string or end is reached
