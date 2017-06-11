@@ -10,17 +10,15 @@ using namespace asparserations;
 using namespace grammar;
 using namespace table;
 
-LR_Table::LR_Table(Grammar& grammar, const Nonterminal& root)
+LR_Table::LR_Table(Grammar& grammar)
 {
   std::map<Item_Set,State*> item_sets;
   std::list<std::pair<const Item_Set,State*>*> queue;
 
-  Token& empty_string = grammar.add_token("_$");
-  Nonterminal& s = grammar.add_nonterminal("_root");
-  s.add_production("_rootprod", {&root, &empty_string});
   grammar.compute_first_sets();
 
-  Item_Set start_set({Item(s.productions().front(), 0, empty_string)});
+  Item_Set start_set({Item(grammar.accept().production_at("$root"),
+			   0, grammar.end())});
   _states.emplace_back(0);
   item_sets.insert(std::make_pair(start_set, &_states.back()));
   queue.push_back(&*item_sets.begin());

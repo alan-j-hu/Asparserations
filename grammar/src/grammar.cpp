@@ -2,27 +2,32 @@
 #include "../include/production.hpp"
 #include <utility>
 
+#include<iostream>
+
 using namespace asparserations;
 using namespace grammar;
 
-Grammar::TokenImp::TokenImp(Grammar& g, const std::string& id)
-  : Token(g, id) {}
-
-Grammar::NonterminalImp::NonterminalImp(Grammar& g, const std::string& id)
-  : Nonterminal(g, id) {}
-
-bool Grammar::NonterminalImp::has_empty_string_in_first_set() const
+Grammar::Grammar(const std::string& start)
+  : _end(*this,"$end"), _accept(*this,"$accept")
 {
-  return _has_empty_string_in_first_set;
+  _start_symbol = &add_nonterminal(start);
+  _accept.add_production("$root", {_start_symbol, &_end});
 }
 
-const std::set<const Token*>& Grammar::NonterminalImp::first_set() const
+Grammar::Grammar(Grammar&& old)
+  : _tokens(std::move(old._tokens)),
+    _nonterminals(std::move(old._nonterminals)),
+    _start_symbol(std::move(old._start_symbol)),
+    _end(std::move(old._end)),
+    _accept(std::move(old._accept))
 {
-  return _first_set;
+  for(auto& pair : _tokens) {
+    pair.second._grammar = this;
+  }
+  for(auto& pair : _nonterminals) {
+    pair.second._grammar = this;
+  }
 }
-
-Grammar::Grammar()
-  : _start_symbol(nullptr) {}
 
 Token& Grammar::add_token(const std::string& id)
 {
@@ -58,20 +63,31 @@ const Nonterminal& Grammar::nonterminal_at(const std::string& id) const
   return _nonterminals.at(id);
 }
 
-Nonterminal* Grammar::start_symbol()
+const Nonterminal& Grammar::accept() const
 {
-  return _start_symbol;
+  return _accept;
 }
 
-const Nonterminal* Grammar::start_symbol() const
+const Token& Grammar::end() const
 {
-  return _start_symbol;
+  return _end;
+}
+
+Nonterminal& Grammar::start_symbol()
+{
+  return *_start_symbol;
+}
+
+const Nonterminal& Grammar::start_symbol() const
+{
+  return *_start_symbol;
 }
 
 void Grammar::set_start_symbol(Nonterminal* start)
 {
   if(start != nullptr && &start->grammar() == this) {
     _start_symbol = start;
+    _accept.production_at("$root").set_symbol(0, start);
   }
 }
 
@@ -80,11 +96,10 @@ void Grammar::compute_first_sets()
   bool needs_update = true;
   while(needs_update) {
     needs_update = false;
-
-    for(std::pair<const std::string,Grammar::NonterminalImp>& pair
-	  : _nonterminals) {
+    for(auto& pair : _nonterminals) {
       Grammar::NonterminalImp& nonterminal = pair.second;
-      for(const Production& production : nonterminal.productions()) {
+      for(const auto& elem : nonterminal.productions()) {
+	const Production& production = elem.second;
         nonterminal._has_empty_string_in_first_set = true;
 	//Repeat until first set does not have empty string or end is reached
 	for(const Symbol* symbol : production.symbols()) {
@@ -94,13 +109,19 @@ void Grammar::compute_first_sets()
 	      needs_update = true;
 	    }
 	  }
-
 	  if(!symbol->has_empty_string_in_first_set()) {
 	    nonterminal._has_empty_string_in_first_set = false;
 	    break;
 	  }
 	}
       }
+    }
+  }
+  //Handle accept symbol, which is not in nonterminal map
+  if(_start_symbol != nullptr) {
+    _accept._first_set = _start_symbol->first_set();
+    if(_start_symbol->has_empty_string_in_first_set()) {
+      _accept._first_set.insert(&_end);
     }
   }
 }

@@ -1,3 +1,4 @@
+#include "../../grammar/include/grammar.hpp"
 #include "../include/lalr_table.hpp"
 #include "../include/item_set.hpp"
 #include <map>
@@ -7,12 +8,20 @@ using namespace asparserations;
 using namespace grammar;
 using namespace table;
 
-LALR_Table::LALR_Table()
+LALR_Table::LALR_Table(Grammar& grammar)
 {
   std::map<Item_Set,State*,Item_Set::Compare_Cores> item_sets;  
   std::list<std::pair<const Item_Set,State*>*> queue;
 
-  unsigned int index;
+  grammar.compute_first_sets();
+
+  Item_Set start_set({Item(grammar.accept().production_at("$root"),
+			   0, grammar.end())});
+  _states.emplace_back(0);
+  item_sets.insert(std::make_pair(start_set, &_states.back()));
+  queue.push_back(&*item_sets.begin());
+
+  unsigned int index = 0;
   //For each element in the queue of item sets...
   for(auto& elem : queue) {
     auto transitions = _goto(_closure(elem->first));

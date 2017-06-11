@@ -30,14 +30,14 @@ void State::add_reduction(const Symbol* const input,
 }
 
 const std::map<const asparserations::grammar::Symbol*,const State*>&
-State::transitions()
+State::transitions() const
 {
   return _transitions;
 }
 
 const std::map<const asparserations::grammar::Symbol*,
                std::set<const asparserations::grammar::Production*>>&
-State::reductions()
+State::reductions() const
 {
   return _reductions;
 }

@@ -1,30 +1,59 @@
-#include "../include/nonterminal.hpp"
+#include "../include/grammar.hpp"
+#include <utility>
 
 using namespace asparserations;
 using namespace grammar;
 
-Nonterminal::Nonterminal(Grammar& g, const std::string& id)
-  : _grammar(g), _id(id)
+Grammar::NonterminalImp::NonterminalImp(Grammar& g, const std::string& id)
+  : _grammar(&g), _id(id)
 {}
 
-const std::string& Nonterminal::id() const
+const std::map<std::string,Production>&
+Grammar::NonterminalImp::productions() const
+{
+  return _productions;
+}
+
+Production&
+Grammar::NonterminalImp::add_production(const std::string& id,
+					std::vector<const Symbol*> symbols)
+{
+  return _productions.emplace(std::piecewise_construct,
+			      std::forward_as_tuple(id),
+		              std::forward_as_tuple(*this, id, symbols)).first
+    ->second;
+}
+
+Production& Grammar::NonterminalImp::production_at(const std::string& id)
+{
+  return _productions.at(id);
+}
+
+const Production&
+Grammar::NonterminalImp::production_at(const std::string& id) const
+{
+  return _productions.at(id);
+}
+
+const std::string& Grammar::NonterminalImp::id() const
 {
   return _id;
 }
 
-Grammar& Nonterminal::grammar()
+Grammar& Grammar::NonterminalImp::grammar()
 {
-  return _grammar;
+  return *_grammar;
 }
 
-const Grammar& Nonterminal::grammar() const
+const Grammar& Grammar::NonterminalImp::grammar() const
 {
-  return _grammar;
+  return *_grammar;
 }
 
-bool Nonterminal::derives_empty_string() const
+bool Grammar::NonterminalImp::derives_empty_string() const
 {
-  for(const Production& p : _productions) {
+  for(const auto& elem : _productions) {
+    const Production& p = elem.second;
     if(p.symbols().empty()) {
       return true;
     }
@@ -32,14 +61,12 @@ bool Nonterminal::derives_empty_string() const
   return false;
 }
 
-const std::list<Production>& Nonterminal::productions() const
+bool Grammar::NonterminalImp::has_empty_string_in_first_set() const
 {
-  return _productions;
+  return _has_empty_string_in_first_set;
 }
 
-Production& Nonterminal::add_production(const std::string& id,
-					std::vector<const Symbol*> symbols)
+const std::set<const Token*>& Grammar::NonterminalImp::first_set() const
 {
-  _productions.emplace_back(*this, id, symbols);
-  return _productions.back();
+  return _first_set;
 }

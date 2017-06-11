@@ -1,4 +1,3 @@
-#include "../../bootstrap/include/grammar_syntax.hpp"
 #include "../../grammar/include/grammar.hpp"
 #include <iostream>
 
@@ -12,14 +11,8 @@ void print_first_set(const asparserations::grammar::Symbol& s)
 
 int main()
 {
-  //Grammar grammar
-  asparserations::grammar::Grammar g;
-  asparserations::bootstrap::load_grammar_syntax(g);
-  g.compute_first_sets();
-  print_first_set(*g.start_symbol());
-
   //Grammar in the dragon book
-  asparserations::grammar::Grammar dragon_book;
+  asparserations::grammar::Grammar dragon_book("S");
   asparserations::grammar::Nonterminal& S = dragon_book.add_nonterminal("S");
   asparserations::grammar::Nonterminal& C = dragon_book.add_nonterminal("C");
   asparserations::grammar::Token& c = dragon_book.add_token("c");
@@ -29,13 +22,14 @@ int main()
   C.add_production("1", {&c, &C});
   C.add_production("2", {&d});
   dragon_book.compute_first_sets();
+
   print_first_set(S);
   print_first_set(C);
   print_first_set(c);
   print_first_set(d);
 
   //Grammar with empty string in a first set
-  asparserations::grammar::Grammar e_str;
+  asparserations::grammar::Grammar e_str("foo");
   asparserations::grammar::Token& foo = e_str.add_token("foo");
   asparserations::grammar::Token& bar = e_str.add_token("bar");
   asparserations::grammar::Nonterminal& e = e_str.add_nonterminal("e");

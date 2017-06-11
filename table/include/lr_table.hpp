@@ -14,7 +14,7 @@ namespace asparserations {
     class LR_Table : public Table
     {
     public:
-      LR_Table(grammar::Grammar&, const grammar::Nonterminal&);
+      LR_Table(grammar::Grammar&);
       const std::list<State>& states() const;
     private:
       std::list<State> _states;

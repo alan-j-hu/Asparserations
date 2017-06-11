@@ -3,6 +3,7 @@
 
 #include "production.hpp"
 #include <list>
+#include <map>
 #include <set>
 #include <string>
 
@@ -17,11 +18,11 @@ namespace asparserations {
       virtual Grammar& grammar()=0;
       virtual const Grammar& grammar() const=0;
       virtual const std::set<const Token*>& first_set() const=0;
-      virtual const std::list<Production>& productions() const=0;
+      virtual const std::map<std::string,Production>& productions() const=0;
       virtual bool derives_empty_string() const=0;
       virtual bool has_empty_string_in_first_set() const=0;
-    private:
-      Symbol(const Symbol&)=delete;
+    protected:
+      Symbol()=default;
     };
   }
 }

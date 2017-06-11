@@ -3,8 +3,9 @@
 
 #include "production.hpp"
 #include "symbol.hpp"
+#include <map>
+#include <set>
 #include <string>
-#include <vector>
 
 namespace asparserations {
   namespace grammar {
@@ -13,20 +14,20 @@ namespace asparserations {
     class Nonterminal : public Symbol
     {
     public:
-      const std::list<Production>& productions() const;
-      const std::string& id() const;
-      Grammar& grammar();
-      const Grammar& grammar() const;
+      virtual const std::map<std::string,Production>& productions() const=0;
+      virtual Production& production_at(const std::string&)=0;
+      virtual const Production& production_at(const std::string&) const=0;
+      virtual const std::string& id() const=0;
+      virtual Grammar& grammar()=0;
+      virtual const Grammar& grammar() const=0;
       virtual const std::set<const Token*>& first_set() const=0;
-      bool derives_empty_string() const;
+      virtual bool derives_empty_string() const=0;
       virtual bool has_empty_string_in_first_set() const=0;
-      Production& add_production(const std::string&,std::vector<const Symbol*>);
+      virtual Production& add_production(const std::string&,
+		               		 std::vector<const Symbol*>)=0;
     protected:
-      Nonterminal(Grammar&, const std::string&);
-    private:
-      const std::string _id;
-      Grammar& _grammar;
-      std::list<Production> _productions;
+      Nonterminal()=default;
+      Nonterminal(Nonterminal&&)=default;
     };
   }
 }

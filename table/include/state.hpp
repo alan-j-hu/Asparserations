@@ -20,10 +20,10 @@ namespace asparserations {
       void add_reduction(const asparserations::grammar::Symbol* const,
 	     const std::set<const asparserations::grammar::Production*>&);
       const std::map<const asparserations::grammar::Symbol*,const State*>&
-      transitions();
+      transitions() const;
       const std::map<const asparserations::grammar::Symbol*,
 	       std::set<const asparserations::grammar::Production*>>&
-      reductions();
+      reductions() const;
     private:
       unsigned int _index;
       std::map<const asparserations::grammar::Symbol*,const State*>

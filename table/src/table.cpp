@@ -23,7 +23,8 @@ std::set<Item> Table::_closure(const Item_Set& item_set) const
        : std::set<const Token*> {&item->lookahead}
       );
 
-    for(const Production& production : item->next()->productions()) {
+    for(const auto& elem : item->next()->productions()) {
+      const Production& production = elem.second;
       for(const Token* lookahead : lookaheads) {
 	auto result = items.insert(Item(production, 0, *lookahead));
 	if(result.second) {
