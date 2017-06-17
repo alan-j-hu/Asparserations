@@ -3,14 +3,22 @@ namespace asparserations
   //Namespace for grammar API
   namespace grammar
     class Grammar
+      DATA
+      class TokenImp : Token
+      class NonterminalImp : Nonterminal
+      std::map<std::string,TokenImp> _tokens
+      std::map<std::string,NonterminalImp> _nonterminals
 
+      METHODS
+      Nonterminal& add_nonterminal(const std::string&)
+      Token& add_token(const std::string&)
+      [const] Token& token_at(const std::string&) [const]
+      [const] Nonterminal& nonterminal_at(const std::string&) [const]
 
     class Symbol
-      std::set<Token*>& first_set() = 0;
-      
+      std::set<Token*>& first_set() = 0      
  
     class Token : public Symbol
-
 
     class Nonterminal : public Symbol
       DATA
@@ -21,13 +29,8 @@ namespace asparserations
       getter for first set
       getter for productions
 
-
-
-
     class Production
       std::vector<const Symbol*> symbols
-
-
 
 
   //Namespace for generating the state machine
@@ -51,59 +54,42 @@ namespace asparserations
     class State
       std::map<Symbol*, State*>
 
-
-
-
     class Table
-      const std::set<State>& states() const = 0;
-
+      const std::set<State>& states() const = 0
 
     class LR_Table : public Table
-      const std::set<State>& states() const;
-
+      const std::set<State>& states() const
 
     class LALR_Table : public Table
-      const std::set<State>& states() const;
+      const std::set<State>& states() const
 
 
-
-
-
-
-  //Namespace for code generation
+  //Namespace for DSL
   namespace codegen
 
+  class Datum
+    enum class Type {Bool, Char, Int, Float}
+    union
+    {
+      bool bool_v
+      char char_v
+      int int_v
+      float float_v
+    } _value
+    Type _type
 
-    class Template
-      // Used for OUTPUT
-      
-      //Change the function definitions to create different stubs
-      //1. Make them virtual and inherit from the class
-      //   -Downside: each class only needs one instance, bad design (singleton)
-      //2. Use std::function and let different instances mutate functions
-      //   -Downside: ugly functors
-
-      std::string generate_state_transition(const Symbol&, int)
-      std::string generate_state(const State&)
-      std::string generate_state_machine()
-
-
-
-
-
-    class Generator
-      Generator(which_algo, const Nonterminal&, const Template&)
-      const std::string& output();
-
-
-// User
-
-
-   template.generate_state_machine_transition = [](const Symbol& symbol,
-                                                   int state_index)
-   {
-     return "case " + symbol.name() + ": state = " + state_index + "; break;";
-   };
-
-
-   codegen::Generator my_gen(root, template);
+    namespace parser
+      class Pattern
+        Node node() = 0
+      class Literal : Pattern
+        Literal(const std::string&)
+      class List : Pattern
+        List(std::vector<Pattern*>)
+      class VariadicList : Pattern
+        VariadicList(std::vector<Pattern*>, Pattern*)
+      class Number : Pattern
+        Number()
+      class Extension : Pattern
+        Extension()
+      class Atom : Pattern
+        Atom()

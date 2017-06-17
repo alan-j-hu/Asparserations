@@ -1,3 +1,4 @@
+#include "../../bootstrap/include/grammar_syntax.hpp"
 #include "../../grammar/include/grammar.hpp"
 #include <iostream>
 
@@ -11,6 +12,11 @@ void print_first_set(const asparserations::grammar::Symbol& s)
 
 int main()
 {
+  asparserations::grammar::Grammar g
+    = asparserations::bootstrap::grammar_syntax();
+  g.compute_first_sets();
+  print_first_set(g.nonterminal_at("root"));
+  print_first_set(g.nonterminal_at("Nonterminal_List"));
   //Grammar in the dragon book
   asparserations::grammar::Grammar dragon_book("S");
   asparserations::grammar::Nonterminal& S = dragon_book.add_nonterminal("S");

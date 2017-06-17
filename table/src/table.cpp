@@ -17,19 +17,21 @@ std::set<Item> Table::_closure(const Item_Set& item_set) const
   }
 
   for(const Item* item : queue) {
-    std::set<const Token*> lookaheads =
-      (item->marker < item->production.symbols().size() - 1
-        ? item->peek()->first_set()
-       : std::set<const Token*> {&item->lookahead}
-      );
+    if(item->marker < item->production.symbols().size()) {
+      std::set<const Token*> lookaheads =
+        (item->marker < item->production.symbols().size() - 1
+          ? item->peek()->first_set()
+         : std::set<const Token*> {&item->lookahead}
+        );
 
-    for(const auto& elem : item->next()->productions()) {
-      const Production& production = elem.second;
-      for(const Token* lookahead : lookaheads) {
-	auto result = items.insert(Item(production, 0, *lookahead));
-	if(result.second) {
-	  queue.push_back(&*result.first);
-	}
+      for(const auto& elem : item->next()->productions()) {
+        const Production& production = elem.second;
+        for(const Token* lookahead : lookaheads) {
+	  auto result = items.insert(Item(production, 0, *lookahead));
+	  if(result.second) {
+	    queue.push_back(&*result.first);
+	  }
+        }
       }
     }
   }

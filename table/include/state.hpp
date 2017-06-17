@@ -17,7 +17,7 @@ namespace asparserations {
       unsigned int index() const;
       void add_transition(const asparserations::grammar::Symbol* const,
 			  const State*);
-      void add_reduction(const asparserations::grammar::Symbol* const,
+      void add_reductions(const asparserations::grammar::Symbol* const,
 	     const std::set<const asparserations::grammar::Production*>&);
       const std::map<const asparserations::grammar::Symbol*,const State*>&
       transitions() const;

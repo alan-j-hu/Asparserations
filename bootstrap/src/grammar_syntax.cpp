@@ -95,5 +95,6 @@ Grammar asparserations::bootstrap::grammar_syntax()
   root.add_production("main",
     {&tokens_keyword, &identifier_list, &rules_keyword, &nonterminal_list});
 
+  //Use move semantics so productions' pointers to symbols are valid
   return grammar;
 }

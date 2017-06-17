@@ -23,7 +23,7 @@ LR_Table::LR_Table(Grammar& grammar)
   item_sets.insert(std::make_pair(start_set, &_states.back()));
   queue.push_back(&*item_sets.begin());
 
-  unsigned int index = 0;
+  unsigned int index = 1;
   //For each element in the queue of item sets...
   for(auto elem : queue) {
     //Get the kernel items of its transitions
@@ -35,7 +35,6 @@ LR_Table::LR_Table(Grammar& grammar)
 	_states.emplace_back(index);
         auto result = item_sets.insert(
 	  std::make_pair(Item_Set(transition.second.first), &_states.back()));
-
         //If the item set doesn't already exist, queue it for processing
         if(result.second) {
 	  queue.push_back(&*result.first);
@@ -45,9 +44,8 @@ LR_Table::LR_Table(Grammar& grammar)
 	}
         elem->second->add_transition(transition.first, result.first->second);
       }
-
       //Register the reductions
-      elem->second->add_reduction(transition.first, transition.second.second);
+      elem->second->add_reductions(transition.first, transition.second.second);
     }
   }
 }

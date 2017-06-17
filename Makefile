@@ -49,6 +49,10 @@ bootstrap/src/grammar_syntax.cpp : bootstrap/include/grammar_syntax.hpp
 tests/src/first_set1.cpp : bootstrap/include/grammar_syntax.hpp \
 grammar/include/grammar.hpp
 
+tests/include/print_states.hpp :
+tests/src/print_states.cpp : tests/include/print_states.hpp \
+table/include/state.hpp table/include/table.hpp
+
 #Grammar
 build/grammar.o : grammar/src/grammar.cpp
 	$(CXX) $(CXXFLAGS) -c -o build/grammar.o grammar/src/grammar.cpp
@@ -89,7 +93,26 @@ bootstrap/src/grammar_syntax.cpp
 build/first_set1.o : tests/src/first_set1.cpp
 	$(CXX) $(CXXFLAGS) -c -o build/first_set1.o tests/src/first_set1.cpp
 
+build/print_states.o : tests/src/print_states.cpp
+	$(CXX) $(CXXFLAGS) -c -o build/print_states.o tests/src/print_states.cpp
+
+build/lr_table1.o : tests/src/lr_table1.cpp
+	$(CXX) $(CXXFLAGS) -c -o build/lr_table1.o tests/src/lr_table1.cpp
+
+build/lalr_table1.o : tests/src/lalr_table1.cpp
+	$(CXX) $(CXXFLAGS) -c -o build/lalr_table1.o tests/src/lalr_table1.cpp
+
 #Executables
 bin/first_set1.out : build/first_set1.o build/grammar_syntax.o $(GRAMMAR_OBJS)
 	$(CXX) -std=c++11 -o bin/first_set1.out build/first_set1.o \
 build/grammar_syntax.o $(GRAMMAR_OBJS)
+
+bin/lr_table1.out : build/lr_table1.o build/print_states.o $(GRAMMAR_OBJS) \
+$(TABLE_OBJS)
+	$(CXX) -std=c++11 -o bin/lr_table1.out build/lr_table1.o \
+build/print_states.o $(GRAMMAR_OBJS) $(TABLE_OBJS)
+
+bin/lalr_table1.out : build/lalr_table1.o build/print_states.o $(GRAMMAR_OBJS) \
+$(TABLE_OBJS)
+	$(CXX) -std=c++11 -o bin/lalr_table1.out build/lalr_table1.o \
+build/print_states.o $(GRAMMAR_OBJS) $(TABLE_OBJS)

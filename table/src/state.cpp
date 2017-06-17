@@ -20,7 +20,7 @@ void State::add_transition(const Symbol* const input, const State* state)
   _transitions.insert(std::make_pair(input, state));
 }
 
-void State::add_reduction(const Symbol* const input,
+void State::add_reductions(const Symbol* const input,
 			  const std::set<const Production*>& productions)
 {
   std::set<const Production*>& ref = _reductions[input];

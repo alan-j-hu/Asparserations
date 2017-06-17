@@ -21,7 +21,7 @@ LALR_Table::LALR_Table(Grammar& grammar)
   item_sets.insert(std::make_pair(start_set, &_states.back()));
   queue.push_back(&*item_sets.begin());
 
-  unsigned int index = 0;
+  unsigned int index = 1;
   //For each element in the queue of item sets...
   for(auto& elem : queue) {
     auto transitions = _goto(_closure(elem->first));
@@ -51,6 +51,7 @@ LALR_Table::LALR_Table(Grammar& grammar)
 	}
         elem->second->add_transition(transition.first, result.first->second);
       }
+      elem->second->add_reductions(transition.first, transition.second.second);
     }
   }
 }
