@@ -4,6 +4,7 @@ GRAMMAR_OBJS = build/grammar.o build/nonterminal.o build/token.o \
 build/production.o
 TABLE_OBJS = build/table.o build/lr_table.o build/lalr_table.o \
 build/item_set.o build/item.o build/state.o
+CODEGEN_OBJS = build/json_generator.o
 
 clean :
 	rm build/*
@@ -92,6 +93,12 @@ build/lr_table1.o : tests/src/lr_table1.cpp
 build/lalr_table1.o : tests/src/lalr_table1.cpp
 	$(CXX) $(CXXFLAGS) -c -o build/lalr_table1.o tests/src/lalr_table1.cpp
 
+build/json_test1.o : tests/src/json_test1.cpp \
+codegen/include/json_generator.hpp \
+grammar/include/grammar.hpp grammar/include/nonterminal.hpp \
+grammar/include/token.hpp table/include/lr_table.hpp
+	$(CXX) $(CXXFLAGS) -c -o build/json_test1.o tests/src/json_test1.cpp
+
 #Executables
 bin/first_set1.out : build/first_set1.o build/grammar_syntax.o $(GRAMMAR_OBJS)
 	$(CXX) -std=c++11 -o bin/first_set1.out build/first_set1.o \
@@ -106,3 +113,7 @@ bin/lalr_table1.out : build/lalr_table1.o build/print_states.o $(GRAMMAR_OBJS) \
 $(TABLE_OBJS)
 	$(CXX) -std=c++11 -o bin/lalr_table1.out build/lalr_table1.o \
 build/print_states.o $(GRAMMAR_OBJS) $(TABLE_OBJS)
+
+bin/json_test1.out : build/json_test1.o $(GRAMMAR_OBJS) $(TABLE_OBJS) \
+$(CODEGEN_OBJS)
+	$(CXX) -std=c++11 -o bin/json_test1.out build/json_test1.o $(GRAMMAR_OBJS) $(TABLE_OBJS) $(CODEGEN_OBJS)

@@ -31,19 +31,25 @@ Grammar::Grammar(Grammar&& old)
 
 Token& Grammar::add_token(const std::string& id)
 {
-  Token& tok = _tokens.emplace(std::piecewise_construct,
+  auto result = _tokens.emplace(std::piecewise_construct,
 			       std::forward_as_tuple(id),
-			       std::forward_as_tuple(*this, id)).first->second;
-  _token_vec.push_back(&tok);
+			       std::forward_as_tuple(*this, id));
+  Token& tok = result.first->second;
+  if(result.second) {
+    _token_vec.push_back(&tok);
+  }
   return tok;
 }
 
 Nonterminal& Grammar::add_nonterminal(const std::string& id)
 {
-  Nonterminal& nt = _nonterminals
+  auto result = _nonterminals
     .emplace(std::piecewise_construct, std::forward_as_tuple(id),
-	     std::forward_as_tuple(*this, id)).first->second;
-  _nonterminal_vec.push_back(&nt);
+	     std::forward_as_tuple(*this, id));
+  Nonterminal& nt = result.first->second;
+  if(result.second) {
+    _nonterminal_vec.push_back(&nt);
+  }
   return nt;
 }
 

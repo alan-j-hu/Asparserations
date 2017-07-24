@@ -16,7 +16,7 @@ LALR_Table::LALR_Table(Grammar& grammar)
 
   grammar.compute_first_sets();
 
-  Item_Set start_set({Item(grammar.accept().production_at("$root"),
+  Item_Set start_set({Item(grammar.accept().production_at("__root__"),
 			   0, grammar.end())});
   _states.emplace_back(0);
   item_sets.insert(std::make_pair(start_set, &_states.back()));

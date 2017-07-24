@@ -7,13 +7,16 @@
 #include "../../table/include/state.hpp"
 #include "../../table/include/table.hpp"
 
+#include <iostream>
+#include <stdexcept>
+
 using namespace asparserations;
 using namespace grammar;
 using namespace table;
 using namespace codegen;
 
 JSON_Generator::JSON_Generator(const Table& table, bool pretty_print,
-			       const std::string& tab = "  ")
+			       const std::string& tab)
   : _table(table),
     _grammar(table.grammar()),
     _pretty_print(pretty_print),
@@ -27,6 +30,10 @@ const std::string& JSON_Generator::code() const {return _code;}
 
 void JSON_Generator::_break_and_indent()
 {
+  if(_indent_depth > 10) {
+    std::cout << _code << std::endl;
+    throw std::runtime_error("Int underflow");
+  }
   if(_pretty_print) {
     _code += "\n";
     for(unsigned int i = 0; i < _indent_depth; ++i) {
@@ -45,7 +52,9 @@ void JSON_Generator::_generate()
   _code += ",";
   _break_and_indent();
   _code += "\"table\" : ";
+  //std::cout << "Entering _generate_table" << std::endl;
   _generate_table(_table);
+  //std::cout << "Exiting _generate_table" << std::endl;
   --_indent_depth;
   _break_and_indent();
   _code += "}";
@@ -65,12 +74,12 @@ void JSON_Generator::_generate_nonterminal(const Nonterminal& n)
   bool needs_comma = false;
   for(auto& pair : n.productions()) {
     const Production& production = pair.second;
-    _break_and_indent();
     if(needs_comma) {
       _code += ",";
     } else {
       needs_comma = true;
     }
+    _break_and_indent();
     _code += "\"" + production.id() + "\" : [";
     ++_indent_depth;
     bool needs_comma2 = false;
@@ -102,7 +111,7 @@ void JSON_Generator::_generate_nonterminal(const Nonterminal& n)
 
 void JSON_Generator::_generate_grammar(const Grammar& grammar)
 {
-  _code = "{";
+  _code += "{";
   ++_indent_depth;
   _break_and_indent();
   //Tokens
@@ -110,6 +119,7 @@ void JSON_Generator::_generate_grammar(const Grammar& grammar)
   ++_indent_depth;
   _generate_token(grammar.end());
   for(const Token* token : grammar.tokens()) {
+    _code += ",";
     _generate_token(*token);
   }
   --_indent_depth;
@@ -120,7 +130,7 @@ void JSON_Generator::_generate_grammar(const Grammar& grammar)
   _code += "\"nonterminals\" : [";
   ++_indent_depth;
   _break_and_indent();
-  _generate_nonterminal(grammar.start_symbol());
+  _generate_nonterminal(grammar.accept());
   for(const Nonterminal* nonterminal : grammar.nonterminals()) {
     _code += ",";
     _break_and_indent();
@@ -157,7 +167,7 @@ void JSON_Generator::_generate_state(const State& state)
   }
   --_indent_depth;
   _break_and_indent();
-  _code += ",";
+  _code += "},";
   _break_and_indent();
   _code += "\"reductions\" : {";
   ++_indent_depth;
@@ -184,33 +194,34 @@ void JSON_Generator::_generate_state(const State& state)
       _break_and_indent();
       _code += "}";
     }
+    //std::cout << "Ending loop over productions" << std::endl;
     --_indent_depth;
     _break_and_indent();
     _code += "]";
-    --_indent_depth;
-    _break_and_indent();
-    _code += "},";
-    _break_and_indent();
-    _code += "\"gotos\" : {";
-    ++_indent_depth;
-    needs_comma = false;
-    for(auto& transition : state.transitions()) {
-      const Symbol& symbol = *transition.first;
-      const State& state = *transition.second;
-      if(!symbol.is_token()) {
-        if(needs_comma) {
-	  _code += ",";
-        } else {
-	  needs_comma = true;
-        }
-        _break_and_indent();
-	_code += "\"" + symbol.id() + "\" : " + std::to_string(state.index());
-      }
-    }
-    --_indent_depth;
-    _break_and_indent();
-    _code += "}";
   }
+  --_indent_depth;
+  _break_and_indent();
+  _code += "},";
+  _break_and_indent();
+  _code += "\"gotos\" : {";
+  ++_indent_depth;
+  needs_comma = false;
+  for(auto& transition : state.transitions()) {
+    const Symbol& symbol = *transition.first;
+    const State& state = *transition.second;
+    if(!symbol.is_token()) {
+      if(needs_comma) {
+        _code += ",";
+      } else {
+        needs_comma = true;
+      }
+      _break_and_indent();
+      _code += "\"" + symbol.id() + "\" : " + std::to_string(state.index());
+    }
+  }
+  --_indent_depth;
+  _break_and_indent();
+  _code += "}";
   --_indent_depth;
   _break_and_indent();
   _code += "}";

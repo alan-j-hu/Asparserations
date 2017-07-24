@@ -11,7 +11,7 @@ namespace asparserations {
     class JSON_Generator : public Code_Generator
     {
     public:
-      JSON_Generator(const table::Table&, bool, const std::string&);
+      JSON_Generator(const table::Table&, bool, const std::string& tab = "  ");
       const std::string& code() const;
     private:
       std::string _code;
