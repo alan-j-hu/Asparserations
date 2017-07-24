@@ -14,9 +14,8 @@ Grammar::NonterminalImp::productions() const
   return _productions;
 }
 
-Production&
-Grammar::NonterminalImp::add_production(const std::string& id,
-					std::vector<const Symbol*> symbols)
+Production& Grammar::NonterminalImp::add_production
+                     (const std::string& id, std::vector<const Symbol*> symbols)
 {
   return _productions.emplace(std::piecewise_construct,
 			      std::forward_as_tuple(id),
@@ -48,6 +47,11 @@ Grammar& Grammar::NonterminalImp::grammar()
 const Grammar& Grammar::NonterminalImp::grammar() const
 {
   return *_grammar;
+}
+
+bool Grammar::NonterminalImp::is_token() const
+{
+  return false;
 }
 
 bool Grammar::NonterminalImp::derives_empty_string() const

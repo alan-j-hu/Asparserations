@@ -32,6 +32,11 @@ const std::map<std::string,Production>& Grammar::TokenImp::productions() const
   return _productions;
 }
 
+bool Grammar::TokenImp::is_token() const
+{
+  return true;
+}
+
 bool Grammar::TokenImp::derives_empty_string() const
 {
   return false;

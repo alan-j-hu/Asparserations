@@ -11,6 +11,7 @@ using namespace grammar;
 using namespace table;
 
 LR_Table::LR_Table(Grammar& grammar)
+  : _grammar(grammar)
 {
   std::map<Item_Set,State*> item_sets;
   std::list<std::pair<const Item_Set,State*>*> queue;
@@ -53,4 +54,9 @@ LR_Table::LR_Table(Grammar& grammar)
 const std::list<State>& LR_Table::states() const
 {
   return _states;
+}
+
+const Grammar& LR_Table::grammar() const
+{
+  return _grammar;
 }

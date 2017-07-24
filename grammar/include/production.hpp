@@ -15,6 +15,8 @@ namespace asparserations {
 		 const std::vector<const Symbol*>&);
       const std::vector<const Symbol*>& symbols() const;
       const std::string& id() const;
+      Nonterminal& nonterminal();
+      const Nonterminal& nonterminal() const;
       void set_symbol(unsigned int, const Symbol*);
       void insert_symbol(unsigned int, const Symbol*);
       void erase_symbol(unsigned int);

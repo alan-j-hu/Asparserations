@@ -9,6 +9,7 @@ using namespace grammar;
 using namespace table;
 
 LALR_Table::LALR_Table(Grammar& grammar)
+  : _grammar(grammar)
 {
   std::map<Item_Set,State*,Item_Set::Compare_Cores> item_sets;  
   std::list<std::pair<const Item_Set,State*>*> queue;
@@ -59,4 +60,9 @@ LALR_Table::LALR_Table(Grammar& grammar)
 const std::list<State>& LALR_Table::states() const
 {
   return _states;
+}
+
+const Grammar& LALR_Table::grammar() const
+{
+  return _grammar;
 }

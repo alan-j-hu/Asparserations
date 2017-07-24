@@ -7,6 +7,7 @@
 #include <map>
 #include <set>
 #include <string>
+#include <vector>
 
 namespace asparserations {
   namespace grammar {
@@ -48,6 +49,8 @@ namespace asparserations {
       Nonterminal& nonterminal_at(const std::string&);
       const Nonterminal& nonterminal_at(const std::string&) const;
 
+      const std::vector<Nonterminal*>& nonterminals() const;
+      const std::vector<Token*>& tokens() const;
       const Nonterminal& accept() const;
       const Token& end() const;
 
@@ -81,6 +84,7 @@ namespace asparserations {
         const Grammar& grammar() const;
         const std::set<const Token*>& first_set() const;
         const std::map<std::string,Production>& productions() const;
+	bool is_token() const;
         bool derives_empty_string() const;
         bool has_empty_string_in_first_set() const;
 	//Members
@@ -101,6 +105,7 @@ namespace asparserations {
         Grammar& grammar();
         const Grammar& grammar() const;
         const std::set<const Token*>& first_set() const;
+	bool is_token() const;
         bool derives_empty_string() const;
         bool has_empty_string_in_first_set() const;
         Production& add_production(const std::string&,
@@ -113,6 +118,8 @@ namespace asparserations {
 	bool _has_empty_string_in_first_set;
       };
 
+      std::vector<Token*> _token_vec;
+      std::vector<Nonterminal*> _nonterminal_vec;
       std::map<std::string,TokenImp> _tokens;
       std::map<std::string,NonterminalImp> _nonterminals;
       Nonterminal* _start_symbol;

@@ -8,10 +8,10 @@ using namespace asparserations;
 using namespace grammar;
 
 Grammar::Grammar(const std::string& start)
-  : _end(*this,"$end"), _accept(*this,"$accept")
+  : _end(*this, "__end__"), _accept(*this, "__accept__")
 {
   _start_symbol = &add_nonterminal(start);
-  _accept.add_production("$root", {_start_symbol, &_end});
+  _accept.add_production("__root__", {_start_symbol, &_end});
 }
 
 Grammar::Grammar(Grammar&& old)
@@ -31,16 +31,20 @@ Grammar::Grammar(Grammar&& old)
 
 Token& Grammar::add_token(const std::string& id)
 {
-  return _tokens.emplace(std::piecewise_construct,
-			 std::forward_as_tuple(id),
-			 std::forward_as_tuple(*this, id)).first->second;
+  Token& tok = _tokens.emplace(std::piecewise_construct,
+			       std::forward_as_tuple(id),
+			       std::forward_as_tuple(*this, id)).first->second;
+  _token_vec.push_back(&tok);
+  return tok;
 }
 
 Nonterminal& Grammar::add_nonterminal(const std::string& id)
 {
-  return _nonterminals.emplace(std::piecewise_construct,
-			       std::forward_as_tuple(id),
-			       std::forward_as_tuple(*this, id)).first->second;
+  Nonterminal& nt = _nonterminals
+    .emplace(std::piecewise_construct, std::forward_as_tuple(id),
+	     std::forward_as_tuple(*this, id)).first->second;
+  _nonterminal_vec.push_back(&nt);
+  return nt;
 }
 
 Token& Grammar::token_at(const std::string& id)
@@ -61,6 +65,16 @@ Nonterminal& Grammar::nonterminal_at(const std::string& id)
 const Nonterminal& Grammar::nonterminal_at(const std::string& id) const
 {
   return _nonterminals.at(id);
+}
+
+const std::vector<Nonterminal*>& Grammar::nonterminals() const
+{
+  return _nonterminal_vec;
+}
+
+const std::vector<Token*>& Grammar::tokens() const
+{
+  return _token_vec;
 }
 
 const Nonterminal& Grammar::accept() const

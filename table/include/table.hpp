@@ -9,6 +9,7 @@
 
 namespace asparserations {
   namespace grammar {
+    class Grammar;
     class Production;
     class Symbol;
   }
@@ -17,6 +18,7 @@ namespace asparserations {
     class Table
     {
     public:
+      virtual const grammar::Grammar& grammar() const=0;
       virtual const std::list<State>& states() const=0;
     protected:
       /**

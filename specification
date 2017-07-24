@@ -63,33 +63,294 @@ namespace asparserations
     class LALR_Table : public Table
       const std::set<State>& states() const
 
-
-  //Namespace for DSL
   namespace codegen
+    class Code_Generator
+      const std::string& code() const=0;
 
-  class Datum
-    enum class Type {Bool, Char, Int, Float}
-    union
+//Brainstorm
+
+namespace {
+  class Parser
+  {
+    std::vector<State> _state_stack;
+
+    void state0()
     {
-      bool bool_v
-      char char_v
-      int int_v
-      float float_v
-    } _value
-    Type _type
+      State& state = _state_stack.back();
+      if(state.action == shift) {
+        Lexer lexer = state.lexer;
+        switch(state.symbol) {
+        case id:
+          auto result = lexer.recognize_id();
+	  if(result.second) {
+	    state.symbol = result.first;
+	    _state_stack.emplace_back(&this->state3);
+	    break;
+	  }(...)
+        case lparens:
+          auto result = lexer.recognize_lparens();
+       	  if(result.second) {
+	    state.symbol = result.first;
+	    _state_stack.emplace_back(&this->state2);
+	    break;
+	  }(...)
+	(...)
+        default:
+	  state.action = reduce;
+          _state_stack.pop_back();
+	} else if(state.action == reduce) {
+	  Lexer lexer = state.lexer;
+	  switch(state.symbol) {
+	  case plus:
+	    switch(state.production) {
+	    case 4:
+	      _state_stack.emplace_back(&this->state);
+	      return;
+	    (...)
+	    default:
+	    }
+	  (...)
+	  default:
+	    state.action = go_to;
+	  }
+	} else {
+	  switch(state.symbol) {
+	  case E:
+	    switch(state.production) {
+	    case 4:
+	      _state_stack.push_back(reduce(4));
+	    (...)
+	    default:
+	      break;
+	    }
+	  (...)
+	  default:
+	    _state_stack.pop_back();
+	  }
+	}
+      }
+    }
+  };
+  struct State
+  {
+    const void (Parser::*)(State) function_ptr;
+    Symbol symbol;
+    Production production;
+    Lexer lexer;
+  };
+}
 
-    namespace parser
-      class Pattern
-        Node node() = 0
-      class Literal : Pattern
-        Literal(const std::string&)
-      class List : Pattern
-        List(std::vector<Pattern*>)
-      class VariadicList : Pattern
-        VariadicList(std::vector<Pattern*>, Pattern*)
-      class Number : Pattern
-        Number()
-      class Extension : Pattern
-        Extension()
-      class Atom : Pattern
-        Atom()
+Node* parse(Lexer& lexer)
+{
+}
+
+
+//OR
+
+//Highly compressed struct format
+
+class Parser
+{
+  //The Token type is actually a function pointer to the
+  //lexer's recognizer function
+  //Example:
+  //Token lparens = Lexer::next_lparens;
+  using Token = Lexeme(Lexer::*)();
+
+  std::array<std::pair<,unsigned int>,1> productions {
+  };
+  using Production = unsigned int;
+
+  //A class template that represents a subsequence of an array
+  //C++ doesn't have classes with variable-length array memberss (I don't want
+  //to use std::vector because it uses the heap and the generated code should
+  //be small and fast) so I pack all of the object's arrays into one large
+  //array and keep pointers and sizes into them
+  template<class T>
+  struct ArrayView
+  {
+    const T* pointer;
+    const unsigned int size;
+    ArrayView(T* const, unsigned int)
+    T& operator[](unsigned int);
+    const T& operator[](unsigned int) const;
+  };
+
+  //The following three arrays are the aforementioned large arrays that
+  //ArrayView keeps a place in
+
+  //Array of token/state pairs representing shifts
+  std::array<std::pair<Token,unsigned int>> shifts {
+    {id, 3}, {lparens, 2}
+  };
+
+  //Array of productions to reduce to
+  std::array<Production> reduce_productions = {
+    4
+  };
+
+  //ArrayView peeks into above array
+  std::array<std::pair<Token,ArrayView<Production>>,1> reduces = {
+    {plus, Array(productions.data, 1)}
+  };
+
+  //Array of nonterminal/state pairs representing gotos
+  std::array<std::pair<Symbol,unsigned int>,1> gotos {
+    {E, 4}
+  };
+
+  struct State
+  {
+    ArrayView<std::pair<Token,unsigned int>> shifts;
+    ArrayView<std::pair<Token,ArrayView<Production>>> reduces;
+    ArrayView<std::pair<Symbol,unsigned int>> gotos;
+  };
+
+  //The state of the state ("memento")
+  struct StateState or Context
+  {
+    enum class Action : char {shift, reduce, goto};
+    unsigned int index;
+    unsigned int production_index;
+    Action action;
+    Node* node;
+  };
+};
+
+//OR
+
+//Use free store allocation - lower quality, but no weird addressing system
+
+namespace {
+
+struct Production
+{
+  //Pointer to function that returns a pointer to the appropriate node,
+  //representing the nonterminal to reduce to in the parse tree
+  Node*(*node)();
+  unsigned int symbol_count;
+};
+
+struct State
+{
+  std::vector<std::pair<Token,unsigned int>>shifts;
+  std::vector<std::pair<Token,std::vector<Production*>>> reduces;
+  std::map<Symbol,unsigned int> gotos;
+};
+
+struct Continuation
+{
+  enum class Action {shift, reduce, go_to};
+  union {
+    std::vector<std::pair<Token,unsigned int>>::iterator shift_index;
+    std::vector<std::pair<Token,std::vector<Production*>>>::iterator
+      reduce_index;
+    Symbol symbol;
+  };
+  Lexer lexer;
+  unsigned int state;
+  Node* node;
+};
+
+}
+
+class Parser
+{
+  void _enter_state(Continuation&);
+  void _reduce();
+  std::vector<State> _states;
+  std::vector<Continuation> _continuation_stack;
+public:
+  Parser();
+};
+
+void Parser::_enter_state(Continuation& c)
+{
+  State& s = this->_states.at(c.state);
+  Lexer l = c.lexer;
+  if(c.action == Continuation::Action::shift) {
+    for(auto i = c.shift_index; i != s.shifts.end(); ++i) {
+      //Call the token recognization function
+      auto result = lexer.*(i->first);
+      if(result.second) {
+        c.shift_index = i;
+	delete c.node;
+        c.node = result.first;
+        this->_continuation_stack.emplace_back(shift, i->second);
+        return;
+      }
+    }
+    c.action = Continuation::Action::reduce;
+    c.reduce_index = s.reduces.begin();
+  }
+  if (c.action == Continuation::Action::reduce) {
+    for(auto i = c.reduce_index; i != s.reduces.end(); ++i) {
+      auto result = lexer.*(i->first);
+      if(result.second) {
+        c.reduce_index = i;
+	this->_reduce();
+	return;
+      }
+    }
+    c.action = Continuation::Action::go_to;
+  }
+  if(c.action == Continuation::Action::go_to) {
+    auto result = s.gotos.find(c.symbol);
+    if(result.second) {
+      this->_continuation_stack.emplace_back(Continuation::Action::Shift,
+                                             result.first->shift);
+      return;
+    }
+  }
+  this->_continuation_stack.pop_back();
+}
+
+void Parser::_reduce()
+{
+
+}
+
+Parser::Parser()
+{
+  _continuation_stack.emplace_back(Continuation::Action::shift, 0);
+  while(!this->_continuation_stack.empty()) {
+    this->_enter_state(this->_continuation_stack.back());
+  }
+}
+
+//JSON Output
+{
+  "grammar" : {
+    "tokens" : [
+      "e"
+    ],
+    "nonterminals" : [
+      "S" : {
+        "root" : [
+	  {
+	    "id" : "e",
+	    "isToken" : true
+	  }
+	]
+      }
+    ]
+  },
+  "table" : [
+    {
+      "shifts" : {
+        "e" : 1
+      },
+      "reductions" : {
+        "e" : [
+	   {
+	     "nonterminal" : "S",
+	     "production" : "root"
+	   }
+	]
+      },
+      "gotos" : {
+        "S" : 1
+      }
+    }
+  ]
+}

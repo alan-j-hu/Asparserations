@@ -29,6 +29,16 @@ const std::string& Production::id() const
   return _id;
 }
 
+Nonterminal& Production::nonterminal()
+{
+  return _nonterminal;
+}
+
+const Nonterminal& Production::nonterminal() const
+{
+  return _nonterminal;
+}
+
 void Production::set_symbol(unsigned int idx, const Symbol* symbol)
 {
   if(symbol == nullptr) {

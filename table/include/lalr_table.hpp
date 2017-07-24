@@ -12,8 +12,10 @@ namespace asparserations {
     public:
       LALR_Table(grammar::Grammar&);
       const std::list<State>& states() const;
+      const grammar::Grammar& grammar() const;
     private:
       std::list<State> _states;
+      grammar::Grammar& _grammar;
     };
   }
 }

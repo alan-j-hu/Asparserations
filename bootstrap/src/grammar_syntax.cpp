@@ -1,21 +1,21 @@
 /**
 This is the grammar for the grammar file, expressed in the C++ API.
 
-@tokens
-
-Bar
-Identifier
-Colon
-Semicolon
-Tokens_Keyword
-Rules_Keyword
-Hash
-
-@rules
+tokens {
+  Bar,
+  Identifier,
+  Colon,
+  Comma,
+  Semicolon,
+  Tokens_Keyword,
+  Open_Bracket,
+  Close_Bracket,
+  Hash
+}
 
 Symbol_List
-  : Symbol_List Identifier # main
-  | # empty
+  : Symbol_List Comma Identifier # recursive_case
+  | Identifier # base_case
   ;
 
 Production
@@ -42,7 +42,8 @@ Identifier_List
   ;
 
 Root
-  : Tokens_Keyword Identifier_List Rules_Keyword Nonterminal_List # main
+  : Tokens_Keyword Open_Bracket Identifier_List Close_Bracket Nonterminal_List
+      # main
   ;
  */
 
@@ -61,15 +62,18 @@ Grammar asparserations::bootstrap::grammar_syntax()
   Token& bar = grammar.add_token("Bar"); //|
   Token& identifier = grammar.add_token("Identifier"); //[A-Za-z_][A-Za-z0-9_]*
   Token& colon = grammar.add_token("Colon"); //:
+  Token& comma = grammar.add_token("Comma");
   Token& semicolon = grammar.add_token("Semicolon"); //;
   Token& tokens_keyword = grammar.add_token("Tokens_Keyword"); //@tokens
-  Token& rules_keyword = grammar.add_token("Rules_Keyword"); //@rules
+  Token& open_bracket = grammar.add_token("Open_Bracket"); //{
+  Token& close_bracket = grammar.add_token("Close-Bracket"); //}
   Token& hash = grammar.add_token("Hash"); //#
 
   //Nonterminals
   Nonterminal& symbol_list = grammar.add_nonterminal("Symbol_List");
-  symbol_list.add_production("main", {&symbol_list, &identifier});
-  symbol_list.add_production("empty", {});
+  symbol_list.add_production("recursive_case",
+			     {&symbol_list, &comma, &identifier});
+  symbol_list.add_production("base_case", {&identifier});
 
   Nonterminal& production = grammar.add_nonterminal("Production");
   production.add_production("main", {&symbol_list, &hash, &identifier});
@@ -93,7 +97,8 @@ Grammar asparserations::bootstrap::grammar_syntax()
 
   Nonterminal& root = grammar.start_symbol();
   root.add_production("main",
-    {&tokens_keyword, &identifier_list, &rules_keyword, &nonterminal_list});
+                      {&tokens_keyword, &open_bracket, &identifier_list,
+ 	                 &close_bracket, &nonterminal_list});
 
   //Use move semantics so productions' pointers to symbols are valid
   return grammar;

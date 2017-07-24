@@ -1,21 +1,21 @@
 /**
 This is the grammar for the grammar file, expressed in the C++ API.
 
-@tokens
-
-Bar
-Identifier
-Colon
-Semicolon
-Tokens_Keyword
-Rules_Keyword
-Hash
-
-@rules
+tokens {
+  Bar,
+  Identifier,
+  Colon,
+  Comma,
+  Semicolon,
+  Tokens_Keyword,
+  Open_Bracket,
+  Close_Bracket,
+  Hash
+}
 
 Symbol_List
-  : Symbol_List Identifier # main
-  | # empty
+  : Symbol_List Comma Identifier # recursive_case
+  | Identifier # base_case
   ;
 
 Production
@@ -42,7 +42,8 @@ Identifier_List
   ;
 
 Root
-  : Tokens_Keyword Identifier_List Rules_Keyword Nonterminal_List # main
+  : Tokens_Keyword Open_Bracket Identifier_List Close_Bracket Nonterminal_List
+      # main
   ;
  */
 
