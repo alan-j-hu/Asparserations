@@ -127,7 +127,7 @@ void JSON_Generator::_generate_grammar(const Grammar& grammar)
   _code += "],";
   _break_and_indent();
   //Nonterminals
-  _code += "\"nonterminals\" : [";
+  _code += "\"nonterminals\" : {";
   ++_indent_depth;
   _break_and_indent();
   _generate_nonterminal(grammar.accept());
@@ -138,7 +138,7 @@ void JSON_Generator::_generate_grammar(const Grammar& grammar)
   }
   --_indent_depth;
   _break_and_indent();
-  _code += "]";
+  _code += "}";
   --_indent_depth;
   _break_and_indent();
   _code += "}";
