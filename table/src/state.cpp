@@ -1,6 +1,7 @@
 #include "../include/state.hpp"
 #include "../../grammar/include/production.hpp"
 #include "../../grammar/include/symbol.hpp"
+#include "../../grammar/include/token.hpp"
 #include <utility>
 
 using namespace asparserations;
@@ -20,12 +21,15 @@ void State::add_transition(const Symbol* const input, const State* state)
   _transitions.insert(std::make_pair(input, state));
 }
 
-void State::add_reductions(const Symbol* const input,
-			  const std::set<const Production*>& productions)
+void State::add_reductions(
+  const std::map<const Token*,std::set<const Production*>>& reductions
+			   )
 {
-  std::set<const Production*>& ref = _reductions[input];
-  for(const Production* p : productions) {
-    ref.insert(p);
+  for(auto& pair : reductions) {
+    std::set<const Production*>& ref = _reductions[pair.first];
+    for(const Production* p : pair.second) {
+      ref.insert(p);
+    }
   }
 }
 
@@ -35,7 +39,7 @@ State::transitions() const
   return _transitions;
 }
 
-const std::map<const asparserations::grammar::Symbol*,
+const std::map<const asparserations::grammar::Token*,
                std::set<const asparserations::grammar::Production*>>&
 State::reductions() const
 {

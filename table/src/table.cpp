@@ -1,5 +1,6 @@
 #include "../include/item_set.hpp"
 #include "../include/table.hpp"
+#include "../../grammar/include/symbol.hpp"
 #include "../../grammar/include/token.hpp"
 #include <list>
 
@@ -39,18 +40,30 @@ std::set<Item> Table::_closure(const Item_Set& item_set) const
   return items;
 }
 
-std::map<const Symbol*,std::pair<std::set<Item>,std::set<const Production*>>>
+//std::map<const Symbol*,std::pair<std::set<Item>,std::set<const Production*>>>
+std::pair<std::map<const Symbol*,std::set<Item>>,
+	  std::map<const Token*,std::set<const Production*>>>
 Table::_goto(const std::set<Item>& items) const
 {
+  std::pair<std::map<const Symbol*,std::set<Item>>,
+            std::map<const Token*,std::set<const Production*>>> ret;
+  /*
   std::map<const Symbol*,std::pair<std::set<Item>,std::set<const Production*>>>
     ret;
+  */
   for(const Item& item : items) {
     if(item.marker < item.production.symbols().size()) {
+      ret.first[item.next()].emplace(item.production,
+                                     item.marker + 1,
+                                     item.lookahead);
+      /*
       ret[item.next()].first.emplace(item.production,
 			             item.marker + 1,
 			             item.lookahead);
+      */
     } else {
-      ret[&item.lookahead].second.insert(&item.production);
+      ret.second[&item.lookahead].insert(&item.production);
+      //ret[&item.lookahead].second.insert(&item.production);
     }
   }
 

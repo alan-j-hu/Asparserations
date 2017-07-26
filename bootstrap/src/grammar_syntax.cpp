@@ -66,7 +66,7 @@ Grammar asparserations::bootstrap::grammar_syntax()
   Token& semicolon = grammar.add_token("Semicolon"); //;
   Token& tokens_keyword = grammar.add_token("Tokens_Keyword"); //@tokens
   Token& open_bracket = grammar.add_token("Open_Bracket"); //{
-  Token& close_bracket = grammar.add_token("Close-Bracket"); //}
+  Token& close_bracket = grammar.add_token("Close_Bracket"); //}
   Token& hash = grammar.add_token("Hash"); //#
 
   //Nonterminals

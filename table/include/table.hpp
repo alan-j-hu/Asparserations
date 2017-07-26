@@ -12,6 +12,7 @@ namespace asparserations {
     class Grammar;
     class Production;
     class Symbol;
+    class Token;
   }
   namespace table {
     class Item_Set;
@@ -35,9 +36,12 @@ namespace asparserations {
 	 @return a map of pointers to Symbols to pairs consisting of shifted
          items and productions for reductions
        */
-      std::map<const asparserations::grammar::Symbol*,
-	       std::pair<std::set<Item>,
-			 std::set<const asparserations::grammar::Production*>>>
+      std::pair<std::map<const grammar::Symbol*,std::set<Item>>,
+                std::map<const grammar::Token*,
+			 std::set<const grammar::Production*>>>
+      //std::map<const asparserations::grammar::Symbol*,
+      //         std::pair<std::set<Item>,
+      //	  	  std::set<const asparserations::grammar::Production*>>>
       _goto(const std::set<Item>&) const;
     };
   }

@@ -173,14 +173,14 @@ void JSON_Generator::_generate_state(const State& state)
   ++_indent_depth;
   needs_comma = false;
   for(auto& reduction : state.reductions()) {
-    const Symbol& symbol = *reduction.first;
+    const Token& token = *reduction.first;
     if(needs_comma) {
       _code += ",";
     } else {
       needs_comma = true;
     }
     _break_and_indent();
-    _code += "\"" + symbol.id() + "\" : [";
+    _code += "\"" + token.id() + "\" : [";
     ++_indent_depth;
     for(auto& production : reduction.second) {
       _break_and_indent();
@@ -194,7 +194,6 @@ void JSON_Generator::_generate_state(const State& state)
       _break_and_indent();
       _code += "}";
     }
-    //std::cout << "Ending loop over productions" << std::endl;
     --_indent_depth;
     _break_and_indent();
     _code += "]";
