@@ -19,6 +19,32 @@ std::set<Item> Table::_closure(const Item_Set& item_set) const
 
   for(const Item* item : queue) {
     if(item->marker < item->production.symbols().size()) {
+      // Handle the fact that first sets can have the empty string
+      for(auto& pair : item->next()->productions()) {
+        const Production& production = pair.second;
+        bool inherits_lookahead = true;
+        for(int i=item->marker+1; i < item->production.symbols().size(); ++i) {
+          for(const Token* lookahead : item->peek()->first_set()) {
+            auto result = items.insert(Item(production, 0, *lookahead));
+	    if(result.second) {
+	      queue.push_back(&*result.first);
+	    }
+          }
+          if(!item->peek()->derives_empty_string()) {
+            inherits_lookahead = false;
+	    break;
+          }
+        }
+        if(inherits_lookahead) {
+          auto result = items.insert(Item(production, 0, item->lookahead));
+	  if(result.second) {
+	    queue.push_back(&*result.first);
+	  }
+        }
+      }
+    }
+    /*
+    if(item->marker < item->production.symbols().size()) {
       std::set<const Token*> lookaheads =
         (item->marker < item->production.symbols().size() - 1
           ? item->peek()->first_set()
@@ -35,35 +61,24 @@ std::set<Item> Table::_closure(const Item_Set& item_set) const
         }
       }
     }
+    */
   }
-
   return items;
 }
 
-//std::map<const Symbol*,std::pair<std::set<Item>,std::set<const Production*>>>
 std::pair<std::map<const Symbol*,std::set<Item>>,
 	  std::map<const Token*,std::set<const Production*>>>
 Table::_goto(const std::set<Item>& items) const
 {
   std::pair<std::map<const Symbol*,std::set<Item>>,
             std::map<const Token*,std::set<const Production*>>> ret;
-  /*
-  std::map<const Symbol*,std::pair<std::set<Item>,std::set<const Production*>>>
-    ret;
-  */
   for(const Item& item : items) {
     if(item.marker < item.production.symbols().size()) {
       ret.first[item.next()].emplace(item.production,
                                      item.marker + 1,
                                      item.lookahead);
-      /*
-      ret[item.next()].first.emplace(item.production,
-			             item.marker + 1,
-			             item.lookahead);
-      */
     } else {
       ret.second[&item.lookahead].insert(&item.production);
-      //ret[&item.lookahead].second.insert(&item.production);
     }
   }
 

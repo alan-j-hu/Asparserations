@@ -8,6 +8,7 @@ CODEGEN_OBJS = build/json_generator.o
 
 clean :
 	rm build/*
+	rm bin/*
 
 grammar/include/grammar.hpp : grammar/include/nonterminal.hpp \
 grammar/include/token.hpp
@@ -29,6 +30,8 @@ table/include/lalr_table.hpp : table/include/state.hpp table/include/table.hpp
 table/include/item_set.hpp : table/include/item.hpp
 
 codegen/include/json_generator.hpp : codegen/include/code_generator.hpp
+
+bootstrap/include/lexer.hpp : autogen/include/parser.hpp
 
 #Grammar
 build/grammar.o: grammar/src/grammar.cpp grammar/include/grammar.hpp \
@@ -104,6 +107,16 @@ codegen/include/json_generator.hpp grammar/include/grammar.hpp \
 table/include/lr_table.hpp bootstrap/include/grammar_syntax.hpp
 	$(CXX) $(CXXFLAGS) -c -o build/gen_json.o bootstrap/src/gen_json.cpp
 
+build/lexer.o : bootstrap/src/lexer.cpp bootstrap/include/lexer.hpp
+	$(CXX) $(CXXFLAGS) -c -o build/lexer.o bootstrap/src/lexer.cpp
+
+build/parser.o : autogen/src/Parser.cpp autogen/include/Parser.hpp
+	$(CXX) $(CXXFLAGS) -c -o build/parser.o autogen/src/Parser.cpp
+
+build/main.o : main.cpp autogen/include/Parser.hpp bootstrap/include/lexer.hpp \
+grammar/include/grammar.hpp
+	$(CXX) $(CXXFLAGS) -c -o build/main.o main.cpp
+
 #Executables
 bin/first_set1.out : build/first_set1.o build/grammar_syntax.o $(GRAMMAR_OBJS)
 	$(CXX) -std=c++11 -o bin/first_set1.out build/first_set1.o \
@@ -128,3 +141,17 @@ bin/gen_json.out : build/gen_json.o $(GRAMMAR_OBJS) $(TABLE_OBJS) \
 $(CODEGEN_OBJS) build/grammar_syntax.o
 	$(CXX) -std=c++11 -o bin/gen_json.out build/gen_json.o $(GRAMMAR_OBJS) \
 $(TABLE_OBJS) $(CODEGEN_OBJS) build/grammar_syntax.o
+
+bin/asparserations : build/main.o $(GRAMMAR_OBJS) $(TABLE_OBJS) $(CODEGEN_OBJS)\
+build/parser.o build/lexer.o
+	$(CXX) -std=c++11 -o bin/asparserations build/main.o $(GRAMMAR_OBJS) \
+$(TABLE_OBJS) $(CODEGEN_OBJS) build/parser.o build/lexer.o
+
+#Bootstrap
+bootstrap/output_json.json : bin/gen_json.out
+	bin/gen_json.out > bootstrap/output_json.json
+
+autogen/include/parser.hpp autogen/src/parser.cpp : \
+bootstrap/parser_gen.py bootstrap/output_json.json bootstrap/config.json
+	python3 bootstrap/parser_gen.py bootstrap/output_json.json \
+	bootstrap/config.json autogen

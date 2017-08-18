@@ -6,6 +6,7 @@
 
 namespace asparserations {
   namespace grammar {
+    class Nonterminal;
     class Production;
     class Symbol;
     class Token;
@@ -19,18 +20,27 @@ namespace asparserations {
       void add_transition(const grammar::Symbol* const, const State*);
       void add_reductions(const std::map<const grammar::Token*,
 			  std::set<const grammar::Production*>>&);
-      const std::map<const asparserations::grammar::Symbol*,const State*>&
-      transitions() const;
+      const std::map<const grammar::Token*,
+		     std::pair<const State*,
+			       std::set<const grammar::Production*>>>&
+      actions() const;
+      const std::map<const grammar::Nonterminal*,const State*>& gotos() const;
+      /*
+      const std::map<const grammar::Symbol*,const State*>& transitions() const;
       const std::map<const asparserations::grammar::Token*,
-	             std::set<const asparserations::grammar::Production*>>&
-      reductions() const;
+	             std::set<const grammar::Production*>>& reductions() const;
+      */
     private:
       unsigned int _index;
-      std::map<const asparserations::grammar::Symbol*,const State*>
-      _transitions;
+      std::map<const grammar::Token*,
+               std::pair<const State*,std::set<const grammar::Production*>>>
+      _actions;
+      std::map<const grammar::Nonterminal*,const State*> _gotos;
+      /*
+      std::map<const grammar::Symbol*,const State*> _transitions;
       std::map<const asparserations::grammar::Token*,
-	       std::set<const asparserations::grammar::Production*>>
-      _reductions;
+	       std::set<const grammar::Production*>> _reductions;
+      */
     };
   }
 }

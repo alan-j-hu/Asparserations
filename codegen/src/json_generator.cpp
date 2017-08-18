@@ -144,45 +144,38 @@ void JSON_Generator::_generate_grammar(const Grammar& grammar)
   _code += "}";
 }
 
-void JSON_Generator::_generate_state(const State& state)
+void JSON_Generator::_generate_actions(
+  const std::map<const Token*,std::pair<const State*,
+                              std::set<const Production*>>>& actions)
 {
   _code += "{";
   ++_indent_depth;
-  _break_and_indent();
-  _code += "\"shifts\" : {";
-  ++_indent_depth;
   bool needs_comma = false;
-  for(auto& transition : state.transitions()) {
-    const Symbol& symbol = *transition.first;
-    const State& state = *transition.second;
-    if(symbol.is_token()) {
-      if(needs_comma) {
-        _code += ",";
-      } else {
-        needs_comma = true;
-      }
-      _break_and_indent();
-      _code += "\"" + symbol.id() + "\" : " + std::to_string(state.index());
-    }
-  }
-  --_indent_depth;
-  _break_and_indent();
-  _code += "},";
-  _break_and_indent();
-  _code += "\"reductions\" : {";
-  ++_indent_depth;
-  needs_comma = false;
-  for(auto& reduction : state.reductions()) {
-    const Token& token = *reduction.first;
+  for(auto& action : actions) {
     if(needs_comma) {
       _code += ",";
     } else {
       needs_comma = true;
     }
     _break_and_indent();
-    _code += "\"" + token.id() + "\" : [";
+    _code += "\"" + action.first->id() + "\" : {";
     ++_indent_depth;
-    for(auto& production : reduction.second) {
+    _break_and_indent();
+    _code += "\"shift\" : "
+      + (action.second.first == nullptr
+	 ? "null"
+	 : std::to_string(action.second.first->index()))
+      + ",";
+    _break_and_indent();
+    _code += "\"reduces\" : [";
+    ++_indent_depth;
+    bool needs_comma2 = false;
+    for(auto& production : action.second.second) {
+      if(needs_comma2) {
+	_code += ",";
+      } else {
+	needs_comma2 = true;
+      }
       _break_and_indent();
       _code += "{";
       ++_indent_depth;
@@ -197,30 +190,49 @@ void JSON_Generator::_generate_state(const State& state)
     --_indent_depth;
     _break_and_indent();
     _code += "]";
-  }
-  --_indent_depth;
-  _break_and_indent();
-  _code += "},";
-  _break_and_indent();
-  _code += "\"gotos\" : {";
-  ++_indent_depth;
-  needs_comma = false;
-  for(auto& transition : state.transitions()) {
-    const Symbol& symbol = *transition.first;
-    const State& state = *transition.second;
-    if(!symbol.is_token()) {
-      if(needs_comma) {
-        _code += ",";
-      } else {
-        needs_comma = true;
-      }
-      _break_and_indent();
-      _code += "\"" + symbol.id() + "\" : " + std::to_string(state.index());
-    }
+    --_indent_depth;
+    _break_and_indent();
+    _code += "}";
   }
   --_indent_depth;
   _break_and_indent();
   _code += "}";
+}
+
+void JSON_Generator::_generate_gotos(const std::map<const Nonterminal*,
+				     const State*>& gotos)
+{
+  _code += "{";
+  ++_indent_depth;
+  bool needs_comma = false;
+  for(auto& go_to : gotos) {
+    if(needs_comma) {
+      _code += ",";
+    } else {
+      needs_comma = true;
+    }
+    _break_and_indent();
+    _code += "\"" + go_to.first->id() + "\" : "
+      + std::to_string(go_to.second->index());
+  }
+  --_indent_depth;
+  _break_and_indent();
+  _code += "}";
+}
+
+void JSON_Generator::_generate_state(const State& state)
+{
+  _code += "{";
+  ++_indent_depth;
+  _break_and_indent();
+  _code += "\"index\" : " + std::to_string(state.index()) + ",";
+  _break_and_indent();
+  _code += "\"actions\" : ";
+  _generate_actions(state.actions());
+  _code += ",";
+  _break_and_indent();
+  _code += "\"gotos\" : ";
+  _generate_gotos(state.gotos());
   --_indent_depth;
   _break_and_indent();
   _code += "}";

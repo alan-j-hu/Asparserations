@@ -2,10 +2,17 @@
 #define _ASPARSERATIONS_CODEGEN_JSON_GENERATOR_
 
 #include "code_generator.hpp"
+#include <map>
+#include <set>
 #include <string>
 
 namespace asparserations {
-  namespace grammar {class Grammar;class Nonterminal;class Token;}
+  namespace grammar {
+    class Grammar;
+    class Nonterminal;
+    class Token;
+    class Production;
+  }
   namespace table {class State;class Table;}
   namespace codegen {
     class JSON_Generator : public Code_Generator
@@ -25,6 +32,12 @@ namespace asparserations {
       void _generate_token(const grammar::Token&);
       void _generate_nonterminal(const grammar::Nonterminal&);
       void _generate_grammar(const grammar::Grammar&);
+      void _generate_actions(
+	const std::map<const grammar::Token*,
+	std::pair<const table::State*,std::set<const grammar::Production*>>>&
+			     );
+      void _generate_gotos(const std::map<const grammar::Nonterminal*,
+			                  const table::State*>&);
       void _generate_state(const table::State&);
       void _generate_table(const table::Table&);
     };

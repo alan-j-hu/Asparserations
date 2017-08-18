@@ -23,7 +23,6 @@ namespace asparserations {
       virtual const std::set<const Token*>& first_set() const=0;
       virtual bool is_token() const=0;
       virtual bool derives_empty_string() const=0;
-      virtual bool has_empty_string_in_first_set() const=0;
       virtual Production& add_production(const std::string&,
 		               		 std::vector<const Symbol*>)=0;
     protected:

@@ -14,8 +14,8 @@ tokens {
 }
 
 Symbol_List
-  : Symbol_List Comma Identifier # recursive_case
-  | Identifier # base_case
+  : Identifier Symbol_List # main
+  | # empty
   ;
 
 Production
@@ -24,21 +24,21 @@ Production
 
 Production_List
   : Production Bar Production_List # recursive_case
-  | Production # base_case
+  | Production Semicolon # base_case
   ;
 
 Nonterminal
-  : Identifier Colon Production_List Semicolon # main
+  : Identifier Colon Production_List # main
   ;
 
 Nonterminal_List
-  : Nonterminal_List Nonterminal # main
+  : Nonterminal Nonterminal_List # main
   | # empty
   ;
 
 Identifier_List
-  : Identifier Identifier_List # main
-  | # empty
+  : Identifier Comma Identifier_List # recursive
+  | Identifier # base
   ;
 
 Root
@@ -51,6 +51,7 @@ Root
 #include "../../grammar/include/production.hpp"
 #include "../../grammar/include/nonterminal.hpp"
 #include "../../grammar/include/token.hpp"
+#include <iostream>
 
 using namespace asparserations;
 using namespace grammar;
@@ -71,9 +72,8 @@ Grammar asparserations::bootstrap::grammar_syntax()
 
   //Nonterminals
   Nonterminal& symbol_list = grammar.add_nonterminal("Symbol_List");
-  symbol_list.add_production("recursive_case",
-			     {&symbol_list, &comma, &identifier});
-  symbol_list.add_production("base_case", {&identifier});
+  symbol_list.add_production("main", {&identifier, &symbol_list});
+  symbol_list.add_production("empty", {});
 
   Nonterminal& production = grammar.add_nonterminal("Production");
   production.add_production("main", {&symbol_list, &hash, &identifier});
@@ -81,19 +81,19 @@ Grammar asparserations::bootstrap::grammar_syntax()
   Nonterminal& production_list = grammar.add_nonterminal("Production_List");
   production_list.add_production("recursive_case",
 				 {&production, &bar, &production_list});
-  production_list.add_production("base_case", {&production});
+  production_list.add_production("base_case", {&production, &semicolon});
 
   Nonterminal& nonterminal = grammar.add_nonterminal("Nonterminal");
-  nonterminal
-  .add_production("main", {&identifier, &colon, &production_list, &semicolon});
+  nonterminal.add_production("main", {&identifier, &colon, &production_list});
 
   Nonterminal& nonterminal_list = grammar.add_nonterminal("Nonterminal_List");
-  nonterminal_list.add_production("main", {&nonterminal_list, &nonterminal});
+  nonterminal_list.add_production("main", {&nonterminal, &nonterminal_list});
   nonterminal_list.add_production("empty", {});
 
   Nonterminal& identifier_list = grammar.add_nonterminal("Identifier_List");
-  identifier_list.add_production("main", {&identifier, &identifier_list});
-  identifier_list.add_production("empty", {});
+  identifier_list.add_production("recursive",
+				 {&identifier, &comma, &identifier_list});
+  identifier_list.add_production("base", {&identifier});
 
   Nonterminal& root = grammar.start_symbol();
   root.add_production("main",

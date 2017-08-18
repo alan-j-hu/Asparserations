@@ -86,7 +86,6 @@ namespace asparserations {
         const std::map<std::string,Production>& productions() const;
 	bool is_token() const;
         bool derives_empty_string() const;
-        bool has_empty_string_in_first_set() const;
 	//Members
 	const std::string _id;
         Grammar* _grammar;
@@ -107,7 +106,6 @@ namespace asparserations {
         const std::set<const Token*>& first_set() const;
 	bool is_token() const;
         bool derives_empty_string() const;
-        bool has_empty_string_in_first_set() const;
         Production& add_production(const std::string&,
 				   std::vector<const Symbol*>);
 	//Members
@@ -115,7 +113,7 @@ namespace asparserations {
         Grammar* _grammar;
         std::map<std::string,Production> _productions;
 	std::set<const Token*> _first_set;
-	bool _has_empty_string_in_first_set;
+	bool _derives_empty_string;
       };
 
       std::vector<Token*> _token_vec;

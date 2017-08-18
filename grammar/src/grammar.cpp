@@ -11,7 +11,7 @@ Grammar::Grammar(const std::string& start)
   : _end(*this, "__end__"), _accept(*this, "__accept__")
 {
   _start_symbol = &add_nonterminal(start);
-  _accept.add_production("__root__", {_start_symbol, &_end});
+  _accept.add_production("__root__", {_start_symbol});
 }
 
 Grammar::Grammar(Grammar&& old)
@@ -120,7 +120,7 @@ void Grammar::compute_first_sets()
       Grammar::NonterminalImp& nonterminal = pair.second;
       for(const auto& elem : nonterminal.productions()) {
 	const Production& production = elem.second;
-        nonterminal._has_empty_string_in_first_set = true;
+	bool production_derives_empty_string = true;
 	//Repeat until first set does not have empty string or end is reached
 	for(const Symbol* symbol : production.symbols()) {
 	  for(const Token* first : symbol->first_set()) {
@@ -129,10 +129,13 @@ void Grammar::compute_first_sets()
 	      needs_update = true;
 	    }
 	  }
-	  if(!symbol->has_empty_string_in_first_set()) {
-	    nonterminal._has_empty_string_in_first_set = false;
+	  if(!symbol->derives_empty_string()) {
+	    production_derives_empty_string = false;
 	    break;
 	  }
+	}
+	if(production_derives_empty_string) {
+	  nonterminal._derives_empty_string = true;
 	}
       }
     }
@@ -140,7 +143,7 @@ void Grammar::compute_first_sets()
   //Handle accept symbol, which is not in nonterminal map
   if(_start_symbol != nullptr) {
     _accept._first_set = _start_symbol->first_set();
-    if(_start_symbol->has_empty_string_in_first_set()) {
+    if(_start_symbol->derives_empty_string()) {
       _accept._first_set.insert(&_end);
     }
   }

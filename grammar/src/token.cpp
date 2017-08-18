@@ -41,8 +41,3 @@ bool Grammar::TokenImp::derives_empty_string() const
 {
   return false;
 }
-
-bool Grammar::TokenImp::has_empty_string_in_first_set() const
-{
-  return false;
-}

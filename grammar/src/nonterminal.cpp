@@ -5,7 +5,7 @@ using namespace asparserations;
 using namespace grammar;
 
 Grammar::NonterminalImp::NonterminalImp(Grammar& g, const std::string& id)
-  : _grammar(&g), _id(id)
+  : _grammar(&g), _id(id), _derives_empty_string(false)
 {}
 
 const std::map<std::string,Production>&
@@ -56,18 +56,7 @@ bool Grammar::NonterminalImp::is_token() const
 
 bool Grammar::NonterminalImp::derives_empty_string() const
 {
-  for(const auto& elem : _productions) {
-    const Production& p = elem.second;
-    if(p.symbols().empty()) {
-      return true;
-    }
-  }
-  return false;
-}
-
-bool Grammar::NonterminalImp::has_empty_string_in_first_set() const
-{
-  return _has_empty_string_in_first_set;
+  return _derives_empty_string;
 }
 
 const std::set<const Token*>& Grammar::NonterminalImp::first_set() const

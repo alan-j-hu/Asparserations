@@ -14,8 +14,8 @@ tokens {
 }
 
 Symbol_List
-  : Symbol_List Comma Identifier # recursive_case
-  | Identifier # base_case
+  : Identifier Symbol_List # main
+  | # empty
   ;
 
 Production
@@ -24,21 +24,21 @@ Production
 
 Production_List
   : Production Bar Production_List # recursive_case
-  | Production # base_case
+  | Production Semicolon # base_case
   ;
 
 Nonterminal
-  : Identifier Colon Production_List Semicolon # main
+  : Identifier Colon Production_List # main
   ;
 
 Nonterminal_List
-  : Nonterminal_List Nonterminal # main
+  : Nonterminal Nonterminal_List # main
   | # empty
   ;
 
 Identifier_List
-  : Identifier Identifier_List # main
-  | # empty
+  : Identifier Comma Identifier_List # recursive
+  | Identifier # base
   ;
 
 Root
