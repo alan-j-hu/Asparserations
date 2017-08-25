@@ -1,3 +1,6 @@
+# BUG IN MAKEFILE: EVERY OTHER COMPILATION, EXECUTABLE HAS SEGFAULT WHEN main.o
+# IS NOT REBUILT
+
 CXX = g++
 CXXFLAGS = -std=c++11
 GRAMMAR_OBJS = build/grammar.o build/nonterminal.o build/token.o \
@@ -31,7 +34,10 @@ table/include/item_set.hpp : table/include/item.hpp
 
 codegen/include/json_generator.hpp : codegen/include/code_generator.hpp
 
-bootstrap/include/lexer.hpp : autogen/include/parser.hpp
+bootstrap/include/lexer.hpp : autogen/include/Parser.hpp
+
+bootstrap/include/callback.hpp : grammar/include/grammar.hpp \
+grammar/include/nonterminal.hpp grammar/include/production.hpp
 
 #Grammar
 build/grammar.o: grammar/src/grammar.cpp grammar/include/grammar.hpp \
@@ -113,8 +119,13 @@ build/lexer.o : bootstrap/src/lexer.cpp bootstrap/include/lexer.hpp
 build/parser.o : autogen/src/Parser.cpp autogen/include/Parser.hpp
 	$(CXX) $(CXXFLAGS) -c -o build/parser.o autogen/src/Parser.cpp
 
+build/callback.o : bootstrap/src/callback.cpp bootstrap/include/callback.hpp \
+autogen/include/Parser.hpp
+	$(CXX) $(CXXFLAGS) -c -o build/callback.o bootstrap/src/callback.cpp
+
 build/main.o : main.cpp autogen/include/Parser.hpp bootstrap/include/lexer.hpp \
-grammar/include/grammar.hpp
+bootstrap/include/callback.hpp codegen/include/json_generator.hpp \
+grammar/include/grammar.hpp table/include/lr_table.hpp
 	$(CXX) $(CXXFLAGS) -c -o build/main.o main.cpp
 
 #Executables
@@ -143,15 +154,15 @@ $(CODEGEN_OBJS) build/grammar_syntax.o
 $(TABLE_OBJS) $(CODEGEN_OBJS) build/grammar_syntax.o
 
 bin/asparserations : build/main.o $(GRAMMAR_OBJS) $(TABLE_OBJS) $(CODEGEN_OBJS)\
-build/parser.o build/lexer.o
+build/parser.o build/lexer.o build/callback.o
 	$(CXX) -std=c++11 -o bin/asparserations build/main.o $(GRAMMAR_OBJS) \
-$(TABLE_OBJS) $(CODEGEN_OBJS) build/parser.o build/lexer.o
+$(TABLE_OBJS) $(CODEGEN_OBJS) build/parser.o build/lexer.o build/callback.o
 
 #Bootstrap
 bootstrap/output_json.json : bin/gen_json.out
 	bin/gen_json.out > bootstrap/output_json.json
 
-autogen/include/parser.hpp autogen/src/parser.cpp : \
+autogen/include/Parser.hpp autogen/src/Parser.cpp : \
 bootstrap/parser_gen.py bootstrap/output_json.json bootstrap/config.json
 	python3 bootstrap/parser_gen.py bootstrap/output_json.json \
 	bootstrap/config.json autogen

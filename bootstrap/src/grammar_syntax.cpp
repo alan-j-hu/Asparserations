@@ -91,9 +91,9 @@ Grammar asparserations::bootstrap::grammar_syntax()
   nonterminal_list.add_production("empty", {});
 
   Nonterminal& identifier_list = grammar.add_nonterminal("Identifier_List");
-  identifier_list.add_production("recursive",
+  identifier_list.add_production("recursive_case",
 				 {&identifier, &comma, &identifier_list});
-  identifier_list.add_production("base", {&identifier});
+  identifier_list.add_production("base_case", {&identifier});
 
   Nonterminal& root = grammar.start_symbol();
   root.add_production("main",

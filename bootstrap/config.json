@@ -1,0 +1,9 @@
+{
+    "namespace" : ["asparserations", "_generated"],
+    "class_name" : "Parser",
+    "lexer" : "asparserations::bootstrap::Lexer",
+    "callback" : "asparserations::bootstrap::Callback",
+    "payload" : "asparserations::bootstrap::Callback::Payload",
+    "header_front" : "#include\"../../bootstrap/include/callback.hpp\"\nnamespace asparserations {\n  namespace bootstrap {\n    class Lexer;\n  }\n}",
+    "src_front" : "#include \"../../bootstrap/include/lexer.hpp\"\n"
+}
