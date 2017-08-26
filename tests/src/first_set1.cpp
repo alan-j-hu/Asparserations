@@ -8,6 +8,9 @@ void print_first_set(const asparserations::grammar::Symbol& s)
   for(const asparserations::grammar::Token* token : s.first_set()) {
     std::cout << token->id() << std::endl;
   }
+  if(s.derives_empty_string()) {
+    std::cout << "<<Empty string>>" << std::endl;
+  }
 }
 
 int main()
