@@ -1,6 +1,3 @@
-# BUG IN MAKEFILE: EVERY OTHER COMPILATION, EXECUTABLE HAS SEGFAULT WHEN main.o
-# IS NOT REBUILT
-
 CXX = g++
 CXXFLAGS = -std=c++11
 GRAMMAR_OBJS = build/grammar.o build/nonterminal.o build/token.o \
@@ -8,6 +5,9 @@ build/production.o
 TABLE_OBJS = build/table.o build/lr_table.o build/lalr_table.o \
 build/item_set.o build/item.o build/state.o
 CODEGEN_OBJS = build/json_generator.o
+
+install : bin/asparserations
+	cp bin/asparserations ~/local/bin
 
 clean :
 	rm build/*
