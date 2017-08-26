@@ -36,7 +36,7 @@ bool Item_Set::compare_cores(const Item_Set& item_set) const
     }
 
     //Skip all of the items with identical cores
-    auto iter3 = iter2;
+    iter3 = iter2;
     while(iter2 != item_set._items.end() && !iter3->compare_cores(*iter2)) {
       ++iter2;
     }

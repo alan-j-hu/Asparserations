@@ -109,7 +109,6 @@ Callback::Payload Callback::call(_generated::Token token,
   case _generated::Token::Bar:
     return Payload();
   case _generated::Token::Identifier:
-    std::cout << string << std::endl;
     switch(_mode) {
     case Mode::Token:
       _grammar.add_token(string);
