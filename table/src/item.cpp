@@ -23,8 +23,14 @@ bool Item::compare_cores(const Item& rhs) const
   if(marker < rhs.marker) {
     return true;
   }
+  if(rhs.marker < marker) {
+    return false;
+  }
   if(&production < &rhs.production) {
     return true;
+  }
+  if(&rhs.production < &production) {
+    return false;
   }
   return false;
 }
@@ -34,11 +40,20 @@ bool table::operator<(const Item& lhs, const Item& rhs)
   if(lhs.marker < rhs.marker) {
     return true;
   }
+  if(rhs.marker < lhs.marker) {
+    return false;
+  }
   if(&lhs.production < &rhs.production) {
     return true;
   }
+  if(&rhs.production < &lhs.production) {
+    return false;
+  }
   if(&lhs.lookahead < &rhs.lookahead) {
     return true;
+  }
+  if(&rhs.lookahead < &lhs.lookahead) {
+    return false;
   }
   return false;
 }

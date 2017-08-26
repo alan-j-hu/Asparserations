@@ -1,5 +1,8 @@
 autogen/
+bootstrap/output_json.json
 bin/
 build/
+tests/a.out.json
+tests/grammar
 *~
 ##*##

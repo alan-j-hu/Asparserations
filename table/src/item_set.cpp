@@ -17,13 +17,16 @@ bool Item_Set::compare_cores(const Item_Set& item_set) const
   auto iter2 = item_set._items.begin();
   while(iter1 != _items.end() && iter2 != item_set._items.end()) {
     if(iter1 == _items.end()) {
-      return false;
+      return true;
     }
     if(iter2 == item_set._items.end()) {
-      return true;
+      return false;
     }
     if(iter1->compare_cores(*iter2)) {
       return true;
+    }
+    if(iter2->compare_cores(*iter1)) {
+      return false;
     }
 
     auto iter3 = iter1;
@@ -33,8 +36,8 @@ bool Item_Set::compare_cores(const Item_Set& item_set) const
     }
 
     //Skip all of the items with identical cores
-    auto iter4 = iter2;
-    while(iter2 != item_set._items.end() && !iter4->compare_cores(*iter2)) {
+    auto iter3 = iter2;
+    while(iter2 != item_set._items.end() && !iter3->compare_cores(*iter2)) {
       ++iter2;
     }
   }
