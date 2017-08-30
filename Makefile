@@ -6,6 +6,9 @@ TABLE_OBJS = build/table.o build/lr_table.o build/lalr_table.o \
 build/item_set.o build/item.o build/state.o
 CODEGEN_OBJS = build/json_generator.o
 
+default :
+	mkdir -p build bin
+
 install : bin/asparserations
 	cp bin/asparserations ~/local/bin
 
