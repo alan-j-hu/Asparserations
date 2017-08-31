@@ -8,14 +8,55 @@
 #include <ios>
 #include <iostream>
 #include <string>
+#include <getopt.h>
 
 int main(int argc, char** argv)
 {
-  if(argc < 4) {
+
+  bool use_lalr = false;
+  std::string output_filename = "a.out.json";
+  std::string root = "Root";
+
+  // option, require_argument, and no_argument defined in getopt.h
+  std::vector<option> options = {
+    {"out", required_argument, nullptr, 'o'},
+    {"root", required_argument, nullptr, 'r'},
+    {"lalr", no_argument, nullptr, 'l'}
+  };
+
+  int c = -1;
+  int option_index = -1;
+  while((c = getopt_long(argc, argv, "o:r:", options.data(), &option_index))!=-1) {
+    switch(c) {
+    case 'o':
+      if(optarg == nullptr) {
+	std::cout << "No args provided" << std::endl;
+	return -1;
+      }
+      output_filename = optarg;
+      std::cout << optarg << std::endl;
+      break;
+    case 'r':
+      if(optarg == nullptr) {
+	std::cout << "No args provided" << std::endl;
+	return -1;
+      }
+      root = optarg;
+      break;
+    case 'l':
+      use_lalr = true;
+      break;
+    default:
+      break;
+    }
+  }
+  
+  if(argc - optind < 1) {
     std::cout << "Not enough args" << std::endl;
     return -1;
   }
-  std::ifstream grammar_file(argv[1], std::ios_base::in | std::ios_base::ate);
+
+  std::ifstream grammar_file(argv[optind],std::ios_base::in|std::ios_base::ate);
   auto size = grammar_file.tellg();
 
   // std::string::data() doesn't return mutable char* until C++17, so I need my
@@ -28,7 +69,7 @@ int main(int argc, char** argv)
   // rather than copying it, then making me delete it?
   delete temp_heap_data;
   
-  asparserations::grammar::Grammar grammar(argv[2]);
+  asparserations::grammar::Grammar grammar(root);
   asparserations::bootstrap::Lexer lexer;
   asparserations::bootstrap::Callback callback(grammar);
   asparserations::_generated::Parser parser(lexer, callback);
@@ -38,7 +79,7 @@ int main(int argc, char** argv)
 
   asparserations::table::LR_Table table(grammar);
   asparserations::codegen::JSON_Generator code(table, true);
-  std::ofstream output_file(argv[3]);
+  std::ofstream output_file(output_filename);
   output_file.write(code.code().data(), code.code().size());
   return 0;
 }
