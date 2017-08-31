@@ -2,7 +2,7 @@
 Asparserations is an LR(1) parser generator frontend written in C++. It outputs JSON representing the state machine table. A C++ backend, used to generate the grammar parser, is included in the bootstrap folder.
 
 ## Prerequisites
-This project requires G++, GNU Make, Python 3, and support for the `getopt_long` function.
+This project requires G++, GNU Make, and Python 3.
 
 ## Installing
     make
