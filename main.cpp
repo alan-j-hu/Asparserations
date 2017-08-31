@@ -7,8 +7,17 @@
 #include <fstream>
 #include <ios>
 #include <iostream>
+#include <map>
 #include <string>
-#include <getopt.h>
+#include <utility>
+#include <vector>
+
+enum class Argument
+{
+  Argument,
+  Optional_Argument,
+  No_Argument
+};
 
 int main(int argc, char** argv)
 {
@@ -16,49 +25,106 @@ int main(int argc, char** argv)
   bool use_lalr = false;
   std::string output_filename = "a.out.json";
   std::string root = "Root";
-
-  // option, require_argument, and no_argument defined in getopt.h
-  std::vector<option> options = {
-    {"out", required_argument, nullptr, 'o'},
-    {"root", required_argument, nullptr, 'r'},
-    {"lalr", no_argument, nullptr, 'l'}
+  std::vector<std::string> positional_args;
+  std::map<char,Argument> flags {
+    {'o', Argument::Argument},
+    {'r', Argument::Argument},
+    {'l', Argument::Argument}
   };
+  std::map<std::string,const std::pair<const char,Argument>*>
+    option_abbreviations {
+      {"out", &*flags.find('o')},
+      {"root", &*flags.find('r')},
+      {"lalr", &*flags.find('l')} 
+  };
+  std::map<char,std::string> flag_values;
 
-  int c = -1;
-  int option_index = -1;
-  while((c = getopt_long(argc, argv, "o:r:", options.data(), &option_index))!=-1) {
-    switch(c) {
-    case 'o':
-      if(optarg == nullptr) {
-	std::cout << "No args provided" << std::endl;
+  Argument expects_argument = Argument::No_Argument;
+  char char_flag = '\0';
+  for(int i = 1; i < argc; ++i) {
+    if(argv[i][0] == '-') { // Flag
+      if(expects_argument == Argument::Argument) {
+	std::cout << "Error: Expected argument, got flag" << std::endl;
 	return -1;
       }
-      output_filename = optarg;
-      std::cout << optarg << std::endl;
-      break;
-    case 'r':
-      if(optarg == nullptr) {
-	std::cout << "No args provided" << std::endl;
+      expects_argument = Argument::No_Argument;
+      if(argv[i][1] == '\0') {
+	std::cout << "Error: single dash without flag" << std::endl;
 	return -1;
+      } else if(argv[i][1] == '-') { // Long flag name
+	if(argv[i][2] == '\0') {
+	  std::cout << "Error: double dash without flag" << std::endl;
+	  return -1;
+	}
+	int j = 2;
+	// Increment until null terminator or =
+	for(j = 2; argv[i][j] != '\0' && argv[i][j] != '='; ++j);
+	std::string name(argv[i] + 2, argv[i] + j);
+
+        auto iter = option_abbreviations.find(name);
+	if(iter == option_abbreviations.end()) {
+	  std::cout << "Unknown option --" << name << std::endl;
+	  return -1;
+	}
+	if(argv[i][j] == '=') {
+	  std::string arg(argv[i] + j + 1);
+	  if(expects_argument == Argument::No_Argument) {
+	    std::cout << "Error: No argument needed for "
+		      << name << std::endl;
+	    return -1;
+	  }
+	  flag_values[iter->second->first] = arg;
+	  expects_argument = Argument::No_Argument;
+	} else {
+	  char_flag = iter->second->first;
+	  expects_argument = iter->second->second;
+	}
+      } else if(argv[i][2] == '\0') { // One character after dash
+	char_flag = argv[i][1];
+	expects_argument = flags[char_flag];
+      } else { // Chain of flags (e.g. -abcd)
+	for(int j = 1; argv[i][j] != '\0'; ++j) {
+	  flag_values[argv[i][j]] = "";
+	}
       }
-      root = optarg;
-      break;
-    case 'l':
-      use_lalr = true;
-      break;
-    default:
-      break;
+    } else if(expects_argument == Argument::No_Argument) {
+      positional_args.emplace_back(argv[i]);
+    } else {
+      flag_values[char_flag] = argv[i];
+      expects_argument = Argument::No_Argument;
     }
   }
-  
-  if(argc - optind < 1) {
-    std::cout << "Not enough args" << std::endl;
+
+  if(positional_args.size() < 1) {
+    std::cout << "No file provided" << std::endl;
     return -1;
   }
 
-  std::ifstream grammar_file(argv[optind],std::ios_base::in|std::ios_base::ate);
-  auto size = grammar_file.tellg();
+  for(auto pair : flag_values) {
+    switch(pair.first) {
+    case 'l':
+      use_lalr = true;
+      break;
+    case 'o':
+      if(pair.second == "") {
+	std::cout << "No output filename provided" << std::endl;
+	return -1;
+      }
+      output_filename = pair.second;
+      break;
+    case 'r':
+      if(pair.second == "") {
+	std::cout << "No root nonterminal provided" << std::endl;
+	return -1;
+      }
+      root = pair.second;
+      break;
+    }
+  }
 
+  std::ifstream grammar_file(positional_args[0],
+			     std::ios_base::in | std::ios_base::ate);
+  auto size = grammar_file.tellg();
   // std::string::data() doesn't return mutable char* until C++17, so I need my
   // own char* pointer
   char* temp_heap_data = new char[size];
