@@ -12,12 +12,14 @@
 #include <utility>
 #include <vector>
 
-enum class Argument
-{
-  Argument,
-  Optional_Argument,
-  No_Argument
-};
+namespace {
+  enum class Argument
+  {
+    Argument,
+    Optional_Argument,
+    No_Argument
+  };
+}
 
 int main(int argc, char** argv)
 {
