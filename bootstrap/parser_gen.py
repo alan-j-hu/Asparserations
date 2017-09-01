@@ -282,7 +282,7 @@ def gen_mangled_production_list_header(grammar):
     return lines
 
 def gen_header(template, table, config):
-    tokens = list_to_str(table["grammar"]["tokens"], ",\n  ")
+    tokens = ",\n  ".join(table["grammar"]["tokens"])
     nonterminal_list = []
     for name, wildcard in table["grammar"]["nonterminals"].items():
         nonterminal_list.append(name)
