@@ -7,7 +7,7 @@ This project requires G++, GNU Make, and Python 3.
 ## Installing
     make
     make install
-The binary file is saved to `~/local/bin` cand can be invoked by typing `asparserations [flags...] grammar_file_name`.
+The binary file is saved to `~/local/bin` and can be invoked by typing `asparserations [flags...] grammar_file_name`.
 
 ## Options
 * `--out`, `-o` - Specifies the output file (a.out.json by default)
