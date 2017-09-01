@@ -258,17 +258,6 @@ void $namespace::$class_name::_reduce
 
 """
 
-def list_to_str(ls, separated):
-    needs_sep = False
-    ret = ""
-    for elem in ls:
-        if needs_sep:
-            ret += separated
-        else:
-            needs_sep = True
-        ret += elem
-    return ret
-
 def gen_namespace_decls(namespaces):
     begin = ""
     end = ""
@@ -282,7 +271,7 @@ def gen_production_list(grammar):
     for name,productions in grammar["nonterminals"].items():
         for prodname,wildcard in productions.items():
             names.add(prodname)
-    lines = list_to_str(names, ",\n  ")
+    lines = ",\n  ".join(names)
     return lines
 
 def gen_mangled_production_list_header(grammar):
@@ -297,7 +286,7 @@ def gen_header(template, table, config):
     nonterminal_list = []
     for name, wildcard in table["grammar"]["nonterminals"].items():
         nonterminal_list.append(name)
-    nonterminals = list_to_str(nonterminal_list, ",\n  ")
+    nonterminals = ",\n  ".join(nonterminal_list)
     mangled_productions = gen_mangled_production_list_header(table["grammar"])
     productions = gen_production_list(table["grammar"])
     # Lost in stupid parentheses
@@ -312,7 +301,7 @@ def gen_header(template, table, config):
            .substitute(gen_namespace_decls(config["namespace"]))
 
 def gen_namespace_prefix(namespaces):
-    return list_to_str(namespaces, "::")
+    return "::".join(namespaces)
 
 def gen_mangled_productions_src(grammar):
     lines = []
@@ -321,7 +310,7 @@ def gen_mangled_productions_src(grammar):
             lines.append(name + "_" + prodname + " {Nonterminal::"\
                          + name + ", " + "Production::" + prodname + ", " \
                          + str(len(symbols)) + "}")
-    return list_to_str(lines, ",\n  ")
+    return ",\n  ".join(lines)
 
 def gen_state(template, state, config):
     actions = []
@@ -336,7 +325,7 @@ def gen_state(template, state, config):
                           "&_productions->" + x["nonterminal"]
                           + "_" + x["production"],\
                           action["reduces"])
-        reduce_str = list_to_str(reduce_strs, ",\n          ")
+        reduce_str = ",\n          ".join(reduce_strs)
         action_str += reduce_str + "\n        }}\n      }"
         actions.append(action_str)
     for nonterminal, index in state["gotos"].items():
@@ -344,9 +333,8 @@ def gen_state(template, state, config):
                    + ", &_states[" + str(index) + "]}"
         gotos.append(goto_str)
 
-    actions_str = "{\n      " \
-                  + list_to_str(actions, ",\n      ") + "\n    }"
-    gotos_str = list_to_str(gotos, ",\n        ")
+    actions_str = "{\n      " + ",\n      ".join(actions) + "\n    }"
+    gotos_str = ",\n        ".join(gotos)
     return "_states[" + str(state["index"]) \
         + "] = State {\n    .actions = " + actions_str \
         + ",\n    .gotos = {\n        " + gotos_str + "\n    }\n  };"
@@ -362,16 +350,15 @@ def gen_productions_to_strings(grammar):
             names.add(prodname)
     lines = map(lambda p: "case Production::" + p + ": return \"" + p + "\";",\
                 names)
-    return list_to_str(lines, "\n    ")
+    return "\n    ".join(lines)
 
 def gen_src(template, table, config):
     namespace_prefix = gen_namespace_prefix(config["namespace"])
     states = map(lambda x : gen_state(template, x, config), table["table"])
-    states_text = list_to_str(states, "\n  ")
-    nonterminals_to_strings = list_to_str(map(gen_nonterminal_to_strings,\
+    states_text = "\n  ".join(states)
+    nonterminals_to_strings = "\n    ".join(map(gen_nonterminal_to_strings,\
                                               table["grammar"]["nonterminals"]\
-                                              .items()),\
-                                         "\n    ")
+                                              .items()))
     return string.Template(string.Template(template) \
             .safe_substitute(namespace=namespace_prefix, states=states_text, \
                              state_count=len(table["table"]),\

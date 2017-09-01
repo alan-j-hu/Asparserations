@@ -28,7 +28,7 @@ Callback::Payload Callback::call(_generated::Nonterminal nonterminal,
     default:
       throw std::runtime_error("Unknown production " + Parser::production_to_string(production) + " in __accept__");
     }
-  case _generated::Nonterminal::root:
+  case _generated::Nonterminal::Root:
     switch(production) {
     case _generated::Production::main:
       return Payload();

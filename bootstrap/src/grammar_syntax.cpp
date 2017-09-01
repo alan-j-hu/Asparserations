@@ -58,7 +58,7 @@ using namespace grammar;
 
 Grammar asparserations::bootstrap::grammar_syntax()
 {
-  Grammar grammar("root");
+  Grammar grammar("Root");
   //Tokens
   Token& bar = grammar.add_token("Bar"); //|
   Token& identifier = grammar.add_token("Identifier"); //[A-Za-z_][A-Za-z0-9_]*
