@@ -31,7 +31,7 @@ int main(int argc, char** argv)
   std::map<char,Argument> flags {
     {'o', Argument::Argument},
     {'r', Argument::Argument},
-    {'l', Argument::Argument}
+    {'l', Argument::No_Argument}
   };
   std::map<std::string,const std::pair<const char,Argument>*>
     option_abbreviations {
@@ -70,7 +70,7 @@ int main(int argc, char** argv)
 	}
 	if(argv[i][j] == '=') {
 	  std::string arg(argv[i] + j + 1);
-	  if(expects_argument == Argument::No_Argument) {
+	  if(flags[iter->second->first] == Argument::No_Argument) {
 	    std::cout << "Error: No argument needed for "
 		      << name << std::endl;
 	    return -1;
