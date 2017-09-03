@@ -107,6 +107,7 @@ Callback::Payload Callback::call(_generated::Token token,
   case _generated::Token::__end__:
     return Payload();
   case _generated::Token::Bar:
+    _mode = Mode::Append;
     return Payload();
   case _generated::Token::Identifier:
     switch(_mode) {
