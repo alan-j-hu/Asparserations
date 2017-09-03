@@ -3,7 +3,9 @@
 #include "bootstrap/include/lexer.hpp"
 #include "codegen/include/json_generator.hpp"
 #include "grammar/include/grammar.hpp"
+#include "table/include/lalr_table.hpp"
 #include "table/include/lr_table.hpp"
+#include "table/include/table.hpp"
 #include <fstream>
 #include <ios>
 #include <iostream>
@@ -145,9 +147,15 @@ int main(int argc, char** argv)
   // Discard the Node* return value; all necessary info is in the callback obj
   delete parser.parse(grammar_str);
 
-  asparserations::table::LR_Table table(grammar);
-  asparserations::codegen::JSON_Generator code(table, true);
+  asparserations::table::Table* table;
+  if(use_lalr) {
+    table = new asparserations::table::LALR_Table(grammar);
+  } else {
+    table = new asparserations::table::LR_Table(grammar);
+  }
+  asparserations::codegen::JSON_Generator code(*table, true);
   std::ofstream output_file(output_filename);
   output_file.write(code.code().data(), code.code().size());
+  delete table;
   return 0;
 }
