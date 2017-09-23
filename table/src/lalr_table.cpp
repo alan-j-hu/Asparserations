@@ -1,4 +1,6 @@
 #include "../../grammar/include/grammar.hpp"
+#include "../../grammar/include/token.hpp"
+#include "../include/lalr_item_set.hpp"
 #include "../include/lalr_table.hpp"
 #include "../include/item_set.hpp"
 #include <map>
@@ -11,50 +13,53 @@ using namespace table;
 LALR_Table::LALR_Table(Grammar& grammar)
   : _grammar(grammar)
 {
-  std::map<Item_Set,State*,Item_Set::Compare_Cores> item_sets;  
-  std::list<std::pair<const Item_Set,State*>*> queue;
-
-  grammar.compute_first_sets();
-
+  _grammar.compute_first_sets();
   Item_Set start_set({Item(grammar.accept().production_at("__root__"),
-			   0, grammar.end())});
+			   0, grammar.dummy_lookahead())});
   _states.emplace_back(0);
-  item_sets.insert(std::make_pair(start_set, &_states.back()));
-  queue.push_back(&*item_sets.begin());
-
-  unsigned int index = 1;
-  //For each element in the queue of item sets...
-  for(auto& elem : queue) {
-    auto foo = _goto(_closure(elem->first));
-    auto& transitions = foo.first;
-    auto& reductions = foo.second;
-    //For each transition...
-    for(auto& transition : transitions) {
-      //Try to add the new item set and state pair to the map
-      Item_Set new_item_set(transition.second);
-      _states.emplace_back(index);
-      auto result = item_sets.insert(std::make_pair(new_item_set,
-						    &_states.back()));
-
-      //If the item set doesn't already exist, queue it for processing
-      if(result.second) {
-	queue.push_back(&*result.first);
-	++index;
-      } else {
-	bool was_merged = new_item_set.merge(result.first->first);
-	//If the cores were the same, but the items sets were not:
-	if(was_merged) {
-	  State* state = result.first->second;
-	  item_sets.erase(result.first);
-	  queue.push_back(&*item_sets.insert
-			  (std::make_pair(new_item_set, state)).first);
+  std::map<Item_Set,LALR_Item_Set> item_sets {{start_set,
+	                                       LALR_Item_Set(_states.back())}};
+  std::list<std::pair<const Item_Set,LALR_Item_Set>*> queue;
+  unsigned int state_index = 1;
+  for(auto& pair : queue) {
+    for(auto& abs_item : pair->second.abstract_items()) {
+      // Compute closure of each individual item seperately
+      auto foo = gotos(closure(Item_Set({abs_item.item()})));
+      std::map<const Symbol*,std::set<Item>>& gotos = foo.first;
+      std::map<const Token*,std::set<const Production*>>& reduces = foo.second;
+      for(auto& pair2 : gotos) {
+	// Add a new state to the list of states, try to add a new item set,
+	// if item set exists, use its own corresponding state and pop newly
+	// added state
+	_states.emplace_back(state_index);
+        auto result = item_sets.emplace(Item_Set(pair2.second),
+					LALR_Item_Set(_states.back()));
+	if(!result.second) {
+	  _states.pop_back();
 	}
-	_states.pop_back();
+
+        for(const Item& item : pair2.second) {
+          if(&item.lookahead == &grammar.dummy_lookahead()) {
+	    // Propagated lookahead from item to new item
+	    abs_item.add_child(result.first->second.add_abstract_item(item));
+          } else {
+	    // Spontaneous lookahead from item
+	    result.first->second.add_concrete_item(item);
+          }
+        }
       }
-      elem->second->add_transition(transition.first, result.first->second);
+      for(auto& pair2 : reduces) {
+        if(pair2.first == &grammar.dummy_lookahead()) {
+	  // Propagated lookahead in reduction
+	  abs_item.add_reduction(pair2.second);
+        } else {
+ 	  // Spontaneous lookahead in reduction
+	  pair->second.add_reduction(pair2);
+        }
+      }
     }
-    elem->second->add_reductions(reductions);
   }
+  queue.front()->second.abstract_items().front().propagate(_grammar.end());
 }
 
 const std::list<State>& LALR_Table::states() const

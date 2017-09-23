@@ -28,7 +28,7 @@ LR_Table::LR_Table(Grammar& grammar)
   //For each element in the queue of item sets...
   for(auto& elem : queue) {
     //Get the kernel items of its transitions
-    auto foo = _goto(_closure(elem->first));
+    auto foo = gotos(closure(elem->first));
     auto& transitions = foo.first;
     auto& reductions = foo.second;
     //For each transition...
