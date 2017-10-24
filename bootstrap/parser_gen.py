@@ -333,11 +333,11 @@ def gen_state(template, state, config):
                    + ", &_states[" + str(index) + "]}"
         gotos.append(goto_str)
 
-    actions_str = "{\n      " + ",\n      ".join(actions) + "\n    }"
+    actions_str = ",\n      ".join(actions)
     gotos_str = ",\n        ".join(gotos)
     return "_states[" + str(state["index"]) \
-        + "] = State {\n    .actions = " + actions_str \
-        + ",\n    .gotos = {\n        " + gotos_str + "\n    }\n  };"
+        + "] = State {\n    { // actions\n      " + actions_str + "\n    }" \
+        + ",\n    { // gotos \n        " + gotos_str + "\n    }\n  };"
 
 def gen_nonterminal_to_strings(nonterminal):
     name, wildcard = nonterminal
