@@ -125,18 +125,29 @@ int main(int argc, char** argv)
   }
 
   std::ifstream grammar_file(positional_args[0],
-			     std::ios_base::in | std::ios_base::ate);
+			     std::ifstream::in | std::ifstream::ate);
   auto size = grammar_file.tellg();
+  if(!grammar_file || size == -1) {
+    std::cerr << "Unable to open file: " << positional_args[0] << std::endl;
+    return -1;
+  }
   // std::string::data() doesn't return mutable char* until C++17, so I need my
   // own char* pointer
-  char* temp_heap_data = new char[size];
+  char* temp_heap_data = nullptr;
+  try {
+    temp_heap_data = new char[size];
+  } catch(std::bad_alloc& ex) {
+    grammar_file.close();
+    std::cerr << "Failed to allocate memory." << std::endl;
+    return -1;
+  }
   grammar_file.seekg(std::ios_base::beg);
   grammar_file.read(temp_heap_data, size);
   std::string grammar_str(temp_heap_data, temp_heap_data + size);
   // Can I use move semantics so that grammar takes ownership of heap pointer,
   // rather than copying it, then making me delete it?
   delete temp_heap_data;
-  
+    
   asparserations::grammar::Grammar grammar(root);
   asparserations::bootstrap::Lexer lexer;
   asparserations::bootstrap::Callback callback(grammar);
