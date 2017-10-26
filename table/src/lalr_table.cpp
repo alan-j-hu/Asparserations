@@ -1,6 +1,5 @@
 #include "../../grammar/include/grammar.hpp"
 #include "../../grammar/include/token.hpp"
-#include "../include/lalr_item_set.hpp"
 #include "../include/lalr_table.hpp"
 #include "../include/lalr_state.hpp"
 #include "../include/item_core.hpp"
@@ -21,12 +20,15 @@ LALR_Table::LALR_Table(Grammar& grammar)
   std::map<std::set<Item_Core>,LALR_State> _item_sets {
     {
       {
-        Item_Core { grammar.start_symbol().production_at("__root__"), 0 }
+        Item_Core { grammar.accept().production_at("__root__"), 0 }
       },
-        std::move(LALR_State(_states.back()))
+        LALR_State(_states.back(),
+		   Item_Set({ Item(grammar.accept().production_at("__root__"),
+				   0, grammar.end())}))
     }
   };
   std::list<std::pair<const std::set<Item_Core>,LALR_State>*> queue;
+  queue.push_back(&*_item_sets.begin());
   unsigned int index = 1;
   for(auto& pair : queue) {
     auto foo = gotos(closure(pair->second.item_set()));
@@ -61,7 +63,7 @@ LALR_Table::LALR_Table(Grammar& grammar)
        	                                  &result.first->second.state());
     }
     pair->second.state().add_reductions(reductions);
-    queue.pop_front();
+    //queue.pop_front();
   }
 }
 

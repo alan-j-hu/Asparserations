@@ -14,6 +14,7 @@ namespace asparserations {
     {
     public:
       LALR_State(State&);
+      LALR_State(State&, const Item_Set&);
       const Item_Set& item_set() const;
       State& state();
       bool merge(const std::set<Item>&);

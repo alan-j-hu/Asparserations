@@ -77,11 +77,12 @@ int main(int argc, char** argv)
 		      << name << std::endl;
 	    return -1;
 	  }
-	  flag_values[iter->second->first] = arg;
-	  expects_argument = Argument::No_Argument;
+          flag_values[iter->second->first] = arg;
+          expects_argument = Argument::No_Argument;
 	} else {
-	  char_flag = iter->second->first;
-	  expects_argument = iter->second->second;
+          char_flag = iter->second->first;
+          expects_argument = iter->second->second;
+	  flag_values.emplace(char_flag, "");
 	}
       } else if(argv[i][2] == '\0') { // One character after dash
 	char_flag = argv[i][1];
@@ -104,7 +105,7 @@ int main(int argc, char** argv)
     return -1;
   }
 
-  for(auto pair : flag_values) {
+  for(auto& pair : flag_values) {
     switch(pair.first) {
     case 'l':
       use_lalr = true;

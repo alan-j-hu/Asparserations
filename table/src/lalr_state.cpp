@@ -10,6 +10,11 @@ LALR_State::LALR_State(State& state)
 {
 }
 
+LALR_State::LALR_State(State& state, const Item_Set& item_set)
+  : m_item_set(item_set), m_state(state)
+{
+}
+
 const Item_Set& LALR_State::item_set() const
 {
   return m_item_set;
