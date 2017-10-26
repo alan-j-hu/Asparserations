@@ -2,16 +2,17 @@
 #define _ASPARSERATIONS_TABLE_ITEM_CORE_H_
 
 namespace asparserations {
+  namespace grammar {
+    class Production;
+  }
   namespace table {
-    class Item_Core
+    struct Item_Core
     {
-      Item_Core(const asparserations::grammar::Production&, unsigned short int);
-
-      const asparserations::grammar::Symbol* next() const;
-      const asparserations::grammar::Symbol* peek() const;
-      const asparserations::grammar::Production& production;
+      Item_Core(const grammar::Production&, unsigned short int);
+      const grammar::Production& production;
       const unsigned short int marker;
     };
+    bool operator<(const Item_Core&, const Item_Core&);
   }
 }
 
