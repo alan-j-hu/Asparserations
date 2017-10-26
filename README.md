@@ -12,4 +12,4 @@ The binary file is saved to `~/local/bin` and can be invoked by typing `asparser
 ## Options
 * `--out`, `-o` - Specifies the output file (a.out.json by default)
 * `--root`, `-r` - Specifies the root node (Root by default)
-* `--lalr`, `-l` - Use LALR(1) (not yet supported)
+* `--lalr`, `-l` - Use LALR(1) (experimental)
