@@ -11,37 +11,9 @@ const std::set<Item>& Item_Set::items() const
   return _items;
 }
 
-bool Item_Set::compare_cores(const Item_Set& item_set) const
+void Item_Set::insert(const Item& item)
 {
-  auto iter1 = _items.begin();
-  auto iter2 = item_set._items.begin();
-  while(iter1 != _items.end() && iter2 != item_set._items.end()) {
-    if(iter1 == _items.end()) {
-      return true;
-    }
-    if(iter2 == item_set._items.end()) {
-      return false;
-    }
-    if(iter1->compare_cores(*iter2)) {
-      return true;
-    }
-    if(iter2->compare_cores(*iter1)) {
-      return false;
-    }
-
-    auto iter3 = iter1;
-    //Skip all of the items with identical cores
-    while(iter1 != _items.end() && !iter3->compare_cores(*iter1)) {
-      ++iter1;
-    }
-
-    //Skip all of the items with identical cores
-    iter3 = iter2;
-    while(iter2 != item_set._items.end() && !iter3->compare_cores(*iter2)) {
-      ++iter2;
-    }
-  }
-  return false;
+  _items.insert(item);
 }
 
 bool Item_Set::merge(const Item_Set& item_set)
@@ -64,10 +36,4 @@ bool table::operator<(const Item_Set& lhs, const Item_Set& rhs)
     return true;
   }
   return false;
-}
-
-bool Item_Set::Compare_Cores::operator()(const Item_Set& lhs,
-					 const Item_Set& rhs) const
-{
-  return lhs.compare_cores(rhs);
 }

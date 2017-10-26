@@ -1,7 +1,12 @@
 #include "../../grammar/include/grammar.hpp"
+#include "../../grammar/include/token.hpp"
+#include "../include/lalr_item_set.hpp"
 #include "../include/lalr_table.hpp"
+#include "../include/lalr_state.hpp"
+#include "../include/item_core.hpp"
 #include "../include/item_set.hpp"
 #include <map>
+#include <set>
 #include <utility>
 
 using namespace asparserations;
@@ -11,49 +16,52 @@ using namespace table;
 LALR_Table::LALR_Table(Grammar& grammar)
   : _grammar(grammar)
 {
-  std::map<Item_Set,State*,Item_Set::Compare_Cores> item_sets;  
-  std::list<std::pair<const Item_Set,State*>*> queue;
-
-  grammar.compute_first_sets();
-
-  Item_Set start_set({Item(grammar.accept().production_at("__root__"),
-			   0, grammar.end())});
+  _grammar.compute_first_sets();
   _states.emplace_back(0);
-  item_sets.insert(std::make_pair(start_set, &_states.back()));
-  queue.push_back(&*item_sets.begin());
-
+  std::map<std::set<Item_Core>,LALR_State> _item_sets {
+    {
+      {
+        Item_Core { grammar.start_symbol().production_at("__root__"), 0 }
+      },
+        std::move(LALR_State(_states.back()))
+    }
+  };
+  std::list<std::pair<const std::set<Item_Core>,LALR_State>*> queue;
   unsigned int index = 1;
-  //For each element in the queue of item sets...
-  for(auto& elem : queue) {
-    auto foo = _goto(_closure(elem->first));
+  for(auto& pair : queue) {
+    auto foo = gotos(closure(pair->second.item_set()));
     auto& transitions = foo.first;
     auto& reductions = foo.second;
-    //For each transition...
     for(auto& transition : transitions) {
-      //Try to add the new item set and state pair to the map
-      Item_Set new_item_set(transition.second);
       _states.emplace_back(index);
-      auto result = item_sets.insert(std::make_pair(new_item_set,
-						    &_states.back()));
-
-      //If the item set doesn't already exist, queue it for processing
-      if(result.second) {
-	queue.push_back(&*result.first);
-	++index;
-      } else {
-	bool was_merged = new_item_set.merge(result.first->first);
-	//If the cores were the same, but the items sets were not:
-	if(was_merged) {
-	  State* state = result.first->second;
-	  item_sets.erase(result.first);
-	  queue.push_back(&*item_sets.insert
-			  (std::make_pair(new_item_set, state)).first);
-	}
-	_states.pop_back();
+      std::set<Item_Core> s;
+      for(const Item& i : transition.second) {
+        s.emplace(i.production, i.marker);
       }
-      elem->second->add_transition(transition.first, result.first->second);
+
+      /*
+        -Attempt to emplace new item set and state in the set of item sets
+        -If the emplacement was successful, then LALR_State's item set is empty
+        -If an item set with the sane item cores already exists, then the
+         LALR_State's item set already has items
+        -transition.second is the set of items of the new item set
+        -try to merge them with LALR_State's item set
+       */
+      auto result = _item_sets.emplace(s, LALR_State(_states.back()));
+      auto result2 = result.first->second.merge(transition.second);
+      if(result.second) {
+        ++index;
+      } else {
+        _states.pop_back();
+      }
+      if(result2) {
+        queue.push_back(&*result.first);
+      }
+      pair->second.state().add_transition(transition.first,
+       	                                  &result.first->second.state());
     }
-    elem->second->add_reductions(reductions);
+    pair->second.state().add_reductions(reductions);
+    queue.pop_front();
   }
 }
 

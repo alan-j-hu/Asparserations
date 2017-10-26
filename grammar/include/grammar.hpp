@@ -53,6 +53,7 @@ namespace asparserations {
       const std::vector<Token*>& tokens() const;
       const Nonterminal& accept() const;
       const Token& end() const;
+      const Token& dummy_lookahead() const;
 
       /**
 	 Returns the start symbol
@@ -122,6 +123,7 @@ namespace asparserations {
       std::map<std::string,NonterminalImp> _nonterminals;
       Nonterminal* _start_symbol;
       TokenImp _end;
+      TokenImp _dummy_lookahead;
       NonterminalImp _accept;
     };
   }

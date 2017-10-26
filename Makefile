@@ -3,7 +3,7 @@ CXXFLAGS = -std=c++11
 GRAMMAR_OBJS = build/grammar.o build/nonterminal.o build/token.o \
 build/production.o
 TABLE_OBJS = build/table.o build/lr_table.o build/lalr_table.o \
-build/item_set.o build/item.o build/state.o
+build/item_set.o build/item.o build/state.o build/item_core.o build/lalr_state.o
 CODEGEN_OBJS = build/json_generator.o
 
 all : bin/asparserations
@@ -43,6 +43,8 @@ table/include/lalr_table.hpp : table/include/state.hpp table/include/table.hpp
 
 table/include/item_set.hpp : table/include/item.hpp
 
+table/include/lalr_state.hpp : table/include/item_set.hpp
+
 codegen/include/json_generator.hpp : codegen/include/code_generator.hpp
 
 bootstrap/include/lexer.hpp : autogen/include/Parser.hpp
@@ -77,7 +79,8 @@ table/include/lr_table.hpp table/include/state.hpp | build
 	$(CXX) $(CXXFLAGS) -c -o build/lr_table.o table/src/lr_table.cpp
 
 build/lalr_table.o : table/src/lalr_table.cpp \
-table/include/lalr_table.hpp table/include/item_set.hpp | build
+table/include/lalr_table.hpp table/include/item_core.hpp \
+table/include/item_set.hpp | build
 	$(CXX) $(CXXFLAGS) -c -o build/lalr_table.o table/src/lalr_table.cpp
 
 build/item.o : table/src/item.cpp table/include/item.hpp | build
@@ -89,6 +92,14 @@ build/item_set.o : table/src/item_set.cpp table/include/item_set.hpp | build
 build/state.o : table/src/state.cpp table/include/state.hpp \
 grammar/include/production.hpp grammar/include/symbol.hpp | build
 	$(CXX) $(CXXFLAGS) -c -o build/state.o table/src/state.cpp
+
+build/item_core.o : table/src/item_core.cpp table/include/item_core.hpp \
+grammar/include/production.hpp | build
+	$(CXX) $(CXXFLAGS) -c -o build/item_core.o table/src/item_core.cpp
+
+build/lalr_state.o : table/src/lalr_state.cpp table/include/lalr_state.hpp \
+| build
+	$(CXX) $(CXXFLAGS) -c -o build/lalr_state.o table/src/lalr_state.cpp
 
 #Codegen
 build/json_generator.o : codegen/src/json_generator.cpp | build
@@ -153,7 +164,8 @@ $(TABLE_OBJS) | bin
 	$(CXX) -std=c++11 -o bin/lr_table1.out build/lr_table1.o \
 build/print_states.o $(GRAMMAR_OBJS) $(TABLE_OBJS)
 
-bin/lalr_table1.out : build/lalr_table1.o build/print_states.o $(GRAMMAR_OBJS) \$(TABLE_OBJS) | bin
+bin/lalr_table1.out : build/lalr_table1.o build/print_states.o $(GRAMMAR_OBJS) \
+$(TABLE_OBJS) | bin
 	$(CXX) -std=c++11 -o bin/lalr_table1.out build/lalr_table1.o \
 build/print_states.o $(GRAMMAR_OBJS) $(TABLE_OBJS)
 

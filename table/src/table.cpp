@@ -8,7 +8,7 @@ using namespace asparserations;
 using namespace grammar;
 using namespace table;
 
-std::set<Item> Table::_closure(const Item_Set& item_set) const
+std::set<Item> table::closure(const Item_Set& item_set)
 {
   std::set<Item> items(item_set.items());
   std::list<const Item*> queue;
@@ -43,32 +43,13 @@ std::set<Item> Table::_closure(const Item_Set& item_set) const
         }
       }
     }
-    /*
-    if(item->marker < item->production.symbols().size()) {
-      std::set<const Token*> lookaheads =
-        (item->marker < item->production.symbols().size() - 1
-          ? item->peek()->first_set()
-         : std::set<const Token*> {&item->lookahead}
-        );
-
-      for(const auto& elem : item->next()->productions()) {
-        const Production& production = elem.second;
-        for(const Token* lookahead : lookaheads) {
-	  auto result = items.insert(Item(production, 0, *lookahead));
-	  if(result.second) {
-	    queue.push_back(&*result.first);
-	  }
-        }
-      }
-    }
-    */
   }
   return items;
 }
 
 std::pair<std::map<const Symbol*,std::set<Item>>,
 	  std::map<const Token*,std::set<const Production*>>>
-Table::_goto(const std::set<Item>& items) const
+table::gotos(const std::set<Item>& items)
 {
   std::pair<std::map<const Symbol*,std::set<Item>>,
             std::map<const Token*,std::set<const Production*>>> ret;
