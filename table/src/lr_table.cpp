@@ -11,17 +11,17 @@ using namespace grammar;
 using namespace table;
 
 LR_Table::LR_Table(Grammar& grammar)
-  : _grammar(grammar)
+  : m_grammar(grammar)
 {
   std::map<Item_Set,State*> item_sets;
   std::list<std::pair<const Item_Set,State*>*> queue;
 
   grammar.compute_first_sets();
 
-  Item_Set start_set({Item(grammar.accept().production_at("__root__"),
+  Item_Set start_set({Item(grammar.accept().production_at("_root_"),
 			   0, grammar.end())});
-  _states.emplace_back(0);
-  item_sets.insert(std::make_pair(start_set, &_states.back()));
+  m_states.emplace_back(0);
+  item_sets.insert(std::make_pair(start_set, &m_states.back()));
   queue.push_back(&*item_sets.begin());
 
   unsigned int index = 1;
@@ -34,15 +34,15 @@ LR_Table::LR_Table(Grammar& grammar)
     //For each transition...
     for(auto& transition : transitions) {
       //Try to add a new item set to the state machine
-      _states.emplace_back(index);
+      m_states.emplace_back(index);
       auto result = item_sets.insert(
-	std::make_pair(Item_Set(transition.second), &_states.back()));
+	std::make_pair(Item_Set(transition.second), &m_states.back()));
       //If the item set doesn't already exist, queue it for processing
       if(result.second) {
 	queue.push_back(&*result.first);
 	++index;
       } else {
-	_states.pop_back();
+	m_states.pop_back();
       }
       elem->second->add_transition(transition.first, result.first->second);
     }
@@ -52,10 +52,10 @@ LR_Table::LR_Table(Grammar& grammar)
 
 const std::list<State>& LR_Table::states() const
 {
-  return _states;
+  return m_states;
 }
 
 const Grammar& LR_Table::grammar() const
 {
-  return _grammar;
+  return m_grammar;
 }

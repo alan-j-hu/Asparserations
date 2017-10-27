@@ -7,90 +7,90 @@
 using namespace asparserations;
 using namespace bootstrap;
 using namespace grammar;
-using namespace _generated;
+using namespace generated;
 
 Callback::Callback(Grammar& grammar)
-  : _mode(Mode::Token),
-    _grammar(grammar),
-    _nonterminal(nullptr),
-    _production(nullptr) {}
+  : m_mode(Mode::Token),
+    m_grammar(grammar),
+    m_nonterminal(nullptr),
+    m_production(nullptr) {}
 
-Callback::Payload Callback::call(_generated::Nonterminal nonterminal,
-				 _generated::Production production,
+Callback::Payload Callback::call(generated::Nonterminal nonterminal,
+				 generated::Production production,
 		                 const std::vector<Node*>& children)
 {
   std::string id;
   switch(nonterminal) {
-  case _generated::Nonterminal::__accept__:
+  case generated::Nonterminal::_accept_:
     switch(production) {
-    case _generated::Production::__root__:
+    case generated::Production::_root_:
       return Payload();
     default:
       throw std::runtime_error("Unknown production " + Parser::production_to_string(production) + " in __accept__");
     }
-  case _generated::Nonterminal::Root:
+  case generated::Nonterminal::Root:
     switch(production) {
-    case _generated::Production::main:
+    case generated::Production::main:
       return Payload();
     default:
       throw std::runtime_error("Unknown production " + Parser::production_to_string(production) + "in root");
     }
-  case _generated::Nonterminal::Identifier_List:
+  case generated::Nonterminal::Identifier_List:
     switch(production) {
-    case _generated::Production::recursive_case:
+    case generated::Production::recursive_case:
       return Payload();
-    case _generated::Production::base_case:
+    case generated::Production::base_case:
       return Payload();
     default:
       throw std::runtime_error("Unknown production " + Parser::production_to_string(production) + " in Identifier_List");
     }
-  case _generated::Nonterminal::Nonterminal_List:
+  case generated::Nonterminal::Nonterminal_List:
     switch(production) {
-    case _generated::Production::main:
+    case generated::Production::main:
       return Payload();
-    case _generated::Production::empty:
+    case generated::Production::empty:
       return Payload();
     default:
       throw std::runtime_error("Unknown production " + Parser::production_to_string(production) + " in Nonterminal_List");
     }
-  case _generated::Nonterminal::Nonterminal:
+  case generated::Nonterminal::Nonterminal:
     switch(production) {
-    case _generated::Production::main:
-      _nonterminal = &_grammar.add_nonterminal(std::string(children[0]->begin(),
-		  					   children[0]->end()));
+    case generated::Production::main:
+      m_nonterminal = &m_grammar.add_nonterminal(std::string(children[0]->begin(),
+                  	                                     children[0]->end()));
       return Payload();
     default:
       throw std::runtime_error("Unknown production " + Parser::production_to_string(production) + " in Nonterminal");
     }
-  case _generated::Nonterminal::Production_List:
+  case generated::Nonterminal::Production_List:
     switch(production) {
-    case _generated::Production::recursive_case:
+    case generated::Production::recursive_case:
       return Payload();
-    case _generated::Production::base_case:
+    case generated::Production::base_case:
       return Payload();
     default:
       throw std::runtime_error("Unknown production in " + Parser::production_to_string(production) + " Production_List");
     }
-  case _generated::Nonterminal::Production:
+  case generated::Nonterminal::Production:
     switch(production) {
-    case _generated::Production::main:
-      if(_nonterminal == nullptr) {
+    case generated::Production::main:
+      if(m_nonterminal == nullptr) {
 	throw std::runtime_error("Null pointer");
       }
-      _nonterminal->add_production(
+      m_nonterminal->add_production(
 		      std::string(children[2]->begin(), children[2]->end()),
-		      _symbols
+		      m_symbols
       );
-      _symbols = std::vector<const Symbol*>();
+      m_symbols = std::vector<const Symbol*>();
       return Payload();
     default:
       throw std::runtime_error("Unknown production " + Parser::production_to_string(production) + " in Production");
     }
-  case _generated::Nonterminal::Symbol_List:
+  case generated::Nonterminal::Symbol_List:
     switch(production) {
-    case _generated::Production::main:
+    case generated::Production::main:
       return Payload();
-    case _generated::Production::empty:
+    case generated::Production::empty:
       return Payload();
     default:
       throw std::runtime_error("Unknown production " + Parser::production_to_string(production) + " in Symbol_List");
@@ -100,29 +100,29 @@ Callback::Payload Callback::call(_generated::Nonterminal nonterminal,
   }
 }
 
-Callback::Payload Callback::call(_generated::Token token,
+Callback::Payload Callback::call(generated::Token token,
 				 const std::string& string)
 {
   switch(token) {
-  case _generated::Token::__end__:
+  case generated::Token::_end_:
     return Payload();
-  case _generated::Token::Bar:
-    _mode = Mode::Append;
+  case generated::Token::Bar:
+    m_mode = Mode::Append;
     return Payload();
-  case _generated::Token::Identifier:
-    switch(_mode) {
+  case generated::Token::Identifier:
+    switch(m_mode) {
     case Mode::Token:
-      _grammar.add_token(string);
+      m_grammar.add_token(string);
       return Payload();
     case Mode::Nonterminal:
-      _nonterminal = &_grammar.add_nonterminal(string);
+      m_nonterminal = &m_grammar.add_nonterminal(string);
       return Payload();
     case Mode::Append:
       try {
-        _symbols.push_back(&_grammar.nonterminal_at(string));
+        m_symbols.push_back(&m_grammar.nonterminal_at(string));
       } catch(const std::out_of_range& e) {
 	try {
-	  _symbols.push_back(&_grammar.token_at(string));
+	  m_symbols.push_back(&m_grammar.token_at(string));
 	} catch(const std::out_of_range& e) {
 	  throw std::runtime_error("Undefined symbol " + string);
 	}
@@ -130,23 +130,23 @@ Callback::Payload Callback::call(_generated::Token token,
       return Payload();
     }
     return Payload();
-  case _generated::Token::Colon:
-    _mode = Mode::Append;
+  case generated::Token::Colon:
+    m_mode = Mode::Append;
     return Payload();
-  case _generated::Token::Comma:
+  case generated::Token::Comma:
     return Payload();
-  case _generated::Token::Semicolon:
-    _mode = Mode::Nonterminal;
+  case generated::Token::Semicolon:
+    m_mode = Mode::Nonterminal;
     return Payload();
-  case _generated::Token::Tokens_Keyword:
+  case generated::Token::Tokens_Keyword:
     return Payload();
-  case _generated::Token::Open_Bracket:
+  case generated::Token::Open_Bracket:
     return Payload();
-  case _generated::Token::Close_Bracket:
-    _mode = Mode::Nonterminal;
+  case generated::Token::Close_Bracket:
+    m_mode = Mode::Nonterminal;
     return Payload();
-  case _generated::Token::Hash:
-    _mode = Mode::Production;
+  case generated::Token::Hash:
+    m_mode = Mode::Production;
     return Payload();
   default:
     throw std::runtime_error("Unknown token");
@@ -155,5 +155,5 @@ Callback::Payload Callback::call(_generated::Token token,
 
 const Grammar& Callback::grammar() const
 {
-  return _grammar;
+  return m_grammar;
 }

@@ -1,5 +1,5 @@
 {
-    "namespace" : ["asparserations", "_generated"],
+    "namespace" : ["asparserations", "generated"],
     "class_name" : "Parser",
     "lexer" : "asparserations::bootstrap::Lexer",
     "callback" : "asparserations::bootstrap::Callback",

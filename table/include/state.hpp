@@ -31,11 +31,11 @@ namespace asparserations {
 	             std::set<const grammar::Production*>>& reductions() const;
       */
     private:
-      unsigned int _index;
+      unsigned int m_index;
       std::map<const grammar::Token*,
                std::pair<const State*,std::set<const grammar::Production*>>>
-      _actions;
-      std::map<const grammar::Nonterminal*,const State*> _gotos;
+      m_actions;
+      std::map<const grammar::Nonterminal*,const State*> m_gotos;
       /*
       std::map<const grammar::Symbol*,const State*> _transitions;
       std::map<const asparserations::grammar::Token*,

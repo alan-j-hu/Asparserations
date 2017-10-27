@@ -6,18 +6,18 @@ using namespace asparserations;
 using namespace bootstrap;
 
 std::pair<std::pair<const char*,const char*>,bool>
-Lexer::expect(_generated::Token token, const char* c)
+Lexer::expect(generated::Token token, const char* c)
 {
   if(c == nullptr) throw std::runtime_error("Null pointer");
   skip_whitespace(c);
   auto start = c;
   bool result = false;
   switch(token) {
-  case _generated::Token::Bar:
+  case generated::Token::Bar:
     result = match("|", c);
     return std::make_pair(std::make_pair(start, c), result);
 
-  case _generated::Token::Identifier:
+  case generated::Token::Identifier:
     result = match_range('A', 'z', c);
     if(!result) {
       return std::make_pair(std::make_pair(start, c), false);
@@ -30,35 +30,35 @@ Lexer::expect(_generated::Token token, const char* c)
     } while(result);
     return std::make_pair(std::make_pair(start, c), true);
 
-  case _generated::Token::Colon:
+  case generated::Token::Colon:
     result = match(":", c);
     return std::make_pair(std::make_pair(start, c), result);
 
-  case _generated::Token::Comma:
+  case generated::Token::Comma:
     result = match(",", c);
     return std::make_pair(std::make_pair(start, c), result);
 
-  case _generated::Token::Semicolon:
+  case generated::Token::Semicolon:
     result = match(";", c);
     return std::make_pair(std::make_pair(start, c), result);
 
-  case _generated::Token::Tokens_Keyword:
+  case generated::Token::Tokens_Keyword:
     result = match("tokens", c);
     return std::make_pair(std::make_pair(start, c), result);
 
-  case _generated::Token::Open_Bracket:
+  case generated::Token::Open_Bracket:
     result = match("{", c);
     return std::make_pair(std::make_pair(start, c), result);
 
-  case _generated::Token::Close_Bracket:
+  case generated::Token::Close_Bracket:
     result = match("}", c);
     return std::make_pair(std::make_pair(start, c), result);
 
-  case _generated::Token::Hash:
+  case generated::Token::Hash:
     result = match("#", c);
     return std::make_pair(std::make_pair(start, c), result);
 
-  case _generated::Token::__end__:
+  case generated::Token::_end_:
     result = (*c == '\0');
     return std::make_pair(std::make_pair(start, c), result);
   }

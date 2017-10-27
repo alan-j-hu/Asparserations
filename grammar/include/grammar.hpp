@@ -88,10 +88,10 @@ namespace asparserations {
 	bool is_token() const;
         bool derives_empty_string() const;
 	//Members
-	const std::string _id;
-        Grammar* _grammar;
-        std::set<const Token*> _first_set;
-        const std::map<std::string,Production> _productions;
+	const std::string m_id;
+        Grammar* m_grammar;
+        std::set<const Token*> m_first_set;
+        const std::map<std::string,Production> m_productions;
       };
 
       struct NonterminalImp : public Nonterminal
@@ -110,21 +110,21 @@ namespace asparserations {
         Production& add_production(const std::string&,
 				   std::vector<const Symbol*>);
 	//Members
-	const std::string _id;
-        Grammar* _grammar;
-        std::map<std::string,Production> _productions;
-	std::set<const Token*> _first_set;
-	bool _derives_empty_string;
+	const std::string m_id;
+        Grammar* m_grammar;
+        std::map<std::string,Production> m_productions;
+	std::set<const Token*> m_first_set;
+	bool m_derives_empty_string;
       };
 
-      std::vector<Token*> _token_vec;
-      std::vector<Nonterminal*> _nonterminal_vec;
-      std::map<std::string,TokenImp> _tokens;
-      std::map<std::string,NonterminalImp> _nonterminals;
-      Nonterminal* _start_symbol;
-      TokenImp _end;
-      TokenImp _dummy_lookahead;
-      NonterminalImp _accept;
+      std::vector<Token*> m_token_vec;
+      std::vector<Nonterminal*> m_nonterminal_vec;
+      std::map<std::string,TokenImp> m_tokens;
+      std::map<std::string,NonterminalImp> m_nonterminals;
+      Nonterminal* m_start_symbol;
+      TokenImp m_end;
+      TokenImp m_dummy_lookahead;
+      NonterminalImp m_accept;
     };
   }
 }

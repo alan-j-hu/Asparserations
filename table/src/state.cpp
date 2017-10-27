@@ -10,11 +10,11 @@ using namespace grammar;
 using namespace table;
 
 State::State(unsigned int index)
-  : _index(index) {}
+  : m_index(index) {}
 
 unsigned int State::index() const
 {
-  return _index;
+  return m_index;
 }
 
 void State::add_transition(const Symbol* const input, const State* state)
@@ -24,7 +24,7 @@ void State::add_transition(const Symbol* const input, const State* state)
     if(token == nullptr) {
       throw std::runtime_error("Bad cast from const Symbol* to const Token*");
     }
-    _actions[token].first = state;
+    m_actions[token].first = state;
   } else {
     auto nt = dynamic_cast<const Nonterminal*>(input);
     if(nt == nullptr) {
@@ -32,7 +32,7 @@ void State::add_transition(const Symbol* const input, const State* state)
 	"Bad cast from const Symbol* to const Nonterminal*"
       );
     }
-    _gotos[nt] = state;
+    m_gotos[nt] = state;
   }
 }
 
@@ -41,8 +41,8 @@ void State::add_reductions(
 			   )
 {
   for(auto& pair : reductions) {
-    auto result = _actions.insert(
-      std::make_pair(pair.first,std::make_pair(nullptr,pair.second)));
+    auto result = m_actions.insert(
+      std::make_pair(pair.first,std::make_pair(nullptr, pair.second)));
     //std::set<const Production*>& ref = _actions[pair.first].second;
     if(!result.second) {
       for(const Production* p : pair.second) {
@@ -56,12 +56,12 @@ const std::map<const Token*,
 	       std::pair<const State*,std::set<const Production*>>>&
 State::actions() const
 {
-  return _actions;
+  return m_actions;
 }
 
 const std::map<const Nonterminal*,const State*>& State::gotos() const
 {
-  return _gotos;
+  return m_gotos;
 }
 
 /*

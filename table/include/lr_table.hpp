@@ -18,8 +18,8 @@ namespace asparserations {
       const std::list<State>& states() const;
       const grammar::Grammar& grammar() const;
     private:
-      std::list<State> _states;
-      grammar::Grammar& _grammar;
+      std::list<State> m_states;
+      grammar::Grammar& m_grammar;
     };
   }
 }

@@ -13,29 +13,29 @@ using namespace grammar;
 using namespace table;
 
 LALR_Table::LALR_Table(Grammar& grammar)
-  : _grammar(grammar)
+  : m_grammar(grammar)
 {
-  _grammar.compute_first_sets();
-  _states.emplace_back(0);
-  std::map<std::set<Item_Core>,LALR_State> _item_sets {
+  m_grammar.compute_first_sets();
+  m_states.emplace_back(0);
+  std::map<std::set<Item_Core>,LALR_State> item_sets {
     {
       {
-        Item_Core { grammar.accept().production_at("__root__"), 0 }
+        Item_Core { grammar.accept().production_at("_root_"), 0 }
       },
-        LALR_State(_states.back(),
-		   Item_Set({ Item(grammar.accept().production_at("__root__"),
-				   0, grammar.end())}))
+        LALR_State(m_states.back(),
+		   Item_Set({ Item(grammar.accept().production_at("_root_"),
+                    	           0, grammar.end())}))
     }
   };
   std::list<std::pair<const std::set<Item_Core>,LALR_State>*> queue;
-  queue.push_back(&*_item_sets.begin());
+  queue.push_back(&*item_sets.begin());
   unsigned int index = 1;
   for(auto& pair : queue) {
     auto foo = gotos(closure(pair->second.item_set()));
     auto& transitions = foo.first;
     auto& reductions = foo.second;
     for(auto& transition : transitions) {
-      _states.emplace_back(index);
+      m_states.emplace_back(index);
       std::set<Item_Core> s;
       for(const Item& i : transition.second) {
         s.emplace(i.production, i.marker);
@@ -49,12 +49,12 @@ LALR_Table::LALR_Table(Grammar& grammar)
         -transition.second is the set of items of the new item set
         -try to merge them with LALR_State's item set
        */
-      auto result = _item_sets.emplace(s, LALR_State(_states.back()));
+      auto result = item_sets.emplace(s, LALR_State(m_states.back()));
       auto result2 = result.first->second.merge(transition.second);
       if(result.second) {
         ++index;
       } else {
-        _states.pop_back();
+        m_states.pop_back();
       }
       if(result2) {
         queue.push_back(&*result.first);
@@ -69,10 +69,10 @@ LALR_Table::LALR_Table(Grammar& grammar)
 
 const std::list<State>& LALR_Table::states() const
 {
-  return _states;
+  return m_states;
 }
 
 const Grammar& LALR_Table::grammar() const
 {
-  return _grammar;
+  return m_grammar;
 }

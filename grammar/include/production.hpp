@@ -21,9 +21,9 @@ namespace asparserations {
       void insert_symbol(unsigned int, const Symbol*);
       void erase_symbol(unsigned int);
     private:
-      Nonterminal& _nonterminal;
-      std::string _id;
-      std::vector<const Symbol*> _symbols;
+      Nonterminal& m_nonterminal;
+      std::string m_id;
+      std::vector<const Symbol*> m_symbols;
     };
   }
 }

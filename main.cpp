@@ -154,7 +154,7 @@ int main(int argc, char** argv)
   asparserations::grammar::Grammar grammar(root);
   asparserations::bootstrap::Lexer lexer;
   asparserations::bootstrap::Callback callback(grammar);
-  asparserations::_generated::Parser parser(lexer, callback);
+  asparserations::generated::Parser parser(lexer, callback);
 
   // Discard the Node* return value; all necessary info is in the callback obj
   delete parser.parse(grammar_str);

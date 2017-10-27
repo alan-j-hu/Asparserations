@@ -15,7 +15,7 @@ namespace asparserations {
       void insert(const Item&);
       bool merge(const Item_Set&);
     private:
-      std::set<Item> _items;
+      std::set<Item> m_items;
     };
 
     bool operator<(const Item_Set&, const Item_Set&);

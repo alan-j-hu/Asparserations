@@ -8,7 +8,7 @@
 #include <vector>
 
 namespace asparserations {
-  namespace _generated {
+  namespace generated {
     enum class Nonterminal;
     enum class Production;
     enum class Token;
@@ -22,17 +22,17 @@ namespace asparserations {
       {
       };
       Callback(grammar::Grammar&);
-      Payload call(_generated::Nonterminal, _generated::Production,
-		   const std::vector<_generated::Node*>&);
-      Payload call(_generated::Token, const std::string&);
+      Payload call(generated::Nonterminal, generated::Production,
+		   const std::vector<generated::Node*>&);
+      Payload call(generated::Token, const std::string&);
       const grammar::Grammar& grammar() const;
     private:
       enum class Mode {Token, Nonterminal, Production, Append};
-      Mode _mode;
-      grammar::Grammar& _grammar;
-      grammar::Nonterminal* _nonterminal;
-      grammar::Production* _production;
-      std::vector<const grammar::Symbol*> _symbols;
+      Mode m_mode;
+      grammar::Grammar& m_grammar;
+      grammar::Nonterminal* m_nonterminal;
+      grammar::Production* m_production;
+      std::vector<const grammar::Symbol*> m_symbols;
     };
   }
 }

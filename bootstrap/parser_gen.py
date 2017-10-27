@@ -45,10 +45,10 @@ class Node
     const char* end() const;
     ~Node();
   private:
-    $payload _payload;
-    std::vector<Node*> _children;
-    const char* _begin;
-    const char* _end;
+    $payload m_payload;
+    std::vector<Node*> m_children;
+    const char* m_begin;
+    const char* m_end;
   };
 
 class $class_name
@@ -62,7 +62,7 @@ public:
   ~$class_name();
 private:
 
-  struct _Production
+  struct Mangled_Production
   {
     const Nonterminal nonterminal;
     const Production production;
@@ -77,19 +77,19 @@ private:
 
   struct State
   {
-    std::map<Token,std::pair<const State*,std::set<const _Production*>>>actions;
+    std::map<Token,std::pair<const State*,std::set<const Mangled_Production*>>>actions;
     std::map<Nonterminal,const State*> gotos;
   };
 
-  std::vector<State> _states;
-  $callback& _callback;
-  $lexer& _lexer;
-  std::vector<std::pair<Node*,const State*>> _stack;
-  std::unique_ptr<Productions> _productions;
-  Node* _root;
+  std::vector<State> m_states;
+  $callback& m_callback;
+  $lexer& m_lexer;
+  std::vector<std::pair<Node*,const State*>> m_stack;
+  std::unique_ptr<Productions> m_productions;
+  Node* m_root;
 
-  void _process(const State&, const char*);
-  void _reduce(const _Production&);
+  void m_process(const State&, const char*);
+  void m_reduce(const Mangled_Production&);
 };
 $end_namespace
 
@@ -105,7 +105,7 @@ $namespace::Node::Node(
   const $payload& payload,
   const char* begin,
   const char* end)
-  : _payload(payload), _begin(begin), _end(end) {}
+  : m_payload(payload), m_begin(begin), m_end(end) {}
 
 $namespace::Node::Node(const $payload& payload,
                        const std::vector<Node*>& children)
@@ -113,35 +113,35 @@ $namespace::Node::Node(const $payload& payload,
   if(children.empty())
     throw std::runtime_error("Zero children,"
                              "call Node(const char*, const char*) instead");
-  _payload = payload;
-  _children = children;
-  _begin = children.front()->begin();
-  _end = children.back()->end();
+  m_payload = payload;
+  m_children = children;
+  m_begin = children.front()->begin();
+  m_end = children.back()->end();
 }
 
 const $payload& $namespace::Node::payload() const
 {
-  return _payload;
+  return m_payload;
 }
 
 const std::vector<$namespace::Node*>& $namespace::Node::children() const
 {
-  return _children;
+  return m_children;
 }
 
 const char* $namespace::Node::begin() const
 {
-  return _begin;
+  return m_begin;
 }
 
 const char* $namespace::Node::end() const
 {
-  return _end;
+  return m_end;
 }
 
 $namespace::Node::~Node()
 {
-  for(Node* node : _children) delete node;
+  for(Node* node : m_children) delete node;
 }
 
 $namespace::$class_name::Productions::Productions()
@@ -150,19 +150,19 @@ $namespace::$class_name::Productions::Productions()
 }
 
 $namespace::$class_name::$class_name($lexer& lexer, $callback& callback)
-  : _lexer(lexer), _callback(callback), _productions(new Productions()),
-    _root(nullptr), _states($state_count)
+  : m_lexer(lexer), m_callback(callback), m_productions(new Productions()),
+    m_root(nullptr), m_states($state_count)
 {
   $states
 }
 
 $namespace::Node* $namespace::$class_name::parse(const std::string& input)
 {
-  _process(_states.front(), input.data());
-  while(!_stack.empty()) {
-    _process(*_stack.back().second, _stack.back().first->end());
+  m_process(m_states.front(), input.data());
+  while(!m_stack.empty()) {
+    m_process(*m_stack.back().second, m_stack.back().first->end());
   }
-  return _root;
+  return m_root;
 }
 
 std::string
@@ -185,29 +185,29 @@ $namespace::$class_name::production_to_string($namespace::Production p)
 
 $namespace::$class_name::~$class_name()
 {
-  for(auto pair : _stack) {
+  for(auto pair : m_stack) {
     delete pair.first;
   }
 }
 
-void $namespace::$class_name::_process(const State& state, const char* c)
+void $namespace::$class_name::m_process(const State& state, const char* c)
 {
   for(auto& action : state.actions) {
-    auto result = _lexer.expect(action.first, c);
+    auto result = m_lexer.expect(action.first, c);
     if(result.second) {
       if(action.second.first != nullptr) {
         // std::cout << (long)c << " " << (long)result.first << std::endl;
-        _stack.emplace_back(
-          new Node(_callback.call(action.first,
-                                  std::string(result.first.first,
-                                              result.first.second)),
+        m_stack.emplace_back(
+          new Node(m_callback.call(action.first,
+                                   std::string(result.first.first,
+                                               result.first.second)),
                    result.first.first, result.first.second),
           action.second.first
         );
         return;
       }
       if(!action.second.second.empty()) {
-        _reduce(**action.second.second.begin());
+        m_reduce(**action.second.second.begin());
         return;
       }
     }
@@ -215,45 +215,45 @@ void $namespace::$class_name::_process(const State& state, const char* c)
   throw std::runtime_error("Failed parse");
 }
 
-void $namespace::$class_name::_reduce
-(const $namespace::$class_name::_Production& production)
+void $namespace::$class_name::m_reduce
+(const $namespace::$class_name::Mangled_Production& production)
 {
-  if(_stack.empty()) throw std::runtime_error("Can't reduce empty stack");
+  if(m_stack.empty()) throw std::runtime_error("Can't reduce empty stack");
   Node* node = nullptr;
   if(production.child_count == 0) {
-    node = new Node(_callback.call(production.nonterminal,
-                                   production.production,
-                                   {}),
-                    _stack.back().first->end(),
-                    _stack.back().first->end());
+    node = new Node(m_callback.call(production.nonterminal,
+                                    production.production,
+                                    {}),
+                    m_stack.back().first->end(),
+                    m_stack.back().first->end());
   } else {
     std::vector<Node*> popped;
     for(int i = 0; i < production.child_count; ++i) {
-      if(_stack.empty()) throw std::runtime_error("Stack underflow");
-      popped.push_back(_stack.back().first);
-      _stack.pop_back();
+      if(m_stack.empty()) throw std::runtime_error("Stack underflow");
+      popped.push_back(m_stack.back().first);
+      m_stack.pop_back();
     }
     auto vec = std::vector<Node*>(popped.rbegin(), popped.rend());
-    node = new Node(_callback.call(production.nonterminal,
-                                   production.production,
-                                   vec),
+    node = new Node(m_callback.call(production.nonterminal,
+                                    production.production,
+                                    vec),
                     vec);
   }
-  if(production.nonterminal == Nonterminal::__accept__) {
-    _root = node;
+  if(production.nonterminal == Nonterminal::_accept_) {
+    m_root = node;
     return;
   }
   const State* state;
-  if(_stack.empty()) {
-    state = &_states[0];
+  if(m_stack.empty()) {
+    state = &m_states[0];
   } else {
-    state = _stack.back().second;
+    state = m_stack.back().second;
   }
   auto iter = state->gotos.find(production.nonterminal);
-  if(iter == _stack.back().second->gotos.end()) {
+  if(iter == m_stack.back().second->gotos.end()) {
     throw std::runtime_error("Unknown nonterminal");
   }
-  _stack.emplace_back(node, iter->second);
+  m_stack.emplace_back(node, iter->second);
 }
 
 """
@@ -278,7 +278,7 @@ def gen_mangled_production_list_header(grammar):
     lines = ""
     for name,productions in grammar["nonterminals"].items():
         for prodname,symbols in productions.items():
-            lines += "_Production " + name + "_" + prodname + ";\n    "
+            lines += "Mangled_Production " + name + "_" + prodname + ";\n    "
     return lines
 
 def gen_header(template, table, config):
@@ -320,9 +320,9 @@ def gen_state(template, state, config):
         if action["shift"] is None:
             action_str += "nullptr, {\n          "
         else:
-            action_str += "&_states["+str(action["shift"])+"], {\n          "
+            action_str += "&m_states["+str(action["shift"])+"], {\n          "
         reduce_strs = map(lambda x :
-                          "&_productions->" + x["nonterminal"]
+                          "&m_productions->" + x["nonterminal"]
                           + "_" + x["production"],\
                           action["reduces"])
         reduce_str = ",\n          ".join(reduce_strs)
@@ -330,12 +330,12 @@ def gen_state(template, state, config):
         actions.append(action_str)
     for nonterminal, index in state["gotos"].items():
         goto_str = "{Nonterminal::" + nonterminal \
-                   + ", &_states[" + str(index) + "]}"
+                   + ", &m_states[" + str(index) + "]}"
         gotos.append(goto_str)
 
     actions_str = ",\n      ".join(actions)
     gotos_str = ",\n        ".join(gotos)
-    return "_states[" + str(state["index"]) \
+    return "m_states[" + str(state["index"]) \
         + "] = State {\n    { // actions\n      " + actions_str + "\n    }" \
         + ",\n    { // gotos \n        " + gotos_str + "\n    }\n  };"
 
@@ -348,7 +348,8 @@ def gen_productions_to_strings(grammar):
     for name,productions in grammar["nonterminals"].items():
         for prodname,wildcard in productions.items():
             names.add(prodname)
-    lines = map(lambda p: "case Production::" + p + ": return \"" + p + "\";",\
+    lines = map(lambda p: "case Production::" + p + ": return \"" + p \
+                + "\";",
                 names)
     return "\n    ".join(lines)
 
@@ -363,8 +364,10 @@ def gen_src(template, table, config):
             .safe_substitute(namespace=namespace_prefix, states=states_text, \
                              state_count=len(table["table"]),\
                              nonterminals_to_strings=nonterminals_to_strings,\
-                             productions_to_strings=gen_productions_to_strings(table["grammar"]),\
-                             mangled_productions_src=gen_mangled_productions_src(table["grammar"]))) \
+                             productions_to_strings\
+                             =gen_productions_to_strings(table["grammar"]),\
+                             mangled_productions_src=\
+                             gen_mangled_productions_src(table["grammar"]))) \
               .safe_substitute(config)
 
 def main():

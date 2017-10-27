@@ -17,242 +17,240 @@ using namespace codegen;
 
 JSON_Generator::JSON_Generator(const Table& table, bool pretty_print,
 			       const std::string& tab)
-  : _table(table),
-    _grammar(table.grammar()),
-    _pretty_print(pretty_print),
-    _indent_depth(0),
-    _tab(tab)
+  : m_table(table),
+    m_grammar(table.grammar()),
+    m_pretty_print(pretty_print),
+    m_indent_depth(0),
+    m_tab(tab)
 {
-  _generate();
+  m_generate();
 }
 
-const std::string& JSON_Generator::code() const {return _code;}
+const std::string& JSON_Generator::code() const {return m_code;}
 
-void JSON_Generator::_break_and_indent()
+void JSON_Generator::m_break_and_indent()
 {
-  if(_indent_depth > 10) {
-    std::cout << _code << std::endl;
+  if(m_indent_depth > 10) {
+    std::cout << m_code << std::endl;
     throw std::runtime_error("Int underflow");
   }
-  if(_pretty_print) {
-    _code += "\n";
-    for(unsigned int i = 0; i < _indent_depth; ++i) {
-      _code += _tab;
+  if(m_pretty_print) {
+    m_code += "\n";
+    for(unsigned int i = 0; i < m_indent_depth; ++i) {
+      m_code += m_tab;
     }
   }
 }
 
-void JSON_Generator::_generate()
+void JSON_Generator::m_generate()
 {
-  _code += "{";
-  ++_indent_depth;
-  _break_and_indent();
-  _code += "\"grammar\" : ";
-  _generate_grammar(_grammar);
-  _code += ",";
-  _break_and_indent();
-  _code += "\"table\" : ";
-  //std::cout << "Entering _generate_table" << std::endl;
-  _generate_table(_table);
-  //std::cout << "Exiting _generate_table" << std::endl;
-  --_indent_depth;
-  _break_and_indent();
-  _code += "}";
+  m_code += "{";
+  ++m_indent_depth;
+  m_break_and_indent();
+  m_code += "\"grammar\" : ";
+  m_generate_grammar(m_grammar);
+  m_code += ",";
+  m_break_and_indent();
+  m_code += "\"table\" : ";
+  m_generate_table(m_table);
+  --m_indent_depth;
+  m_break_and_indent();
+  m_code += "}";
   
 }
 
-void JSON_Generator::_generate_token(const Token& token)
+void JSON_Generator::m_generate_token(const Token& token)
 {
-  _break_and_indent();
-  _code += "\"" + token.id() + "\"";
+  m_break_and_indent();
+  m_code += "\"" + token.id() + "\"";
 }
 
-void JSON_Generator::_generate_nonterminal(const Nonterminal& n)
+void JSON_Generator::m_generate_nonterminal(const Nonterminal& n)
 {
-  _code += "\"" + n.id() + "\" : {";
-  ++_indent_depth;
+  m_code += "\"" + n.id() + "\" : {";
+  ++m_indent_depth;
   bool needs_comma = false;
   for(auto& pair : n.productions()) {
     const Production& production = pair.second;
     if(needs_comma) {
-      _code += ",";
+      m_code += ",";
     } else {
       needs_comma = true;
     }
-    _break_and_indent();
-    _code += "\"" + production.id() + "\" : [";
-    ++_indent_depth;
+    m_break_and_indent();
+    m_code += "\"" + production.id() + "\" : [";
+    ++m_indent_depth;
     bool needs_comma2 = false;
     for(const Symbol* const symbol : production.symbols()) {
       if(needs_comma2) {
-	_code += ",";
+        m_code += ",";
       } else {
 	needs_comma2 = true;
       }
-      _break_and_indent();
-      _code += "{";
-      ++_indent_depth;
-      _break_and_indent();
-      _code += "\"id\" : \"" + symbol->id() + "\",";
-      _break_and_indent();
-      _code += "\"isToken\" : " + std::to_string(symbol->is_token());
-      --_indent_depth;
-      _break_and_indent();
-      _code += "}";
+      m_break_and_indent();
+      m_code += "{";
+      ++m_indent_depth;
+      m_break_and_indent();
+      m_code += "\"id\" : \"" + symbol->id() + "\",";
+      m_break_and_indent();
+      m_code += "\"isToken\" : " + std::to_string(symbol->is_token());
+      --m_indent_depth;
+      m_break_and_indent();
+      m_code += "}";
     }
-    --_indent_depth;
-    _break_and_indent();
-    _code += "]";
+    --m_indent_depth;
+    m_break_and_indent();
+    m_code += "]";
   }
-  --_indent_depth;
-  _break_and_indent();
-  _code += "}";
+  --m_indent_depth;
+  m_break_and_indent();
+  m_code += "}";
 }
 
-void JSON_Generator::_generate_grammar(const Grammar& grammar)
+void JSON_Generator::m_generate_grammar(const Grammar& grammar)
 {
-  _code += "{";
-  ++_indent_depth;
-  _break_and_indent();
+  m_code += "{";
+  ++m_indent_depth;
+  m_break_and_indent();
   //Tokens
-  _code += "\"tokens\" : [";
-  ++_indent_depth;
-  _generate_token(grammar.end());
+  m_code += "\"tokens\" : [";
+  ++m_indent_depth;
+  m_generate_token(grammar.end());
   for(const Token* token : grammar.tokens()) {
-    _code += ",";
-    _generate_token(*token);
+    m_code += ",";
+    m_generate_token(*token);
   }
-  --_indent_depth;
-  _break_and_indent();
-  _code += "],";
-  _break_and_indent();
+  --m_indent_depth;
+  m_break_and_indent();
+  m_code += "],";
+  m_break_and_indent();
   //Nonterminals
-  _code += "\"nonterminals\" : {";
-  ++_indent_depth;
-  _break_and_indent();
-  _generate_nonterminal(grammar.accept());
+  m_code += "\"nonterminals\" : {";
+  ++m_indent_depth;
+  m_break_and_indent();
+  m_generate_nonterminal(grammar.accept());
   for(const Nonterminal* nonterminal : grammar.nonterminals()) {
-    _code += ",";
-    _break_and_indent();
-    _generate_nonterminal(*nonterminal);
+    m_code += ",";
+    m_break_and_indent();
+    m_generate_nonterminal(*nonterminal);
   }
-  --_indent_depth;
-  _break_and_indent();
-  _code += "}";
-  --_indent_depth;
-  _break_and_indent();
-  _code += "}";
+  --m_indent_depth;
+  m_break_and_indent();
+  m_code += "}";
+  --m_indent_depth;
+  m_break_and_indent();
+  m_code += "}";
 }
 
-void JSON_Generator::_generate_actions(
+void JSON_Generator::m_generate_actions(
   const std::map<const Token*,std::pair<const State*,
                               std::set<const Production*>>>& actions)
 {
-  _code += "{";
-  ++_indent_depth;
+  m_code += "{";
+  ++m_indent_depth;
   bool needs_comma = false;
   for(auto& action : actions) {
     if(needs_comma) {
-      _code += ",";
+      m_code += ",";
     } else {
       needs_comma = true;
     }
-    _break_and_indent();
-    _code += "\"" + action.first->id() + "\" : {";
-    ++_indent_depth;
-    _break_and_indent();
-    _code += "\"shift\" : "
+    m_break_and_indent();
+    m_code += "\"" + action.first->id() + "\" : {";
+    ++m_indent_depth;
+    m_break_and_indent();
+    m_code += "\"shift\" : "
       + (action.second.first == nullptr
 	 ? "null"
 	 : std::to_string(action.second.first->index()))
       + ",";
-    _break_and_indent();
-    _code += "\"reduces\" : [";
-    ++_indent_depth;
+    m_break_and_indent();
+    m_code += "\"reduces\" : [";
+    ++m_indent_depth;
     bool needs_comma2 = false;
     for(auto& production : action.second.second) {
       if(needs_comma2) {
-	_code += ",";
+	m_code += ",";
       } else {
 	needs_comma2 = true;
       }
-      _break_and_indent();
-      _code += "{";
-      ++_indent_depth;
-      _break_and_indent();
-      _code += "\"nonterminal\" : \"" + production->nonterminal().id() + "\",";
-      _break_and_indent();
-      _code += "\"production\" : \"" + production->id() + "\"";
-      --_indent_depth;
-      _break_and_indent();
-      _code += "}";
+      m_break_and_indent();
+      m_code += "{";
+      ++m_indent_depth;
+      m_break_and_indent();
+      m_code += "\"nonterminal\" : \"" + production->nonterminal().id() + "\",";
+      m_break_and_indent();
+      m_code += "\"production\" : \"" + production->id() + "\"";
+      --m_indent_depth;
+      m_break_and_indent();
+      m_code += "}";
     }
-    --_indent_depth;
-    _break_and_indent();
-    _code += "]";
-    --_indent_depth;
-    _break_and_indent();
-    _code += "}";
+    --m_indent_depth;
+    m_break_and_indent();
+    m_code += "]";
+    --m_indent_depth;
+    m_break_and_indent();
+    m_code += "}";
   }
-  --_indent_depth;
-  _break_and_indent();
-  _code += "}";
+  --m_indent_depth;
+  m_break_and_indent();
+  m_code += "}";
 }
 
-void JSON_Generator::_generate_gotos(const std::map<const Nonterminal*,
-				     const State*>& gotos)
+void JSON_Generator::m_generate_gotos(const std::map<const Nonterminal*,
+                                      const State*>& gotos)
 {
-  _code += "{";
-  ++_indent_depth;
+  m_code += "{";
+  ++m_indent_depth;
   bool needs_comma = false;
   for(auto& go_to : gotos) {
     if(needs_comma) {
-      _code += ",";
+      m_code += ",";
     } else {
       needs_comma = true;
     }
-    _break_and_indent();
-    _code += "\"" + go_to.first->id() + "\" : "
+    m_break_and_indent();
+    m_code += "\"" + go_to.first->id() + "\" : "
       + std::to_string(go_to.second->index());
   }
-  --_indent_depth;
-  _break_and_indent();
-  _code += "}";
+  --m_indent_depth;
+  m_break_and_indent();
+  m_code += "}";
 }
 
-void JSON_Generator::_generate_state(const State& state)
+void JSON_Generator::m_generate_state(const State& state)
 {
-  _code += "{";
-  ++_indent_depth;
-  _break_and_indent();
-  _code += "\"index\" : " + std::to_string(state.index()) + ",";
-  _break_and_indent();
-  _code += "\"actions\" : ";
-  _generate_actions(state.actions());
-  _code += ",";
-  _break_and_indent();
-  _code += "\"gotos\" : ";
-  _generate_gotos(state.gotos());
-  --_indent_depth;
-  _break_and_indent();
-  _code += "}";
+  m_code += "{";
+  ++m_indent_depth;
+  m_break_and_indent();
+  m_code += "\"index\" : " + std::to_string(state.index()) + ",";
+  m_break_and_indent();
+  m_code += "\"actions\" : ";
+  m_generate_actions(state.actions());
+  m_code += ",";
+  m_break_and_indent();
+  m_code += "\"gotos\" : ";
+  m_generate_gotos(state.gotos());
+  --m_indent_depth;
+  m_break_and_indent();
+  m_code += "}";
 };
 
-void JSON_Generator::_generate_table(const Table& table)
+void JSON_Generator::m_generate_table(const Table& table)
 {
-  _code += "[";
-  ++_indent_depth;
+  m_code += "[";
+  ++m_indent_depth;
   bool insert_comma = false;
   for(const State& state : table.states()) {
     if(insert_comma) {
-      _code += ",";
+      m_code += ",";
     } else {
       insert_comma = true;
     }
-    _break_and_indent();
-    _generate_state(state);
+    m_break_and_indent();
+    m_generate_state(state);
   }
-  --_indent_depth;
-  _break_and_indent();
-  _code += "]";
+  --m_indent_depth;
+  m_break_and_indent();
+  m_code += "]";
 }

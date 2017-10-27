@@ -11,7 +11,7 @@ namespace asparserations {
     {
     public:
       std::pair<std::pair<const char*,const char*>,bool>
-        expect(_generated::Token, const char*);
+        expect(generated::Token, const char*);
     private:
       bool match(const std::string&, const char*&);
       bool match_range(char, char, const char*&);
