@@ -10,7 +10,7 @@
         "_root_" : [
           {
             "id" : "S",
-            "isToken" : 0
+            "isToken" : false
           }
         ]
       },
@@ -18,11 +18,11 @@
         "prod" : [
           {
             "id" : "C",
-            "isToken" : 0
+            "isToken" : false
           },
           {
             "id" : "C",
-            "isToken" : 0
+            "isToken" : false
           }
         ]
       },
@@ -30,17 +30,17 @@
         "prod1" : [
           {
             "id" : "c",
-            "isToken" : 1
+            "isToken" : true
           },
           {
             "id" : "C",
-            "isToken" : 0
+            "isToken" : false
           }
         ],
         "prod2" : [
           {
             "id" : "d",
-            "isToken" : 1
+            "isToken" : true
           }
         ]
       }

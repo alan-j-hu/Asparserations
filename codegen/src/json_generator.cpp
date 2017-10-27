@@ -93,7 +93,8 @@ void JSON_Generator::m_generate_nonterminal(const Nonterminal& n)
       m_break_and_indent();
       m_code += "\"id\" : \"" + symbol->id() + "\",";
       m_break_and_indent();
-      m_code += "\"isToken\" : " + std::to_string(symbol->is_token());
+      m_code += "\"isToken\" : "
+        + std::string((symbol->is_token() ? "true" : "false"));
       --m_indent_depth;
       m_break_and_indent();
       m_code += "}";
