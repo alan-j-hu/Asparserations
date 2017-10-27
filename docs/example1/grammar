@@ -1,0 +1,9 @@
+tokens {
+  c,
+  d
+}
+
+C : c C # prod1
+  | d # prod2;
+
+S : C C # prod;

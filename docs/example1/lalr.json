@@ -1,0 +1,206 @@
+{
+  "grammar" : {
+    "tokens" : [
+      "_end_",
+      "c",
+      "d"
+    ],
+    "nonterminals" : {
+      "_accept_" : {
+        "_root_" : [
+          {
+            "id" : "S",
+            "isToken" : 0
+          }
+        ]
+      },
+      "S" : {
+        "prod" : [
+          {
+            "id" : "C",
+            "isToken" : 0
+          },
+          {
+            "id" : "C",
+            "isToken" : 0
+          }
+        ]
+      },
+      "C" : {
+        "prod1" : [
+          {
+            "id" : "c",
+            "isToken" : 1
+          },
+          {
+            "id" : "C",
+            "isToken" : 0
+          }
+        ],
+        "prod2" : [
+          {
+            "id" : "d",
+            "isToken" : 1
+          }
+        ]
+      }
+    }
+  },
+  "table" : [
+    {
+      "index" : 0,
+      "actions" : {
+        "c" : {
+          "shift" : 2,
+          "reduces" : [
+          ]
+        },
+        "d" : {
+          "shift" : 3,
+          "reduces" : [
+          ]
+        }
+      },
+      "gotos" : {
+        "S" : 1,
+        "C" : 4
+      }
+    },
+    {
+      "index" : 1,
+      "actions" : {
+        "_end_" : {
+          "shift" : null,
+          "reduces" : [
+            {
+              "nonterminal" : "_accept_",
+              "production" : "_root_"
+            }
+          ]
+        }
+      },
+      "gotos" : {
+      }
+    },
+    {
+      "index" : 2,
+      "actions" : {
+        "c" : {
+          "shift" : 2,
+          "reduces" : [
+          ]
+        },
+        "d" : {
+          "shift" : 3,
+          "reduces" : [
+          ]
+        }
+      },
+      "gotos" : {
+        "C" : 5
+      }
+    },
+    {
+      "index" : 3,
+      "actions" : {
+        "c" : {
+          "shift" : null,
+          "reduces" : [
+            {
+              "nonterminal" : "C",
+              "production" : "prod2"
+            }
+          ]
+        },
+        "d" : {
+          "shift" : null,
+          "reduces" : [
+            {
+              "nonterminal" : "C",
+              "production" : "prod2"
+            }
+          ]
+        },
+        "_end_" : {
+          "shift" : null,
+          "reduces" : [
+            {
+              "nonterminal" : "C",
+              "production" : "prod2"
+            }
+          ]
+        }
+      },
+      "gotos" : {
+      }
+    },
+    {
+      "index" : 4,
+      "actions" : {
+        "c" : {
+          "shift" : 2,
+          "reduces" : [
+          ]
+        },
+        "d" : {
+          "shift" : 3,
+          "reduces" : [
+          ]
+        }
+      },
+      "gotos" : {
+        "C" : 6
+      }
+    },
+    {
+      "index" : 5,
+      "actions" : {
+        "c" : {
+          "shift" : null,
+          "reduces" : [
+            {
+              "nonterminal" : "C",
+              "production" : "prod1"
+            }
+          ]
+        },
+        "d" : {
+          "shift" : null,
+          "reduces" : [
+            {
+              "nonterminal" : "C",
+              "production" : "prod1"
+            }
+          ]
+        },
+        "_end_" : {
+          "shift" : null,
+          "reduces" : [
+            {
+              "nonterminal" : "C",
+              "production" : "prod1"
+            }
+          ]
+        }
+      },
+      "gotos" : {
+      }
+    },
+    {
+      "index" : 6,
+      "actions" : {
+        "_end_" : {
+          "shift" : null,
+          "reduces" : [
+            {
+              "nonterminal" : "S",
+              "production" : "prod"
+            }
+          ]
+        }
+      },
+      "gotos" : {
+      }
+    }
+  ]
+}
