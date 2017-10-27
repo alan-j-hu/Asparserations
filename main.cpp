@@ -48,49 +48,50 @@ int main(int argc, char** argv)
   for(int i = 1; i < argc; ++i) {
     if(argv[i][0] == '-') { // Flag
       if(expects_argument == Argument::Argument) {
-	std::cout << "Error: Expected argument, got flag" << std::endl;
-	return -1;
+        std::cerr << "Error: Expected argument, got flag" << std::endl;
+        return -1;
       }
       expects_argument = Argument::No_Argument;
       if(argv[i][1] == '\0') {
-	std::cout << "Error: single dash without flag" << std::endl;
-	return -1;
+        std::cerr << "Error: single dash without flag" << std::endl;
+        return -1;
       } else if(argv[i][1] == '-') { // Long flag name
-	if(argv[i][2] == '\0') {
-	  std::cout << "Error: double dash without flag" << std::endl;
-	  return -1;
-	}
-	int j = 2;
-	// Increment until null terminator or =
-	for(j = 2; argv[i][j] != '\0' && argv[i][j] != '='; ++j);
-	std::string name(argv[i] + 2, argv[i] + j);
+        if(argv[i][2] == '\0') {
+          std::cerr << "Error: double dash without flag" << std::endl;
+          return -1;
+        }
+        int j = 2;
+        // Increment until null terminator or =
+        for(j = 2; argv[i][j] != '\0' && argv[i][j] != '='; ++j);
+          std::string name(argv[i] + 2, argv[i] + j);
 
         auto iter = option_abbreviations.find(name);
-	if(iter == option_abbreviations.end()) {
-	  std::cout << "Unknown option --" << name << std::endl;
-	  return -1;
-	}
-	if(argv[i][j] == '=') {
-	  std::string arg(argv[i] + j + 1);
-	  if(flags[iter->second->first] == Argument::No_Argument) {
-	    std::cout << "Error: No argument needed for "
-		      << name << std::endl;
-	    return -1;
-	  }
+        if(iter == option_abbreviations.end()) {
+          std::cout << "Unknown option --" << name << std::endl;
+          return -1;
+        }
+        if(argv[i][j] == '=') {
+          std::string arg(argv[i] + j + 1);
+          if(flags[iter->second->first] == Argument::No_Argument) {
+            std::cout << "Error: No argument needed for "
+                      << name << std::endl;
+            return -1;
+          }
           flag_values[iter->second->first] = arg;
           expects_argument = Argument::No_Argument;
-	} else {
+        } else {
           char_flag = iter->second->first;
           expects_argument = iter->second->second;
-	  flag_values.emplace(char_flag, "");
-	}
+          flag_values.emplace(char_flag, "");
+        }
       } else if(argv[i][2] == '\0') { // One character after dash
-	char_flag = argv[i][1];
-	expects_argument = flags[char_flag];
+        char_flag = argv[i][1];
+        flag_values[char_flag] = "";
+        expects_argument = flags[char_flag];
       } else { // Chain of flags (e.g. -abcd)
-	for(int j = 1; argv[i][j] != '\0'; ++j) {
-	  flag_values[argv[i][j]] = "";
-	}
+        for(int j = 1; argv[i][j] != '\0'; ++j) {
+          flag_values[argv[i][j]] = "";
+        }
       }
     } else if(expects_argument == Argument::No_Argument) {
       positional_args.emplace_back(argv[i]);
@@ -101,7 +102,7 @@ int main(int argc, char** argv)
   }
 
   if(positional_args.size() < 1) {
-    std::cout << "No file provided" << std::endl;
+    std::cerr << "No file provided" << std::endl;
     return -1;
   }
 
@@ -112,15 +113,15 @@ int main(int argc, char** argv)
       break;
     case 'o':
       if(pair.second == "") {
-	std::cout << "No output filename provided" << std::endl;
-	return -1;
+        std::cerr << "No output filename provided" << std::endl;
+        return -1;
       }
       output_filename = pair.second;
       break;
     case 'r':
       if(pair.second == "") {
-	std::cout << "No root nonterminal provided" << std::endl;
-	return -1;
+        std::cerr << "No root nonterminal provided" << std::endl;
+        return -1;
       }
       root = pair.second;
       break;
