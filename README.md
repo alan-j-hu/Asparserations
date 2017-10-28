@@ -23,6 +23,8 @@ grammar parser, is included in the bootstrap folder.
 This project requires G++, GNU Make, and Python 3 in order to build from source.
 
 ### Installing
-    make install
+    $ git clone https://github.com/TheAspiringHacker/Asparserations.git
+    $ cd Asparserations
+    $ make install
 The binary file is saved to `~/local/bin` and can be invoked by typing
 `asparserations [flags...] grammar_file_name`.
