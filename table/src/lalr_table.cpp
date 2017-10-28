@@ -17,18 +17,18 @@ LALR_Table::LALR_Table(Grammar& grammar)
 {
   m_grammar.compute_first_sets();
   m_states.emplace_back(0);
-  std::map<std::set<Item_Core>,LALR_State> item_sets {
+  m_item_sets = {
     {
       {
         Item_Core { grammar.accept().production_at("_root_"), 0 }
       },
         LALR_State(m_states.back(),
-		   Item_Set({ Item(grammar.accept().production_at("_root_"),
-                    	           0, grammar.end())}))
+                   Item_Set({ Item(grammar.accept().production_at("_root_"),
+                                   0, grammar.end())}))
     }
   };
   std::list<std::pair<const std::set<Item_Core>,LALR_State>*> queue;
-  queue.push_back(&*item_sets.begin());
+  queue.push_back(&*m_item_sets.begin());
   unsigned int index = 1;
   for(auto& pair : queue) {
     auto foo = gotos(closure(pair->second.item_set()));
@@ -49,7 +49,7 @@ LALR_Table::LALR_Table(Grammar& grammar)
         -transition.second is the set of items of the new item set
         -try to merge them with LALR_State's item set
        */
-      auto result = item_sets.emplace(s, LALR_State(m_states.back()));
+      auto result = m_item_sets.emplace(s, LALR_State(m_states.back()));
       auto result2 = result.first->second.merge(transition.second);
       if(result.second) {
         ++index;
@@ -58,12 +58,13 @@ LALR_Table::LALR_Table(Grammar& grammar)
       }
       if(result2) {
         queue.push_back(&*result.first);
+	m_item_set_state_pairs.emplace_back(&result.first->second.item_set(),
+                                            &result.first->second.state());
       }
       pair->second.state().add_transition(transition.first,
        	                                  &result.first->second.state());
     }
     pair->second.state().add_reductions(reductions);
-    //queue.pop_front();
   }
 }
 
@@ -75,4 +76,10 @@ const std::list<State>& LALR_Table::states() const
 const Grammar& LALR_Table::grammar() const
 {
   return m_grammar;
+}
+
+const std::vector<std::pair<const Item_Set*,const State*>>&
+LALR_Table::item_set_state_pairs() const
+{
+  return m_item_set_state_pairs;
 }

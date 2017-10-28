@@ -1,6 +1,7 @@
 #ifndef ASPARSERATIONS_CODEGEN_JSON_GENERATOR_H_
 #define ASPARSERATIONS_CODEGEN_JSON_GENERATOR_H_
 
+#include "../../table/include/item_set.hpp"
 #include "code_generator.hpp"
 #include <map>
 #include <set>
@@ -38,7 +39,8 @@ namespace asparserations {
                              );
       void m_generate_gotos(const std::map<const grammar::Nonterminal*,
                                            const table::State*>&);
-      void m_generate_state(const table::State&);
+      void m_generate_item_set(const table::Item_Set&);
+      void m_generate_state(const table::State&, const table::Item_Set*);
       void m_generate_table(const table::Table&);
     };
   }

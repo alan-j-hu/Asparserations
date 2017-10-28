@@ -113,7 +113,7 @@ void JSON_Generator::m_generate_grammar(const Grammar& grammar)
   m_code += "{";
   ++m_indent_depth;
   m_break_and_indent();
-  //Tokens
+  // Tokens
   m_code += "\"tokens\" : [";
   ++m_indent_depth;
   m_generate_token(grammar.end());
@@ -125,7 +125,7 @@ void JSON_Generator::m_generate_grammar(const Grammar& grammar)
   m_break_and_indent();
   m_code += "],";
   m_break_and_indent();
-  //Nonterminals
+  // Nonterminals
   m_code += "\"nonterminals\" : {";
   ++m_indent_depth;
   m_break_and_indent();
@@ -219,7 +219,46 @@ void JSON_Generator::m_generate_gotos(const std::map<const Nonterminal*,
   m_code += "}";
 }
 
-void JSON_Generator::m_generate_state(const State& state)
+void JSON_Generator::m_generate_item_set(const Item_Set& item_set)
+{
+  m_code += "[";
+  ++m_indent_depth;
+  m_break_and_indent();
+  bool needs_comma = false;
+  for(const Item& item : item_set.items()) {
+    if(needs_comma) {
+      m_code += ",";
+    } else {
+      needs_comma = true;
+    }
+    m_code += "{";
+    ++m_indent_depth;
+    m_break_and_indent();
+    m_code += "\"production\" : {";
+    ++m_indent_depth;
+    m_break_and_indent();
+    m_code += "\"nonterminal\" : \""
+      + item.production.nonterminal().id() + "\",";
+    m_break_and_indent();
+    m_code += "\"production\" : \"" + item.production.id() + "\"";
+    --m_indent_depth;
+    m_break_and_indent();
+    m_code += "},";
+    m_break_and_indent();
+    m_code += "\"marker\" : " + std::to_string(item.marker) + ",";
+    m_break_and_indent();
+    m_code += "\"lookahead\" : \"" + item.lookahead.id() + "\"";
+    --m_indent_depth;
+    m_break_and_indent();
+    m_code += "}";
+  }
+  --m_indent_depth;
+  m_break_and_indent();
+  m_code += "]";
+}
+
+void JSON_Generator::m_generate_state(const State& state,
+                                      const Item_Set* item_set)
 {
   m_code += "{";
   ++m_indent_depth;
@@ -232,6 +271,14 @@ void JSON_Generator::m_generate_state(const State& state)
   m_break_and_indent();
   m_code += "\"gotos\" : ";
   m_generate_gotos(state.gotos());
+  m_code += ",";
+  m_break_and_indent();
+  m_code += "\"itemSet\" : ";
+  if(item_set == nullptr) {
+    m_code += "null";
+  } else {
+    m_generate_item_set(*item_set);
+  }
   --m_indent_depth;
   m_break_and_indent();
   m_code += "}";
@@ -242,14 +289,14 @@ void JSON_Generator::m_generate_table(const Table& table)
   m_code += "[";
   ++m_indent_depth;
   bool insert_comma = false;
-  for(const State& state : table.states()) {
+  for(auto& pair : table.item_set_state_pairs()) {
     if(insert_comma) {
       m_code += ",";
     } else {
       insert_comma = true;
     }
     m_break_and_indent();
-    m_generate_state(state);
+    m_generate_state(*pair.second, pair.first);
   }
   --m_indent_depth;
   m_break_and_indent();
