@@ -16,11 +16,12 @@ using namespace table;
 using namespace codegen;
 
 JSON_Generator::JSON_Generator(const Table& table, bool pretty_print,
-			       const std::string& tab)
+                	       bool debug, const std::string& tab)
   : m_table(table),
     m_grammar(table.grammar()),
     m_pretty_print(pretty_print),
     m_indent_depth(0),
+    m_debug(debug),
     m_tab(tab)
 {
   m_generate();
@@ -223,7 +224,6 @@ void JSON_Generator::m_generate_item_set(const Item_Set& item_set)
 {
   m_code += "[";
   ++m_indent_depth;
-  m_break_and_indent();
   bool needs_comma = false;
   for(const Item& item : item_set.items()) {
     if(needs_comma) {
@@ -231,6 +231,7 @@ void JSON_Generator::m_generate_item_set(const Item_Set& item_set)
     } else {
       needs_comma = true;
     }
+    m_break_and_indent();
     m_code += "{";
     ++m_indent_depth;
     m_break_and_indent();
@@ -296,7 +297,11 @@ void JSON_Generator::m_generate_table(const Table& table)
       insert_comma = true;
     }
     m_break_and_indent();
-    m_generate_state(*pair.second, pair.first);
+    if(m_debug) {
+      m_generate_state(*pair.second, pair.first);
+    } else {
+      m_generate_state(*pair.second, nullptr);
+    }
   }
   --m_indent_depth;
   m_break_and_indent();

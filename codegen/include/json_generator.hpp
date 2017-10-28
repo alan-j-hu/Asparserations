@@ -19,13 +19,15 @@ namespace asparserations {
     class JSON_Generator : public Code_Generator
     {
     public:
-      JSON_Generator(const table::Table&, bool, const std::string& tab = "  ");
+      JSON_Generator(const table::Table&, bool, bool debug = false,
+                     const std::string& tab = "  ");
       const std::string& code() const;
     private:
       std::string m_code;
       const table::Table& m_table;
       const grammar::Grammar& m_grammar;
       bool m_pretty_print;
+      bool m_debug;
       std::string m_tab;
       unsigned int m_indent_depth;
       void m_break_and_indent();
