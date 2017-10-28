@@ -1,5 +1,5 @@
-#ifndef _ASPARSERATIONS_BOOTSTRAP_CALLBACK_
-#define _ASPARSERATIONS_BOOTSTRAP_CALLBACK_
+#ifndef ASPARSERATIONS_BOOTSTRAP_CALLBACK_H_
+#define ASPARSERATIONS_BOOTSTRAP_CALLBACK_H_
 
 #include "../../grammar/include/grammar.hpp"
 #include "../../grammar/include/nonterminal.hpp"
@@ -23,7 +23,7 @@ namespace asparserations {
       };
       Callback(grammar::Grammar&);
       Payload call(generated::Nonterminal, generated::Production,
-		   const std::vector<generated::Node*>&);
+        	   const std::vector<generated::Node*>&);
       Payload call(generated::Token, const std::string&);
       const grammar::Grammar& grammar() const;
     private:

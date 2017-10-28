@@ -1,5 +1,5 @@
-#ifndef _ASPARSERATIONS_GRAMMAR_GRAMMAR_H_
-#define _ASPARSERATIONS_GRAMMAR_GRAMMAR_H_
+#ifndef ASPARSERATIONS_GRAMMAR_GRAMMAR_H_
+#define ASPARSERATIONS_GRAMMAR_GRAMMAR_H_
 
 #include "nonterminal.hpp"
 #include "token.hpp"
@@ -20,31 +20,31 @@ namespace asparserations {
       Grammar(Grammar&&);
 
       /**
-	 Adds a token to the grammar
-	 @param id the name of the token
-	 @return a reference to the newly added token
+         Adds a token to the grammar
+         @param id the name of the token
+         @return a reference to the newly added token
        */
       Token& add_token(const std::string&);
 
       /**
-	 Adds a nonterminal to the grammar
-	 @param id the name of the nonterminal
-	 @return a reference to the newly added nonterminal
+         Adds a nonterminal to the grammar
+         @param id the name of the nonterminal
+         @return a reference to the newly added nonterminal
        */
       Nonterminal& add_nonterminal(const std::string&);
 
       /**
-	 Gets token by id
-	 @param the key of the token
-	 @return a reference to the corresponding token
+         Gets token by id
+         @param the key of the token
+         @return a reference to the corresponding token
        */
       Token& token_at(const std::string&);
       const Token& token_at(const std::string&) const;
 
       /**
-	 Gets nonterminal by id
-	 @param the key of the nonterminal
-	 @return a reference to the nonterminal
+         Gets nonterminal by id
+         @param the key of the nonterminal
+         @return a reference to the nonterminal
        */
       Nonterminal& nonterminal_at(const std::string&);
       const Nonterminal& nonterminal_at(const std::string&) const;
@@ -56,21 +56,21 @@ namespace asparserations {
       const Token& dummy_lookahead() const;
 
       /**
-	 Returns the start symbol
+         Returns the start symbol
        */
       Nonterminal& start_symbol();
       const Nonterminal& start_symbol() const;
 
       /**
-	 Sets the start symbol
+         Sets the start symbol
        */
       void set_start_symbol(Nonterminal*);
 
       /**
-	 Computes the FIRST sets of the symbols - the set of tokens that the
-	 symbol can start with
+         Computes the FIRST sets of the symbols - the set of tokens that the
+         symbol can start with
 
-	 Only call after grammar has been completely constructed!
+         Only call after grammar has been completely constructed!
        */
       void compute_first_sets();
     private:
@@ -78,7 +78,7 @@ namespace asparserations {
 
       struct TokenImp : public Token
       {
-	//Methods
+        // Methods
 	TokenImp(Grammar& g, const std::string& id);
 	const std::string& id() const;
         Grammar& grammar();
@@ -87,7 +87,7 @@ namespace asparserations {
         const std::map<std::string,Production>& productions() const;
 	bool is_token() const;
         bool derives_empty_string() const;
-	//Members
+        // Members
 	const std::string m_id;
         Grammar* m_grammar;
         std::set<const Token*> m_first_set;
@@ -96,7 +96,7 @@ namespace asparserations {
 
       struct NonterminalImp : public Nonterminal
       {
-	//Methods
+        // Methods
         NonterminalImp(Grammar& g, const std::string& id);	
         const std::map<std::string,Production>& productions() const;
         Production& production_at(const std::string&);
@@ -108,8 +108,8 @@ namespace asparserations {
 	bool is_token() const;
         bool derives_empty_string() const;
         Production& add_production(const std::string&,
-				   std::vector<const Symbol*>);
-	//Members
+                                   std::vector<const Symbol*>);
+	// Members
 	const std::string m_id;
         Grammar* m_grammar;
         std::map<std::string,Production> m_productions;

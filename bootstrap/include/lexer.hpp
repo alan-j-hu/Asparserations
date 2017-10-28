@@ -1,5 +1,5 @@
-#ifndef _ASPARSERATIONS_BOOTSTRAP_LEXER_
-#define _ASPARSERATIONS_BOOTSTRAP_LEXER_
+#ifndef ASPARSERATIONS_BOOTSTRAP_LEXER_H_
+#define ASPARSERATIONS_BOOTSTRAP_LEXER_H_
 
 #include "../../autogen/include/Parser.hpp"
 #include <string>

@@ -1,5 +1,5 @@
-#ifndef _ASPARSERATIONS_GRAMMAR_TOKEN_H_
-#define _ASPARSERATIONS_GRAMMAR_TOKEN_H_
+#ifndef ASPARSERATIONS_GRAMMAR_TOKEN_H_
+#define ASPARSERATIONS_GRAMMAR_TOKEN_H_
 
 #include "production.hpp"
 #include "symbol.hpp"

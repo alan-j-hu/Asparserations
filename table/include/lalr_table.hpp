@@ -1,5 +1,5 @@
-#ifndef _ASPARSERATIONS_TABLE_LALR_TABLE_H_
-#define _ASPARSERATIONS_TABLE_LALR_TABLE_H_
+#ifndef ASPARSERATIONS_TABLE_LALR_TABLE_H_
+#define ASPARSERATIONS_TABLE_LALR_TABLE_H_
 
 #include "item_core.hpp"
 #include "lalr_state.hpp"

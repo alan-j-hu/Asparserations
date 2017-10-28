@@ -1,5 +1,5 @@
-#ifndef _ASPARSERATIONS_TABLE_ITEM_SET_H_
-#define _ASPARSERATIONS_TABLE_ITEM_SET_H_
+#ifndef ASPARSERATIONS_TABLE_ITEM_SET_H_
+#define ASPARSERATIONS_TABLE_ITEM_SET_H_
 
 #include "item.hpp"
 #include <set>

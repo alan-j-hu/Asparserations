@@ -1,5 +1,5 @@
-#ifndef _ASPARSERATIONS_CODEGEN_JSON_GENERATOR_
-#define _ASPARSERATIONS_CODEGEN_JSON_GENERATOR_
+#ifndef ASPARSERATIONS_CODEGEN_JSON_GENERATOR_H_
+#define ASPARSERATIONS_CODEGEN_JSON_GENERATOR_H_
 
 #include "code_generator.hpp"
 #include <map>
@@ -33,11 +33,11 @@ namespace asparserations {
       void m_generate_nonterminal(const grammar::Nonterminal&);
       void m_generate_grammar(const grammar::Grammar&);
       void m_generate_actions(
-	const std::map<const grammar::Token*,
-	std::pair<const table::State*,std::set<const grammar::Production*>>>&
-			     );
+        const std::map<const grammar::Token*,
+        std::pair<const table::State*,std::set<const grammar::Production*>>>&
+                             );
       void m_generate_gotos(const std::map<const grammar::Nonterminal*,
-			                  const table::State*>&);
+                                           const table::State*>&);
       void m_generate_state(const table::State&);
       void m_generate_table(const table::Table&);
     };

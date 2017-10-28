@@ -1,5 +1,5 @@
-#ifndef _ASPARSERATIONS_TABLE_GENERATOR_H_
-#define _ASPARSERATIONS_TABLE_GENERATOR_H_
+#ifndef ASPARSERATIONS_TABLE_GENERATOR_H_
+#define ASPARSERATIONS_TABLE_GENERATOR_H_
 
 #include "state.hpp"
 #include "item.hpp"
@@ -38,7 +38,7 @@ namespace asparserations {
      */
     std::pair<std::map<const grammar::Symbol*,std::set<Item>>,
               std::map<const grammar::Token*,
-		       std::set<const grammar::Production*>>>
+                       std::set<const grammar::Production*>>>
     gotos(const std::set<Item>&);
   }
 }

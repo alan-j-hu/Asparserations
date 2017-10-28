@@ -44,7 +44,7 @@ LALR_Table::LALR_Table(Grammar& grammar)
       /*
         -Attempt to emplace new item set and state in the set of item sets
         -If the emplacement was successful, then LALR_State's item set is empty
-        -If an item set with the sane item cores already exists, then the
+        -If an item set with the same item cores already exists, then the
          LALR_State's item set already has items
         -transition.second is the set of items of the new item set
         -try to merge them with LALR_State's item set

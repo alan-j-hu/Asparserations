@@ -1,5 +1,5 @@
-#ifndef _ASPARSERATIONS_GRAMMAR_PRODUCTION_H_
-#define _ASPARSERATIONS_GRAMMAR_PRODUCTION_H_
+#ifndef ASPARSERATIONS_GRAMMAR_PRODUCTION_H_
+#define ASPARSERATIONS_GRAMMAR_PRODUCTION_H_
 
 #include <string>
 #include <vector>
@@ -12,7 +12,7 @@ namespace asparserations {
     {
     public:
       Production(Nonterminal&, const std::string&,
-		 const std::vector<const Symbol*>&);
+                 const std::vector<const Symbol*>&);
       const std::vector<const Symbol*>& symbols() const;
       const std::string& id() const;
       Nonterminal& nonterminal();

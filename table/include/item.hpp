@@ -1,5 +1,5 @@
-#ifndef _ASPARSERATIONS_TABLE_ITEM_H_
-#define _ASPARSERATIONS_TABLE_ITEM_H_
+#ifndef ASPARSERATIONS_TABLE_ITEM_H_
+#define ASPARSERATIONS_TABLE_ITEM_H_
 
 namespace asparserations {
   namespace grammar {
