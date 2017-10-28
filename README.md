@@ -8,6 +8,7 @@ grammar parser, is included in the bootstrap folder.
   [LA]LR(1) table construction algorithm
 - Productions are named instead of indexed and names are local to the
   nonterminal
+- Preserves shift/reduce and reduce/reduce conflicts in JSON
 - Used to generate the parser for grammar files
 - Can be integrated with lexers easily (the grammar file lexer is lazy/a
   generator/monadic!)
