@@ -4,3 +4,5 @@ running
 
     $ asparserations -r S -o lr.json grammar
     $ asparserations -r S -l -o lalr.json grammar
+    $ asparserations -r S -o lr-debug.json -d grammar
+    $ asparserations -r S -l -o lalr-debug.json -d grammar

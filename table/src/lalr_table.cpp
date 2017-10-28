@@ -28,6 +28,8 @@ LALR_Table::LALR_Table(Grammar& grammar)
     }
   };
   std::list<std::pair<const std::set<Item_Core>,LALR_State>*> queue;
+  m_item_set_state_pairs.emplace_back(&m_item_sets.begin()->second.item_set(),
+                                      &m_states.back());
   queue.push_back(&*m_item_sets.begin());
   unsigned int index = 1;
   for(auto& pair : queue) {

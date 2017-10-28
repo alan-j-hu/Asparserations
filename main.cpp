@@ -27,19 +27,22 @@ int main(int argc, char** argv)
 {
 
   bool use_lalr = false;
+  bool debug = false;
   std::string output_filename = "a.out.json";
   std::string root = "Root";
   std::vector<std::string> positional_args;
   std::map<char,Argument> flags {
     {'o', Argument::Argument},
     {'r', Argument::Argument},
-    {'l', Argument::No_Argument}
+    {'l', Argument::No_Argument},
+    {'d', Argument::No_Argument}
   };
   std::map<std::string,const std::pair<const char,Argument>*>
     option_abbreviations {
       {"out", &*flags.find('o')},
       {"root", &*flags.find('r')},
-      {"lalr", &*flags.find('l')} 
+      {"lalr", &*flags.find('l')},
+      {"debug", &*flags.find('d')}
   };
   std::map<char,std::string> flag_values;
 
@@ -67,13 +70,13 @@ int main(int argc, char** argv)
 
         auto iter = option_abbreviations.find(name);
         if(iter == option_abbreviations.end()) {
-          std::cout << "Unknown option --" << name << std::endl;
+          std::cerr << "Unknown option --" << name << std::endl;
           return -1;
         }
         if(argv[i][j] == '=') {
           std::string arg(argv[i] + j + 1);
           if(flags[iter->second->first] == Argument::No_Argument) {
-            std::cout << "Error: No argument needed for "
+            std::cerr << "Error: No argument needed for "
                       << name << std::endl;
             return -1;
           }
@@ -125,6 +128,9 @@ int main(int argc, char** argv)
       }
       root = pair.second;
       break;
+    case 'd':
+      debug = true;
+      break;
     }
   }
 
@@ -151,11 +157,11 @@ int main(int argc, char** argv)
   // Can I use move semantics so that grammar takes ownership of heap pointer,
   // rather than copying it, then making me delete it?
   delete temp_heap_data;
-    
+
   asparserations::grammar::Grammar grammar(root);
   asparserations::bootstrap::Lexer lexer;
   asparserations::bootstrap::Callback callback(grammar);
-  asparserations::generated::Parser parser(lexer, callback);
+  asparserations::generated::Parser parser(lexer, callback); //segfault
 
   // Discard the Node* return value; all necessary info is in the callback obj
   delete parser.parse(grammar_str);
@@ -166,7 +172,7 @@ int main(int argc, char** argv)
   } else {
     table = new asparserations::table::LR_Table(grammar);
   }
-  asparserations::codegen::JSON_Generator code(*table, true);
+  asparserations::codegen::JSON_Generator code(*table, true, debug);
   std::ofstream output_file(output_filename);
   output_file.write(code.code().data(), code.code().size());
   delete table;

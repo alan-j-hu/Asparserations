@@ -21,6 +21,8 @@ LR_Table::LR_Table(Grammar& grammar)
 			   0, grammar.end())});
   m_states.emplace_back(0);
   m_item_sets.insert(std::make_pair(start_set, &m_states.back()));
+  m_item_set_state_pairs.emplace_back(&m_item_sets.begin()->first,
+                                      &m_states.back());
   queue.push_back(&*m_item_sets.begin());
 
   unsigned int index = 1;

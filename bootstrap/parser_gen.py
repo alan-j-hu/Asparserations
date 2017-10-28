@@ -77,7 +77,8 @@ private:
 
   struct State
   {
-    std::map<Token,std::pair<const State*,std::set<const Mangled_Production*>>>actions;
+    std::map<Token,std::pair<const State*,std::set<const Mangled_Production*>>>
+      actions;
     std::map<Nonterminal,const State*> gotos;
   };
 
@@ -196,7 +197,6 @@ void $namespace::$class_name::m_process(const State& state, const char* c)
     auto result = m_lexer.expect(action.first, c);
     if(result.second) {
       if(action.second.first != nullptr) {
-        // std::cout << (long)c << " " << (long)result.first << std::endl;
         m_stack.emplace_back(
           new Node(m_callback.call(action.first,
                                    std::string(result.first.first,
