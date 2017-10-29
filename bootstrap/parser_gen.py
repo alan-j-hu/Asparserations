@@ -5,8 +5,8 @@ import string
 import sys
 
 header_template = """
-#ifndef ASPARSERATIONS__GENERATED_${class_name}_H_
-#define ASPARSERATIONS__GENERATED_${class_name}_H_
+#ifndef ASPARSERATIONS_GENERATED_${class_name}_H_
+#define ASPARSERATIONS_GENERATED_${class_name}_H_
 
 #include <array>
 #include <map>
