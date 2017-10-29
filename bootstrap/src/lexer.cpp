@@ -17,14 +17,20 @@ Lexer::expect(generated::Token token, const generated::Lexer_State& state)
     return std::make_pair(s, result);
 
   case generated::Token::Identifier:
-    result = match_range('A', 'z', s);
+    result = match_range('A', 'Z', s);
+    if(!result) {
+      result = match_range('a', 'z', s);
+    }
     if(!result) {
       return std::make_pair(s, false);
     }
     do {
-      result = match_range('A', 'z', s);
+      result = match_range('A', 'Z', s);
       if(!result) {
-	result = match_range('0','9', s);
+        result = match_range('a', 'z', s);
+      }
+      if(!result) {
+        result = match_range('0','9', s);
       }
     } while(result);
     return std::make_pair(s, true);

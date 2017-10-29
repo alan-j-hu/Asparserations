@@ -235,7 +235,7 @@ void $namespace::$class_name::m_process
     }
   }
   throw std::runtime_error("Failed parse: " + std::to_string(err.lines)
-    + ":" + std::to_string(err.begin - err.last_newline));
+    + ":" + std::to_string(err.end - err.last_newline));
 }
 
 void $namespace::$class_name::m_reduce
