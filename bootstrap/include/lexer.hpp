@@ -10,12 +10,12 @@ namespace asparserations {
     class Lexer
     {
     public:
-      std::pair<std::pair<const char*,const char*>,bool>
-        expect(generated::Token, const char*);
+      std::pair<generated::Lexer_State,bool>
+      expect(generated::Token, const generated::Lexer_State&);
     private:
-      bool match(const std::string&, const char*&);
-      bool match_range(char, char, const char*&);
-      void skip_whitespace(const char*&);
+      bool match(const std::string&, generated::Lexer_State&);
+      bool match_range(char, char, generated::Lexer_State&);
+      void skip_whitespace(generated::Lexer_State&);
     };
   }
 }

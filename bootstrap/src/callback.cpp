@@ -56,8 +56,9 @@ Callback::Payload Callback::call(generated::Nonterminal nonterminal,
   case generated::Nonterminal::Nonterminal:
     switch(production) {
     case generated::Production::main:
-      m_nonterminal = &m_grammar.add_nonterminal(std::string(children[0]->begin(),
-                  	                                     children[0]->end()));
+      m_nonterminal
+        = &m_grammar.add_nonterminal(std::string(children[0]->state().begin,
+                  	                         children[0]->state().end));
       return Payload();
     default:
       throw std::runtime_error("Unknown production " + Parser::production_to_string(production) + " in Nonterminal");
@@ -77,8 +78,8 @@ Callback::Payload Callback::call(generated::Nonterminal nonterminal,
       if(m_nonterminal == nullptr) {
 	throw std::runtime_error("Null pointer");
       }
-      m_nonterminal->add_production(
-		      std::string(children[2]->begin(), children[2]->end()),
+      m_nonterminal->add_production(std::string(children[2]->state().begin,
+                                                children[2]->state().end),
 		      m_symbols
       );
       m_symbols = std::vector<const Symbol*>();

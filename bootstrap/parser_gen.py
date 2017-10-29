@@ -32,24 +32,32 @@ enum class Production
   $productions
 };
 
+struct Lexer_State
+{
+  const char* begin;
+  const char* end;
+  unsigned int lines;
+  const char* last_newline;
+};
+
+Lexer_State next(const Lexer_State&);
+
 /**
  */
 class Node
-  {
+{
   public:
-    Node(const $payload&, const char*, const char*);
+    Node(const $payload&, const Lexer_State&);
     Node(const $payload&, const std::vector<Node*>&);
     const $payload& payload() const;
     const std::vector<Node*>& children() const;
-    const char* begin() const;
-    const char* end() const;
+    const Lexer_State& state() const;
     ~Node();
   private:
     $payload m_payload;
     std::vector<Node*> m_children;
-    const char* m_begin;
-    const char* m_end;
-  };
+    Lexer_State m_state;
+};
 
 class $class_name
 {
@@ -89,7 +97,7 @@ private:
   std::unique_ptr<Productions> m_productions;
   Node* m_root;
 
-  void m_process(const State&, const char*);
+  void m_process(const State&, const Lexer_State&);
   void m_reduce(const Mangled_Production&);
 };
 $end_namespace
@@ -102,11 +110,20 @@ src_template = """
 #include "../include/$class_name.hpp"
 $src_front
 
-$namespace::Node::Node(
-  const $payload& payload,
-  const char* begin,
-  const char* end)
-  : m_payload(payload), m_begin(begin), m_end(end) {}
+$namespace::Lexer_State $namespace::next(const $namespace::Lexer_State& ls)
+{
+  $namespace::Lexer_State ls_prime = {
+    ls.end,
+    ls.end,
+    ls.lines,
+    ls.last_newline
+  };
+  return ls_prime;
+}
+
+$namespace::Node::Node(const $payload& payload,
+                       const $namespace::Lexer_State& state)
+  : m_payload(payload), m_state(state) {}
 
 $namespace::Node::Node(const $payload& payload,
                        const std::vector<Node*>& children)
@@ -116,8 +133,12 @@ $namespace::Node::Node(const $payload& payload,
                              "call Node(const char*, const char*) instead");
   m_payload = payload;
   m_children = children;
-  m_begin = children.front()->begin();
-  m_end = children.back()->end();
+  m_state = $namespace::Lexer_State {
+    children.front()->state().begin,
+    children.back()->state().end,
+    children.back()->state().lines,
+    children.back()->state().last_newline
+  };
 }
 
 const $payload& $namespace::Node::payload() const
@@ -130,14 +151,9 @@ const std::vector<$namespace::Node*>& $namespace::Node::children() const
   return m_children;
 }
 
-const char* $namespace::Node::begin() const
+const $namespace::Lexer_State& $namespace::Node::state() const
 {
-  return m_begin;
-}
-
-const char* $namespace::Node::end() const
-{
-  return m_end;
+  return m_state;
 }
 
 $namespace::Node::~Node()
@@ -159,9 +175,12 @@ $namespace::$class_name::$class_name($lexer& lexer, $callback& callback)
 
 $namespace::Node* $namespace::$class_name::parse(const std::string& input)
 {
-  m_process(m_states.front(), input.data());
+  m_process(m_states.front(),
+            $namespace::Lexer_State{input.data(), input.data(), 
+                                    1, input.data() - 1});
   while(!m_stack.empty()) {
-    m_process(*m_stack.back().second, m_stack.back().first->end());
+    m_process(*m_stack.back().second,
+              $namespace::next(m_stack.back().first->state()));
   }
   return m_root;
 }
@@ -191,17 +210,20 @@ $namespace::$class_name::~$class_name()
   }
 }
 
-void $namespace::$class_name::m_process(const State& state, const char* c)
+void $namespace::$class_name::m_process
+(const State& state, const $namespace::Lexer_State& lex_state)
 {
+  $namespace::Lexer_State err;
   for(auto& action : state.actions) {
-    auto result = m_lexer.expect(action.first, c);
+    auto result = m_lexer.expect(action.first, lex_state);
+    err = result.first;
     if(result.second) {
       if(action.second.first != nullptr) {
         m_stack.emplace_back(
           new Node(m_callback.call(action.first,
-                                   std::string(result.first.first,
-                                               result.first.second)),
-                   result.first.first, result.first.second),
+                                   std::string(result.first.begin,
+                                               result.first.end)),
+                   result.first),
           action.second.first
         );
         return;
@@ -212,7 +234,8 @@ void $namespace::$class_name::m_process(const State& state, const char* c)
       }
     }
   }
-  throw std::runtime_error("Failed parse");
+  throw std::runtime_error("Failed parse: " + std::to_string(err.lines)
+    + ":" + std::to_string(err.begin - err.last_newline));
 }
 
 void $namespace::$class_name::m_reduce
@@ -224,8 +247,7 @@ void $namespace::$class_name::m_reduce
     node = new Node(m_callback.call(production.nonterminal,
                                     production.production,
                                     {}),
-                    m_stack.back().first->end(),
-                    m_stack.back().first->end());
+                    $namespace::next(m_stack.back().first->state()));
   } else {
     std::vector<Node*> popped;
     for(int i = 0; i < production.child_count; ++i) {

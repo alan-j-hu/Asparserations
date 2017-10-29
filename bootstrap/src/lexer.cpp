@@ -1,92 +1,105 @@
 #include "../include/lexer.hpp"
 #include <cctype>
 #include <stdexcept>
-
+#include <iostream>
 using namespace asparserations;
 using namespace bootstrap;
 
-std::pair<std::pair<const char*,const char*>,bool>
-Lexer::expect(generated::Token token, const char* c)
+std::pair<generated::Lexer_State,bool>
+Lexer::expect(generated::Token token, const generated::Lexer_State& state)
 {
-  if(c == nullptr) throw std::runtime_error("Null pointer");
-  skip_whitespace(c);
-  auto start = c;
+  generated::Lexer_State s = state;
+  skip_whitespace(s);
   bool result = false;
   switch(token) {
   case generated::Token::Bar:
-    result = match("|", c);
-    return std::make_pair(std::make_pair(start, c), result);
+    result = match("|", s);
+    return std::make_pair(s, result);
 
   case generated::Token::Identifier:
-    result = match_range('A', 'z', c);
+    result = match_range('A', 'z', s);
     if(!result) {
-      return std::make_pair(std::make_pair(start, c), false);
+      return std::make_pair(s, false);
     }
     do {
-      result = match_range('A', 'z', c);
+      result = match_range('A', 'z', s);
       if(!result) {
-	result = match_range('0','9', c);
+	result = match_range('0','9', s);
       }
     } while(result);
-    return std::make_pair(std::make_pair(start, c), true);
+    return std::make_pair(s, true);
 
   case generated::Token::Colon:
-    result = match(":", c);
-    return std::make_pair(std::make_pair(start, c), result);
+    result = match(":", s);
+    return std::make_pair(s, result);
 
   case generated::Token::Comma:
-    result = match(",", c);
-    return std::make_pair(std::make_pair(start, c), result);
+    result = match(",", s);
+    return std::make_pair(s, result);
 
   case generated::Token::Semicolon:
-    result = match(";", c);
-    return std::make_pair(std::make_pair(start, c), result);
+    result = match(";", s);
+    return std::make_pair(s, result);
 
   case generated::Token::Tokens_Keyword:
-    result = match("tokens", c);
-    return std::make_pair(std::make_pair(start, c), result);
+    result = match("tokens", s);
+    return std::make_pair(s, result);
 
   case generated::Token::Open_Bracket:
-    result = match("{", c);
-    return std::make_pair(std::make_pair(start, c), result);
+    result = match("{", s);
+    return std::make_pair(s, result);
 
   case generated::Token::Close_Bracket:
-    result = match("}", c);
-    return std::make_pair(std::make_pair(start, c), result);
+    result = match("}", s);
+    return std::make_pair(s, result);
 
   case generated::Token::Hash:
-    result = match("#", c);
-    return std::make_pair(std::make_pair(start, c), result);
+    result = match("#", s);
+    return std::make_pair(s, result);
 
   case generated::Token::_end_:
-    result = (*c == '\0');
-    return std::make_pair(std::make_pair(start, c), result);
+    result = (*s.end == '\0');
+    return std::make_pair(s, result);
   }
   throw std::runtime_error("Unknown variant");
 }
 
-void Lexer::skip_whitespace(const char*& c)
+void Lexer::skip_whitespace(generated::Lexer_State& state)
 {
-  for(; *c != '\0' && std::isspace(*c); ++c);
+  for(; *state.begin != '\0' && std::isspace(*state.begin); ++state.begin) {
+    if(*state.begin == '\n') {
+      state.last_newline = state.begin;
+      ++state.lines;
+    }
+  }
+  state.end = state.begin;
 }
 
-bool Lexer::match(const std::string& match, const char*& c)
+bool Lexer::match(const std::string& match, generated::Lexer_State& state)
 {
-  const char* iter = c;
+  generated::Lexer_State s = state;
   for(auto ch : match) {
-    if(*iter == '\0' || *iter != ch) {
+    if(*s.end == '\n') {
+      s.last_newline = s.end;
+      ++s.lines;
+    }
+    if(*s.end == '\0' || *s.end != ch) {
       return false;
     }
-    ++iter;
+    ++s.end;
   }
-  c = iter;
+  state = s;
   return true;
 }
 
-bool Lexer::match_range(char lo, char hi, const char*& c)
+bool Lexer::match_range(char lo, char hi, generated::Lexer_State& state)
 {
-  if(*c >= lo && *c <= hi) {
-    ++c;
+  if(*state.end >= lo && *state.end <= hi) {
+    if(*state.end == '\n') {
+      state.last_newline = state.end;
+      ++state.lines;
+    }
+    ++state.end;
     return true;
   }
   return false;
