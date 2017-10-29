@@ -5,8 +5,8 @@ import string
 import sys
 
 header_template = """
-#ifndef _ASPARSERATIONS__GENERATED_${class_name}_
-#define _ASPARSERATIONS__GENERATED_${class_name}_
+#ifndef ASPARSERATIONS__GENERATED_${class_name}_H_
+#define ASPARSERATIONS__GENERATED_${class_name}_H_
 
 #include <array>
 #include <map>
@@ -97,7 +97,7 @@ $end_namespace
 #endif
 """
 
-src_template = """#include <iostream>
+src_template = """
 #include <stdexcept>
 #include "../include/$class_name.hpp"
 $src_front

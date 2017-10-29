@@ -23,7 +23,7 @@ namespace asparserations {
       };
       Callback(grammar::Grammar&);
       Payload call(generated::Nonterminal, generated::Production,
-        	   const std::vector<generated::Node*>&);
+                   const std::vector<generated::Node*>&);
       Payload call(generated::Token, const std::string&);
       const grammar::Grammar& grammar() const;
     private:

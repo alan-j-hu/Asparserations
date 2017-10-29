@@ -17,7 +17,7 @@ grammar parser, is included in the bootstrap folder.
 - `--out`, `-o` - Specifies the output file (a.out.json by default)
 - `--root`, `-r` - Specifies the root node (Root by default)
 - `--lalr`, `-l` - Use LALR(1) (experimental)
-- `--debug` `-d` - Output the item sets as well as the states
+- `--debug`, `-d` - Output the item sets as well as the states
 
 ## Building From Source
 
