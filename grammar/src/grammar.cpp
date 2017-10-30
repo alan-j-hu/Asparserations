@@ -8,7 +8,7 @@ using namespace asparserations;
 using namespace grammar;
 
 Grammar::Grammar(const std::string& start)
-  : m_end(*this, "_end_"), m_accept(*this, "_accept_")
+  : m_end(*this, "_end_", 0), m_accept(*this, "_accept_", 0)
 {
   m_start_symbol = &add_nonterminal(start);
   m_accept.add_production("_root_", {m_start_symbol});
@@ -32,8 +32,10 @@ Grammar::Grammar(Grammar&& old)
 Token& Grammar::add_token(const std::string& name)
 {
   auto result = m_tokens.emplace(std::piecewise_construct,
-		                 std::forward_as_tuple(name),
-			         std::forward_as_tuple(*this, name));
+                                 std::forward_as_tuple(name),
+                                 std::forward_as_tuple(*this,
+                                                       name,
+                                                       m_tokens.size() + 1));
   Token& tok = result.first->second;
   if(result.second) {
     m_token_vec.push_back(&tok);
@@ -45,7 +47,7 @@ Nonterminal& Grammar::add_nonterminal(const std::string& name)
 {
   auto result = m_nonterminals
     .emplace(std::piecewise_construct, std::forward_as_tuple(name),
-	     std::forward_as_tuple(*this, name));
+	     std::forward_as_tuple(*this, name, m_nonterminals.size() + 1));
   Nonterminal& nt = result.first->second;
   if(result.second) {
     m_nonterminal_vec.push_back(&nt);

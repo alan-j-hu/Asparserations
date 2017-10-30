@@ -3,8 +3,9 @@
 using namespace asparserations;
 using namespace grammar;
 
-Grammar::TokenImp::TokenImp(Grammar& g, const std::string& name)
-  : m_grammar(&g), m_name(name), m_first_set{this}
+Grammar::TokenImp::TokenImp(Grammar& g, const std::string& name,
+                            unsigned int index)
+  : m_grammar(&g), m_name(name), m_first_set{this}, m_index(index)
 {}
 
 const std::string& Grammar::TokenImp::name() const

@@ -78,16 +78,17 @@ namespace asparserations {
       struct TokenImp : public Token
       {
         // Methods
-	TokenImp(Grammar& g, const std::string& id);
-	const std::string& name() const;
+        TokenImp(Grammar& g, const std::string& id, unsigned int);
+        const std::string& name() const;
         Grammar& grammar();
         const Grammar& grammar() const;
         const std::set<const Token*>& first_set() const;
         const std::map<std::string,Production>& productions() const;
-	bool is_token() const;
+        bool is_token() const;
         bool derives_empty_string() const;
         // Members
-	const std::string m_name;
+        const std::string m_name;
+        const unsigned int m_index;
         Grammar* m_grammar;
         std::set<const Token*> m_first_set;
         const std::map<std::string,Production> m_productions;
@@ -96,7 +97,7 @@ namespace asparserations {
       struct NonterminalImp : public Nonterminal
       {
         // Methods
-        NonterminalImp(Grammar& g, const std::string& id);	
+        NonterminalImp(Grammar& g, const std::string& id, unsigned int);	
         const std::map<std::string,Production>& productions() const;
         Production& production_at(const std::string&);
         const Production& production_at(const std::string&) const;
@@ -104,16 +105,17 @@ namespace asparserations {
         Grammar& grammar();
         const Grammar& grammar() const;
         const std::set<const Token*>& first_set() const;
-	bool is_token() const;
+        bool is_token() const;
         bool derives_empty_string() const;
         Production& add_production(const std::string&,
                                    std::vector<const Symbol*>);
 	// Members
 	const std::string m_name;
+        const unsigned int m_index;
         Grammar* m_grammar;
         std::map<std::string,Production> m_productions;
-	std::set<const Token*> m_first_set;
-	bool m_derives_empty_string;
+        std::set<const Token*> m_first_set;
+        bool m_derives_empty_string;
       };
 
       std::vector<Token*> m_token_vec;

@@ -4,8 +4,9 @@
 using namespace asparserations;
 using namespace grammar;
 
-Grammar::NonterminalImp::NonterminalImp(Grammar& g, const std::string& name)
-  : m_grammar(&g), m_name(name), m_derives_empty_string(false)
+Grammar::NonterminalImp::NonterminalImp(Grammar& g, const std::string& name,
+                                        unsigned int index)
+  : m_grammar(&g), m_name(name), m_derives_empty_string(false), m_index(index)
 {}
 
 const std::map<std::string,Production>&
