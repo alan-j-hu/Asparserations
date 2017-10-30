@@ -9,8 +9,7 @@ Grammar::NonterminalImp::NonterminalImp(Grammar& g, const std::string& name,
   : m_grammar(&g), m_name(name), m_derives_empty_string(false), m_index(index)
 {}
 
-const std::map<std::string,Production>&
-Grammar::NonterminalImp::productions() const
+const std::list<Production>& Grammar::NonterminalImp::productions() const
 {
   return m_productions;
 }
@@ -18,22 +17,21 @@ Grammar::NonterminalImp::productions() const
 Production& Grammar::NonterminalImp::add_production
 (const std::string& name, std::vector<const Symbol*> symbols)
 {
-  return m_productions.emplace(std::piecewise_construct,
-      	                       std::forward_as_tuple(name),
-                               std::forward_as_tuple(*this, name, symbols,
-                                                     m_productions.size()))
-    .first->second;
+  m_productions.emplace_back(*this, name, symbols, m_productions.size());
+  auto& production = m_productions.back();
+  m_production_map.emplace(name, &production);
+  return production;
 }
 
 Production& Grammar::NonterminalImp::production_at(const std::string& name)
 {
-  return m_productions.at(name);
+  return *m_production_map.at(name);
 }
 
 const Production&
 Grammar::NonterminalImp::production_at(const std::string& name) const
 {
-  return m_productions.at(name);
+  return *m_production_map.at(name);
 }
 
 const std::string& Grammar::NonterminalImp::name() const

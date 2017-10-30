@@ -73,12 +73,12 @@ const Nonterminal& Grammar::nonterminal_at(const std::string& name) const
   return m_nonterminals.at(name);
 }
 
-const std::vector<Nonterminal*>& Grammar::nonterminals() const
+const std::vector<const Nonterminal*>& Grammar::nonterminals() const
 {
   return m_nonterminal_vec;
 }
 
-const std::vector<Token*>& Grammar::tokens() const
+const std::vector<const Token*>& Grammar::tokens() const
 {
   return m_token_vec;
 }
@@ -118,8 +118,7 @@ void Grammar::compute_first_sets()
     needs_update = false;
     for(auto& pair : m_nonterminals) {
       Grammar::NonterminalImp& nonterminal = pair.second;
-      for(const auto& elem : nonterminal.productions()) {
-        const Production& production = elem.second;
+      for(const auto& production : nonterminal.productions()) {
         bool production_derives_empty_string = true;
         // Repeat until first set does not have empty string or end is reached
         for(const Symbol* symbol : production.symbols()) {

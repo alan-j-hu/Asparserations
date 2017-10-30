@@ -37,7 +37,7 @@ Grammar::TokenImp::first_set() const
   return m_first_set;
 }
 
-const std::map<std::string,Production>& Grammar::TokenImp::productions() const
+const std::list<Production>& Grammar::TokenImp::productions() const
 {
   return m_productions;
 }

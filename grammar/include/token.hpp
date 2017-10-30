@@ -17,7 +17,7 @@ namespace asparserations {
       virtual unsigned int index() const=0;
       virtual const std::set<std::reference_wrapper<const Token>>&
         first_set() const=0;
-      virtual const std::map<std::string,Production>& productions() const=0;
+      virtual const std::list<Production>& productions() const=0;
       virtual bool is_token() const=0;
       virtual bool derives_empty_string() const=0;
     };

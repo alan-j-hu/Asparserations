@@ -20,8 +20,7 @@ std::set<Item> table::closure(const Item_Set& item_set)
   for(const Item* item : queue) {
     if(item->marker < item->production.symbols().size()) {
       // Handle the fact that first sets can have the empty string
-      for(auto& pair : item->next()->productions()) {
-        const Production& production = pair.second;
+      for(auto& production : item->next()->productions()) {
         bool inherits_lookahead = true;
         for(int i=item->marker+1; i < item->production.symbols().size(); ++i) {
           for(auto& lookahead : item->peek()->first_set()) {

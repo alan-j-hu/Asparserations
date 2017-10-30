@@ -71,8 +71,7 @@ void JSON_Generator::m_generate_nonterminal(const Nonterminal& n)
   m_code += "\"" + n.name() + "\" : {";
   ++m_indent_depth;
   bool needs_comma = false;
-  for(auto& pair : n.productions()) {
-    const Production& production = pair.second;
+  for(auto& production : n.productions()) {
     if(needs_comma) {
       m_code += ",";
     } else {

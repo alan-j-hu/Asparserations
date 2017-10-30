@@ -49,8 +49,8 @@ namespace asparserations {
       Nonterminal& nonterminal_at(const std::string&);
       const Nonterminal& nonterminal_at(const std::string&) const;
 
-      const std::vector<Nonterminal*>& nonterminals() const;
-      const std::vector<Token*>& tokens() const;
+      const std::vector<const Nonterminal*>& nonterminals() const;
+      const std::vector<const Token*>& tokens() const;
       const Nonterminal& accept() const;
       const Token& end() const;
 
@@ -84,7 +84,7 @@ namespace asparserations {
         Grammar& grammar();
         const Grammar& grammar() const;
         const std::set<std::reference_wrapper<const Token>>& first_set() const;
-        const std::map<std::string,Production>& productions() const;
+        const std::list<Production>& productions() const;
         bool is_token() const;
         bool derives_empty_string() const;
         // Members
@@ -92,14 +92,14 @@ namespace asparserations {
         const unsigned int m_index;
         Grammar* m_grammar;
         std::set<std::reference_wrapper<const Token>> m_first_set;
-        const std::map<std::string,Production> m_productions;
+        const std::list<Production> m_productions;
       };
 
       struct NonterminalImp : public Nonterminal
       {
         // Methods
         NonterminalImp(Grammar& g, const std::string& id, unsigned int);	
-        const std::map<std::string,Production>& productions() const;
+        const std::list<Production>& productions() const;
         Production& production_at(const std::string&);
         const Production& production_at(const std::string&) const;
         const std::string& name() const;
@@ -115,13 +115,14 @@ namespace asparserations {
 	const std::string m_name;
         const unsigned int m_index;
         Grammar* m_grammar;
-        std::map<std::string,Production> m_productions;
+        std::list<Production> m_productions;
+	std::map<std::string,Production*> m_production_map;
         std::set<std::reference_wrapper<const Token>> m_first_set;
         bool m_derives_empty_string;
       };
 
-      std::vector<Token*> m_token_vec;
-      std::vector<Nonterminal*> m_nonterminal_vec;
+      std::vector<const Token*> m_token_vec;
+      std::vector<const Nonterminal*> m_nonterminal_vec;
       std::map<std::string,TokenImp> m_tokens;
       std::map<std::string,NonterminalImp> m_nonterminals;
       Nonterminal* m_start_symbol;
