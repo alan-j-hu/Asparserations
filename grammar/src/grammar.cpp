@@ -2,8 +2,6 @@
 #include "../include/production.hpp"
 #include <utility>
 
-#include<iostream>
-
 using namespace asparserations;
 using namespace grammar;
 
@@ -121,24 +119,24 @@ void Grammar::compute_first_sets()
     for(auto& pair : m_nonterminals) {
       Grammar::NonterminalImp& nonterminal = pair.second;
       for(const auto& elem : nonterminal.productions()) {
-	const Production& production = elem.second;
-	bool production_derives_empty_string = true;
-	//Repeat until first set does not have empty string or end is reached
-	for(const Symbol* symbol : production.symbols()) {
-	  for(const Token* first : symbol->first_set()) {
-	    auto result = nonterminal.m_first_set.insert(first);
-	    if(result.second) {
-	      needs_update = true;
-	    }
-	  }
-	  if(!symbol->derives_empty_string()) {
-	    production_derives_empty_string = false;
-	    break;
-	  }
-	}
-	if(production_derives_empty_string) {
-	  nonterminal.m_derives_empty_string = true;
-	}
+        const Production& production = elem.second;
+        bool production_derives_empty_string = true;
+        // Repeat until first set does not have empty string or end is reached
+        for(const Symbol* symbol : production.symbols()) {
+          for(const Token* first : symbol->first_set()) {
+            auto result = nonterminal.m_first_set.insert(first);
+            if(result.second) {
+              needs_update = true;
+            }
+          }
+          if(!symbol->derives_empty_string()) {
+            production_derives_empty_string = false;
+            break;
+          }
+        }
+        if(production_derives_empty_string) {
+          nonterminal.m_derives_empty_string = true;
+        }
       }
     }
   }
