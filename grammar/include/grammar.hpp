@@ -63,7 +63,7 @@ namespace asparserations {
       /**
          Sets the start symbol
        */
-      void set_start_symbol(Nonterminal*);
+      void set_start_symbol(Nonterminal&);
 
       /**
          Computes the FIRST sets of the symbols - the set of tokens that the

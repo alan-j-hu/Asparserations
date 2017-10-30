@@ -32,6 +32,9 @@ Lexer::expect(generated::Token token, const generated::Lexer_State& state)
       if(!result) {
         result = match_range('0','9', s);
       }
+      if(!result) {
+        result = match("_", s);
+      }
     } while(result);
     return std::make_pair(s, true);
 

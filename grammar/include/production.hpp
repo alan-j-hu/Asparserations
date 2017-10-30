@@ -18,8 +18,8 @@ namespace asparserations {
       unsigned int index() const;
       Nonterminal& nonterminal();
       const Nonterminal& nonterminal() const;
-      void set_symbol(unsigned int, const Symbol*);
-      void insert_symbol(unsigned int, const Symbol*);
+      void set_symbol(unsigned int, const Symbol&);
+      void insert_symbol(unsigned int, const Symbol&);
       void erase_symbol(unsigned int);
     private:
       Nonterminal& m_nonterminal;

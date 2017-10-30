@@ -26,7 +26,7 @@ Callback::Payload Callback::call(generated::Nonterminal nonterminal,
     case generated::Production::_root_:
       return Payload();
     default:
-      throw std::runtime_error("Unknown production " + Parser::production_to_string(production) + " in __accept__");
+      throw std::runtime_error("Unknown production " + Parser::production_to_string(production) + " in _accept_");
     }
   case generated::Nonterminal::Root:
     switch(production) {
@@ -80,7 +80,7 @@ Callback::Payload Callback::call(generated::Nonterminal nonterminal,
       }
       m_nonterminal->add_production(std::string(children[2]->state().begin,
                                                 children[2]->state().end),
-		      m_symbols
+		                    m_symbols
       );
       m_symbols = std::vector<const Symbol*>();
       return Payload();
@@ -120,13 +120,13 @@ Callback::Payload Callback::call(generated::Token token,
       return Payload();
     case Mode::Append:
       try {
-        m_symbols.push_back(&m_grammar.nonterminal_at(string));
+        m_symbols.push_back(&m_grammar.token_at(string));
       } catch(const std::out_of_range& e) {
-	try {
-	  m_symbols.push_back(&m_grammar.token_at(string));
-	} catch(const std::out_of_range& e) {
-	  throw std::runtime_error("Undefined symbol " + string);
-	}
+        try {
+          m_symbols.push_back(&m_grammar.nonterminal_at(string));
+        } catch(const std::out_of_range& e) {
+          m_symbols.push_back(&m_grammar.add_nonterminal(string));
+        }
       }
       return Payload();
     }

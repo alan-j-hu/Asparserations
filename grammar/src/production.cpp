@@ -44,23 +44,20 @@ const Nonterminal& Production::nonterminal() const
   return m_nonterminal;
 }
 
-void Production::set_symbol(unsigned int idx, const Symbol* symbol)
+void Production::set_symbol(unsigned int idx, const Symbol& symbol)
 {
-  if(symbol == nullptr) {
-    throw std::invalid_argument("Symbol is null");
-  }
-  if(&symbol->grammar() != &m_nonterminal.grammar()) {
+  if(&symbol.grammar() != &m_nonterminal.grammar()) {
     throw std::invalid_argument("Symbol does not belong to the same grammar");
   }
-  m_symbols[idx] = symbol;
+  m_symbols[idx] = &symbol;
 }
 
-void Production::insert_symbol(unsigned int idx, const Symbol* symbol)
+void Production::insert_symbol(unsigned int idx, const Symbol& symbol)
 {
-  if(&symbol->grammar() != &m_nonterminal.grammar()) {
+  if(&symbol.grammar() != &m_nonterminal.grammar()) {
     throw std::invalid_argument("Symbol does not belong to the same grammar");
   }
-  m_symbols.insert(m_symbols.begin() + idx, symbol);
+  m_symbols.insert(m_symbols.begin() + idx, &symbol);
 }
 
 void Production::erase_symbol(unsigned int idx)

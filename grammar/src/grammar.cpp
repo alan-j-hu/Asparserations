@@ -103,10 +103,10 @@ const Nonterminal& Grammar::start_symbol() const
   return *m_start_symbol;
 }
 
-void Grammar::set_start_symbol(Nonterminal* start)
+void Grammar::set_start_symbol(Nonterminal& start)
 {
-  if(start != nullptr && &start->grammar() == this) {
-    m_start_symbol = start;
+  if(&start.grammar() == this) {
+    m_start_symbol = &start;
     m_accept.production_at("_root_").set_symbol(0, start);
   }
 }

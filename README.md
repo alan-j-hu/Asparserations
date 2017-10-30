@@ -30,3 +30,29 @@ This project requires G++, GNU Make, and Python 3 in order to build from source.
     $ make install
 The binary file is saved to `~/local/bin` and can be invoked by typing
 `asparserations [flags...] grammar_file_name`.
+
+## Trying it out
+Create a file called `grammar` in your favorite text editor:
+
+    tokens {
+      number,
+      plus,
+      minus,
+      asterisk,
+      slash
+    }
+    
+    Term : Term plus Factor # add
+         | Term minus Factor # sub
+         | Factor # base_case
+         ;
+    
+    Factor : Factor asterisk number # mult
+           | Factor slash number # div
+           | number # base_case
+           ;
+
+Run:
+
+    $ asparserations -r Term -o table.json grammar
+    $ cat table.json
