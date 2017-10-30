@@ -10,6 +10,7 @@
 #include <ios>
 #include <iostream>
 #include <map>
+#include <stdexcept>
 #include <string>
 #include <utility>
 #include <vector>
@@ -163,9 +164,13 @@ int main(int argc, char** argv)
   asparserations::bootstrap::Callback callback(grammar);
   asparserations::generated::Parser parser(lexer, callback); //segfault
 
-  // Discard the Node* return value; all necessary info is in the callback obj
-  delete parser.parse(grammar_str);
-
+  try {
+    // Discard the Node* return value; all necessary info is in the callback obj
+    delete parser.parse(grammar_str);
+  } catch(std::runtime_error& e) {
+    std::cerr << e.what() << std::endl;
+    return -1;
+  }
   asparserations::table::Table* table;
   if(use_lalr) {
     table = new asparserations::table::LALR_Table(grammar);
