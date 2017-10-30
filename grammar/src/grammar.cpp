@@ -8,8 +8,7 @@ using namespace asparserations;
 using namespace grammar;
 
 Grammar::Grammar(const std::string& start)
-  : m_end(*this, "_end_"), m_accept(*this, "_accept_"),
-    m_dummy_lookahead(*this, "_dummy_")
+  : m_end(*this, "_end_"), m_accept(*this, "_accept_")
 {
   m_start_symbol = &add_nonterminal(start);
   m_accept.add_production("_root_", {m_start_symbol});
@@ -20,8 +19,7 @@ Grammar::Grammar(Grammar&& old)
     m_nonterminals(std::move(old.m_nonterminals)),
     m_start_symbol(std::move(old.m_start_symbol)),
     m_end(std::move(old.m_end)),
-    m_accept(std::move(old.m_accept)),
-    m_dummy_lookahead(std::move(old.m_dummy_lookahead))
+    m_accept(std::move(old.m_accept))
 {
   for(auto& pair : m_tokens) {
     pair.second.m_grammar = this;
@@ -93,11 +91,6 @@ const Nonterminal& Grammar::accept() const
 const Token& Grammar::end() const
 {
   return m_end;
-}
-
-const Token& Grammar::dummy_lookahead() const
-{
-  return m_dummy_lookahead;
 }
 
 Nonterminal& Grammar::start_symbol()
