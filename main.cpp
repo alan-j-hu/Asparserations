@@ -162,11 +162,11 @@ int main(int argc, char** argv)
   asparserations::grammar::Grammar grammar(root);
   asparserations::bootstrap::Lexer lexer;
   asparserations::bootstrap::Callback callback(grammar);
-  asparserations::generated::Parser parser(lexer, callback); //segfault
+  asparserations::generated::Parser parser;
 
   try {
     // Discard the Node* return value; all necessary info is in the callback obj
-    delete parser.parse(grammar_str);
+    delete parser.parse(grammar_str, lexer, callback);
   } catch(std::runtime_error& e) {
     std::cerr << e.what() << std::endl;
     return -1;
