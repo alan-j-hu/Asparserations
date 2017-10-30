@@ -123,7 +123,7 @@ void Grammar::compute_first_sets()
         bool production_derives_empty_string = true;
         // Repeat until first set does not have empty string or end is reached
         for(const Symbol* symbol : production.symbols()) {
-          for(const Token* first : symbol->first_set()) {
+          for(auto& first : symbol->first_set()) {
             auto result = nonterminal.m_first_set.insert(first);
             if(result.second) {
               needs_update = true;
@@ -144,7 +144,31 @@ void Grammar::compute_first_sets()
   if(m_start_symbol != nullptr) {
     m_accept.m_first_set = m_start_symbol->first_set();
     if(m_start_symbol->derives_empty_string()) {
-      m_accept.m_first_set.insert(&m_end);
+      const Token& t = m_end;
+      m_accept.m_first_set.insert(std::cref(t));
     }
   }
+}
+
+bool grammar::operator<(const Symbol& l, const Symbol& r)
+{
+  if(&l.grammar() < &r.grammar()) {
+    return true;
+  }
+  if(&r.grammar() < &l.grammar()) {
+    return false;
+  }
+  if(l.is_token() && !r.is_token()) {
+    return true;
+  }
+  if(r.is_token() && !l.is_token()) {
+    return false;
+  }
+  if(l.index() < r.index()) {
+    return true;
+  }
+  if(r.index() < l.index()) {
+    return false;
+  }
+  return false;
 }

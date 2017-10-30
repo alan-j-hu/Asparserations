@@ -12,9 +12,10 @@ namespace asparserations {
     {
     public:
       Production(Nonterminal&, const std::string&,
-                 const std::vector<const Symbol*>&);
+                 const std::vector<const Symbol*>&, unsigned int);
       const std::vector<const Symbol*>& symbols() const;
       const std::string& name() const;
+      unsigned int index() const;
       Nonterminal& nonterminal();
       const Nonterminal& nonterminal() const;
       void set_symbol(unsigned int, const Symbol*);
@@ -22,9 +23,11 @@ namespace asparserations {
       void erase_symbol(unsigned int);
     private:
       Nonterminal& m_nonterminal;
+      unsigned int m_index;
       std::string m_name;
       std::vector<const Symbol*> m_symbols;
     };
+    bool operator<(const Production&, const Production&);
   }
 }
 

@@ -63,7 +63,7 @@ LALR_Table::LALR_Table(Grammar& grammar)
 	m_item_set_state_pairs.emplace_back(&result.first->second.item_set(),
                                             &result.first->second.state());
       }
-      pair->second.state().add_transition(transition.first,
+      pair->second.state().add_transition(&transition.first.get(),
        	                                  &result.first->second.state());
     }
     pair->second.state().add_reductions(reductions);

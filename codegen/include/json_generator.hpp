@@ -36,11 +36,13 @@ namespace asparserations {
       void m_generate_nonterminal(const grammar::Nonterminal&);
       void m_generate_grammar(const grammar::Grammar&);
       void m_generate_actions(
-        const std::map<const grammar::Token*,
-        std::pair<const table::State*,std::set<const grammar::Production*>>>&
+	const std::map<std::reference_wrapper<const grammar::Token>,
+        std::pair<const table::State*,
+	          std::set<std::reference_wrapper<const grammar::Production>>>>&
                              );
-      void m_generate_gotos(const std::map<const grammar::Nonterminal*,
-                                           const table::State*>&);
+      void m_generate_gotos(
+	const std::map<std::reference_wrapper<const grammar::Nonterminal>,
+                       const table::State*>&);
       void m_generate_item_set(const table::Item_Set&);
       void m_generate_state(const table::State&, const table::Item_Set*);
       void m_generate_table(const table::Table&);

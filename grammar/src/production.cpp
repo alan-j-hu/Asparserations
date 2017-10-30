@@ -6,8 +6,8 @@ using namespace asparserations;
 using namespace grammar;
 
 Production::Production(Nonterminal& nt, const std::string& name,
-		       const std::vector<const Symbol*>& syms)
-  : m_nonterminal(nt), m_name(name), m_symbols(syms)
+		       const std::vector<const Symbol*>& syms, unsigned int idx)
+  : m_nonterminal(nt), m_name(name), m_symbols(syms), m_index(idx)
 {
   for(const Symbol* symbol : m_symbols) {
     if(symbol == nullptr) {
@@ -27,6 +27,11 @@ const std::vector<const Symbol*>& Production::symbols() const
 const std::string& Production::name() const
 {
   return m_name;
+}
+
+unsigned int Production::index() const
+{
+  return m_index;
 }
 
 Nonterminal& Production::nonterminal()
@@ -61,4 +66,21 @@ void Production::insert_symbol(unsigned int idx, const Symbol* symbol)
 void Production::erase_symbol(unsigned int idx)
 {
   m_symbols.erase(m_symbols.begin() + idx);
+}
+
+bool grammar::operator<(const Production& l, const Production& r)
+{
+  if(l.nonterminal() < r.nonterminal()) {
+    return true;
+  }
+  if(r.nonterminal() < l.nonterminal()) {
+    return false;
+  }
+  if(l.index() < r.index()) {
+    return true;
+  }
+  if(r.index() < l.index()) {
+    return false;
+  }
+  return false;
 }

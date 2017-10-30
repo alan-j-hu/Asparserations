@@ -20,7 +20,8 @@ Production& Grammar::NonterminalImp::add_production
 {
   return m_productions.emplace(std::piecewise_construct,
       	                       std::forward_as_tuple(name),
-                               std::forward_as_tuple(*this, name, symbols))
+                               std::forward_as_tuple(*this, name, symbols,
+                                                     m_productions.size()))
     .first->second;
 }
 
@@ -38,6 +39,11 @@ Grammar::NonterminalImp::production_at(const std::string& name) const
 const std::string& Grammar::NonterminalImp::name() const
 {
   return m_name;
+}
+
+unsigned int Grammar::NonterminalImp::index() const
+{
+  return m_index;
 }
 
 Grammar& Grammar::NonterminalImp::grammar()
@@ -60,7 +66,25 @@ bool Grammar::NonterminalImp::derives_empty_string() const
   return m_derives_empty_string;
 }
 
-const std::set<const Token*>& Grammar::NonterminalImp::first_set() const
+const std::set<std::reference_wrapper<const Token>>&
+Grammar::NonterminalImp::first_set() const
 {
   return m_first_set;
+}
+
+bool grammar::operator<(const Nonterminal& l, const Nonterminal& r)
+{
+  if(&l.grammar() < &r.grammar()) {
+    return true;
+  }
+  if(&r.grammar() < &l.grammar()) {
+    return false;
+  }
+  if(l.index() < r.index()) {
+    return true;
+  }
+  if(r.index() < l.index()) {
+    return false;
+  }
+  return false;
 }

@@ -1,5 +1,6 @@
 #include "../include/item.hpp"
 #include "../../grammar/include/production.hpp"
+#include "../../grammar/include/token.hpp"
 
 using namespace asparserations;
 using namespace grammar;
@@ -26,10 +27,10 @@ bool Item::compare_cores(const Item& rhs) const
   if(rhs.marker < marker) {
     return false;
   }
-  if(&production < &rhs.production) {
+  if(production < rhs.production) {
     return true;
   }
-  if(&rhs.production < &production) {
+  if(rhs.production < production) {
     return false;
   }
   return false;
@@ -43,16 +44,16 @@ bool table::operator<(const Item& lhs, const Item& rhs)
   if(rhs.marker < lhs.marker) {
     return false;
   }
-  if(&lhs.production < &rhs.production) {
+  if(lhs.production < rhs.production) {
     return true;
   }
-  if(&rhs.production < &lhs.production) {
+  if(rhs.production < lhs.production) {
     return false;
   }
-  if(&lhs.lookahead < &rhs.lookahead) {
+  if(lhs.lookahead < rhs.lookahead) {
     return true;
   }
-  if(&rhs.lookahead < &lhs.lookahead) {
+  if(rhs.lookahead < lhs.lookahead) {
     return false;
   }
   return false;

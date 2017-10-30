@@ -51,18 +51,18 @@
       "index" : 0,
       "actions" : {
         "c" : {
-          "shift" : 2,
+          "shift" : 1,
           "reduces" : [
           ]
         },
         "d" : {
-          "shift" : 3,
+          "shift" : 2,
           "reduces" : [
           ]
         }
       },
       "gotos" : {
-        "S" : 1,
+        "S" : 3,
         "C" : 4
       },
       "itemSet" : [
@@ -79,39 +79,13 @@
     {
       "index" : 1,
       "actions" : {
-        "_end_" : {
-          "shift" : null,
-          "reduces" : [
-            {
-              "nonterminal" : "_accept_",
-              "production" : "_root_"
-            }
-          ]
-        }
-      },
-      "gotos" : {
-      },
-      "itemSet" : [
-        {
-          "production" : {
-            "nonterminal" : "_accept_",
-            "production" : "_root_"
-          },
-          "marker" : 1,
-          "lookahead" : "_end_"
-        }
-      ]
-    },
-    {
-      "index" : 2,
-      "actions" : {
         "c" : {
-          "shift" : 2,
+          "shift" : 1,
           "reduces" : [
           ]
         },
         "d" : {
-          "shift" : 3,
+          "shift" : 2,
           "reduces" : [
           ]
         }
@@ -139,7 +113,7 @@
       ]
     },
     {
-      "index" : 3,
+      "index" : 2,
       "actions" : {
         "c" : {
           "shift" : null,
@@ -178,6 +152,32 @@
           },
           "marker" : 1,
           "lookahead" : "d"
+        }
+      ]
+    },
+    {
+      "index" : 3,
+      "actions" : {
+        "_end_" : {
+          "shift" : null,
+          "reduces" : [
+            {
+              "nonterminal" : "_accept_",
+              "production" : "_root_"
+            }
+          ]
+        }
+      },
+      "gotos" : {
+      },
+      "itemSet" : [
+        {
+          "production" : {
+            "nonterminal" : "_accept_",
+            "production" : "_root_"
+          },
+          "marker" : 1,
+          "lookahead" : "_end_"
         }
       ]
     },

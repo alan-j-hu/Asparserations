@@ -10,10 +10,10 @@ Item_Core::Item_Core(const Production& p, unsigned short int m)
 
 bool table::operator<(const Item_Core& lhs, const Item_Core& rhs)
 {
-  if(&lhs.production < &rhs.production) {
+  if(lhs.production < rhs.production) {
     return true;
   }
-  if(&rhs.production < &lhs.production) {
+  if(rhs.production < lhs.production) {
     return false;
   }
   if(lhs.marker < rhs.marker) {

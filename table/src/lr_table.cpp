@@ -47,7 +47,8 @@ LR_Table::LR_Table(Grammar& grammar)
       } else {
         m_states.pop_back();
       }
-      elem->second->add_transition(transition.first, result.first->second);
+      elem->second->add_transition(&transition.first.get(),
+                                   result.first->second);
     }
     elem->second->add_reductions(reductions);
   }

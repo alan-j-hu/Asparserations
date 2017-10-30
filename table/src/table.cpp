@@ -24,8 +24,8 @@ std::set<Item> table::closure(const Item_Set& item_set)
         const Production& production = pair.second;
         bool inherits_lookahead = true;
         for(int i=item->marker+1; i < item->production.symbols().size(); ++i) {
-          for(const Token* lookahead : item->peek()->first_set()) {
-            auto result = items.insert(Item(production, 0, *lookahead));
+          for(auto& lookahead : item->peek()->first_set()) {
+            auto result = items.insert(Item(production, 0, lookahead.get()));
 	    if(result.second) {
 	      queue.push_back(&*result.first);
 	    }
@@ -47,19 +47,21 @@ std::set<Item> table::closure(const Item_Set& item_set)
   return items;
 }
 
-std::pair<std::map<const Symbol*,std::set<Item>>,
-	  std::map<const Token*,std::set<const Production*>>>
+std::pair<std::map<std::reference_wrapper<const Symbol>,std::set<Item>>,
+	  std::map<std::reference_wrapper<const Token>,
+                   std::set<std::reference_wrapper<const Production>>>>
 table::gotos(const std::set<Item>& items)
 {
-  std::pair<std::map<const Symbol*,std::set<Item>>,
-            std::map<const Token*,std::set<const Production*>>> ret;
+  std::pair<std::map<std::reference_wrapper<const Symbol>,std::set<Item>>,
+            std::map<std::reference_wrapper<const Token>,
+                     std::set<std::reference_wrapper<const Production>>>> ret;
   for(const Item& item : items) {
     if(item.marker < item.production.symbols().size()) {
-      ret.first[item.next()].emplace(item.production,
+      ret.first[std::cref(*item.next())].emplace(item.production,
                                      item.marker + 1,
                                      item.lookahead);
     } else {
-      ret.second[&item.lookahead].insert(&item.production);
+      ret.second[std::cref(item.lookahead)].insert(std::cref(item.production));
     }
   }
 

@@ -24,7 +24,7 @@ void State::add_transition(const Symbol* const input, const State* state)
     if(token == nullptr) {
       throw std::runtime_error("Bad cast from const Symbol* to const Token*");
     }
-    m_actions[token].first = state;
+    m_actions[std::cref(*token)].first = state;
   } else {
     auto nt = dynamic_cast<const Nonterminal*>(input);
     if(nt == nullptr) {
@@ -32,49 +32,37 @@ void State::add_transition(const Symbol* const input, const State* state)
 	"Bad cast from const Symbol* to const Nonterminal*"
       );
     }
-    m_gotos[nt] = state;
+    m_gotos[std::cref(*nt)] = state;
   }
 }
 
 void State::add_reductions(
-  const std::map<const Token*,std::set<const Production*>>& reductions
-			   )
+  const std::map<std::reference_wrapper<const Token>,
+  std::set<std::reference_wrapper<const Production>>>& reductions
+                           )
 {
   for(auto& pair : reductions) {
-    auto result = m_actions.insert(
-      std::make_pair(pair.first,std::make_pair(nullptr, pair.second)));
-    //std::set<const Production*>& ref = _actions[pair.first].second;
+    auto result
+      = m_actions.insert(std::make_pair(pair.first,
+                                        std::make_pair(nullptr, pair.second)));
     if(!result.second) {
-      for(const Production* p : pair.second) {
+      for(auto& p : pair.second) {
         result.first->second.second.insert(p);
       }
     }
   }
 }
 
-const std::map<const Token*,
-	       std::pair<const State*,std::set<const Production*>>>&
+const std::map<std::reference_wrapper<const Token>,
+               std::pair<const State*,
+                         std::set<std::reference_wrapper<const Production>>>>&
 State::actions() const
 {
   return m_actions;
 }
 
-const std::map<const Nonterminal*,const State*>& State::gotos() const
+const std::map<std::reference_wrapper<const Nonterminal>,const State*>&
+State::gotos() const
 {
   return m_gotos;
 }
-
-/*
-const std::map<const asparserations::grammar::Symbol*,const State*>&
-State::transitions() const
-{
-  return _transitions;
-}
-
-const std::map<const asparserations::grammar::Token*,
-               std::set<const asparserations::grammar::Production*>>&
-State::reductions() const
-{
-  return _reductions;
-}
-*/

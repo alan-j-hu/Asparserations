@@ -3,6 +3,7 @@
 
 #include "state.hpp"
 #include "item.hpp"
+#include <functional>
 #include <list>
 #include <map>
 #include <set>
@@ -39,9 +40,9 @@ namespace asparserations {
        @return a map of pointers to Symbols to pairs consisting of shifted
        items and productions for reductions
      */
-    std::pair<std::map<const grammar::Symbol*,std::set<Item>>,
-              std::map<const grammar::Token*,
-                       std::set<const grammar::Production*>>>
+    std::pair<std::map<std::reference_wrapper<const grammar::Symbol>,std::set<Item>>,
+              std::map<std::reference_wrapper<const grammar::Token>,
+                       std::set<std::reference_wrapper<const grammar::Production>>>>
     gotos(const std::set<Item>&);
   }
 }

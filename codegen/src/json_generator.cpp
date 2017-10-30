@@ -145,8 +145,10 @@ void JSON_Generator::m_generate_grammar(const Grammar& grammar)
 }
 
 void JSON_Generator::m_generate_actions(
-  const std::map<const Token*,std::pair<const State*,
-                              std::set<const Production*>>>& actions)
+  const std::map<std::reference_wrapper<const Token>,
+                 std::pair<const State*,
+                           std::set<std::reference_wrapper<const Production>>>>&
+  actions)
 {
   m_code += "{";
   ++m_indent_depth;
@@ -158,7 +160,7 @@ void JSON_Generator::m_generate_actions(
       needs_comma = true;
     }
     m_break_and_indent();
-    m_code += "\"" + action.first->name() + "\" : {";
+    m_code += "\"" + action.first.get().name() + "\" : {";
     ++m_indent_depth;
     m_break_and_indent();
     m_code += "\"shift\" : "
@@ -181,9 +183,9 @@ void JSON_Generator::m_generate_actions(
       ++m_indent_depth;
       m_break_and_indent();
       m_code += "\"nonterminal\" : \""
-        + production->nonterminal().name() + "\",";
+        + production.get().nonterminal().name() + "\",";
       m_break_and_indent();
-      m_code += "\"production\" : \"" + production->name() + "\"";
+      m_code += "\"production\" : \"" + production.get().name() + "\"";
       --m_indent_depth;
       m_break_and_indent();
       m_code += "}";
@@ -200,8 +202,9 @@ void JSON_Generator::m_generate_actions(
   m_code += "}";
 }
 
-void JSON_Generator::m_generate_gotos(const std::map<const Nonterminal*,
-                                      const State*>& gotos)
+void JSON_Generator::m_generate_gotos(
+  const std::map<std::reference_wrapper<const Nonterminal>,const State*>& gotos
+                                      )
 {
   m_code += "{";
   ++m_indent_depth;
@@ -213,7 +216,7 @@ void JSON_Generator::m_generate_gotos(const std::map<const Nonterminal*,
       needs_comma = true;
     }
     m_break_and_indent();
-    m_code += "\"" + go_to.first->name() + "\" : "
+    m_code += "\"" + go_to.first.get().name() + "\" : "
       + std::to_string(go_to.second->index());
   }
   --m_indent_depth;
