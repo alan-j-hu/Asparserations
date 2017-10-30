@@ -17,7 +17,7 @@ namespace asparserations {
       virtual const std::map<std::string,Production>& productions() const=0;
       virtual Production& production_at(const std::string&)=0;
       virtual const Production& production_at(const std::string&) const=0;
-      virtual const std::string& id() const=0;
+      virtual const std::string& name() const=0;
       virtual Grammar& grammar()=0;
       virtual const Grammar& grammar() const=0;
       virtual const std::set<const Token*>& first_set() const=0;

@@ -3,13 +3,13 @@
 using namespace asparserations;
 using namespace grammar;
 
-Grammar::TokenImp::TokenImp(Grammar& g, const std::string& id)
-  : m_grammar(&g), m_id(id), m_first_set{this}
+Grammar::TokenImp::TokenImp(Grammar& g, const std::string& name)
+  : m_grammar(&g), m_name(name), m_first_set{this}
 {}
 
-const std::string& Grammar::TokenImp::id() const
+const std::string& Grammar::TokenImp::name() const
 {
-  return m_id;
+  return m_name;
 }
 
 Grammar& Grammar::TokenImp::grammar()

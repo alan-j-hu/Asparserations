@@ -31,11 +31,11 @@ Grammar::Grammar(Grammar&& old)
   }
 }
 
-Token& Grammar::add_token(const std::string& id)
+Token& Grammar::add_token(const std::string& name)
 {
   auto result = m_tokens.emplace(std::piecewise_construct,
-		                 std::forward_as_tuple(id),
-			         std::forward_as_tuple(*this, id));
+		                 std::forward_as_tuple(name),
+			         std::forward_as_tuple(*this, name));
   Token& tok = result.first->second;
   if(result.second) {
     m_token_vec.push_back(&tok);
@@ -43,11 +43,11 @@ Token& Grammar::add_token(const std::string& id)
   return tok;
 }
 
-Nonterminal& Grammar::add_nonterminal(const std::string& id)
+Nonterminal& Grammar::add_nonterminal(const std::string& name)
 {
   auto result = m_nonterminals
-    .emplace(std::piecewise_construct, std::forward_as_tuple(id),
-	     std::forward_as_tuple(*this, id));
+    .emplace(std::piecewise_construct, std::forward_as_tuple(name),
+	     std::forward_as_tuple(*this, name));
   Nonterminal& nt = result.first->second;
   if(result.second) {
     m_nonterminal_vec.push_back(&nt);
@@ -55,24 +55,24 @@ Nonterminal& Grammar::add_nonterminal(const std::string& id)
   return nt;
 }
 
-Token& Grammar::token_at(const std::string& id)
+Token& Grammar::token_at(const std::string& name)
 {
-  return m_tokens.at(id);
+  return m_tokens.at(name);
 }
 
-const Token& Grammar::token_at(const std::string& id) const
+const Token& Grammar::token_at(const std::string& name) const
 {
-  return m_tokens.at(id);
+  return m_tokens.at(name);
 }
 
-Nonterminal& Grammar::nonterminal_at(const std::string& id)
+Nonterminal& Grammar::nonterminal_at(const std::string& name)
 {
-  return m_nonterminals.at(id);
+  return m_nonterminals.at(name);
 }
 
-const Nonterminal& Grammar::nonterminal_at(const std::string& id) const
+const Nonterminal& Grammar::nonterminal_at(const std::string& name) const
 {
-  return m_nonterminals.at(id);
+  return m_nonterminals.at(name);
 }
 
 const std::vector<Nonterminal*>& Grammar::nonterminals() const

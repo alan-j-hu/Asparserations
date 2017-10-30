@@ -5,9 +5,9 @@
 using namespace asparserations;
 using namespace grammar;
 
-Production::Production(Nonterminal& nt, const std::string& id,
+Production::Production(Nonterminal& nt, const std::string& name,
 		       const std::vector<const Symbol*>& syms)
-  : m_nonterminal(nt), m_id(id), m_symbols(syms)
+  : m_nonterminal(nt), m_name(name), m_symbols(syms)
 {
   for(const Symbol* symbol : m_symbols) {
     if(symbol == nullptr) {
@@ -24,9 +24,9 @@ const std::vector<const Symbol*>& Production::symbols() const
   return m_symbols;
 }
 
-const std::string& Production::id() const
+const std::string& Production::name() const
 {
-  return m_id;
+  return m_name;
 }
 
 Nonterminal& Production::nonterminal()

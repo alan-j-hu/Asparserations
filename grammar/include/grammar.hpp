@@ -80,7 +80,7 @@ namespace asparserations {
       {
         // Methods
 	TokenImp(Grammar& g, const std::string& id);
-	const std::string& id() const;
+	const std::string& name() const;
         Grammar& grammar();
         const Grammar& grammar() const;
         const std::set<const Token*>& first_set() const;
@@ -88,7 +88,7 @@ namespace asparserations {
 	bool is_token() const;
         bool derives_empty_string() const;
         // Members
-	const std::string m_id;
+	const std::string m_name;
         Grammar* m_grammar;
         std::set<const Token*> m_first_set;
         const std::map<std::string,Production> m_productions;
@@ -101,7 +101,7 @@ namespace asparserations {
         const std::map<std::string,Production>& productions() const;
         Production& production_at(const std::string&);
         const Production& production_at(const std::string&) const;
-        const std::string& id() const;
+        const std::string& name() const;
         Grammar& grammar();
         const Grammar& grammar() const;
         const std::set<const Token*>& first_set() const;
@@ -110,7 +110,7 @@ namespace asparserations {
         Production& add_production(const std::string&,
                                    std::vector<const Symbol*>);
 	// Members
-	const std::string m_id;
+	const std::string m_name;
         Grammar* m_grammar;
         std::map<std::string,Production> m_productions;
 	std::set<const Token*> m_first_set;

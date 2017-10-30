@@ -4,8 +4,8 @@
 using namespace asparserations;
 using namespace grammar;
 
-Grammar::NonterminalImp::NonterminalImp(Grammar& g, const std::string& id)
-  : m_grammar(&g), m_id(id), m_derives_empty_string(false)
+Grammar::NonterminalImp::NonterminalImp(Grammar& g, const std::string& name)
+  : m_grammar(&g), m_name(name), m_derives_empty_string(false)
 {}
 
 const std::map<std::string,Production>&
@@ -15,28 +15,28 @@ Grammar::NonterminalImp::productions() const
 }
 
 Production& Grammar::NonterminalImp::add_production
-                     (const std::string& id, std::vector<const Symbol*> symbols)
+(const std::string& name, std::vector<const Symbol*> symbols)
 {
   return m_productions.emplace(std::piecewise_construct,
-      	                       std::forward_as_tuple(id),
-                               std::forward_as_tuple(*this, id, symbols)).first
-    ->second;
+      	                       std::forward_as_tuple(name),
+                               std::forward_as_tuple(*this, name, symbols))
+    .first->second;
 }
 
-Production& Grammar::NonterminalImp::production_at(const std::string& id)
+Production& Grammar::NonterminalImp::production_at(const std::string& name)
 {
-  return m_productions.at(id);
+  return m_productions.at(name);
 }
 
 const Production&
-Grammar::NonterminalImp::production_at(const std::string& id) const
+Grammar::NonterminalImp::production_at(const std::string& name) const
 {
-  return m_productions.at(id);
+  return m_productions.at(name);
 }
 
-const std::string& Grammar::NonterminalImp::id() const
+const std::string& Grammar::NonterminalImp::name() const
 {
-  return m_id;
+  return m_name;
 }
 
 Grammar& Grammar::NonterminalImp::grammar()

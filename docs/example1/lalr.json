@@ -9,7 +9,7 @@
       "_accept_" : {
         "_root_" : [
           {
-            "id" : "S",
+            "name" : "S",
             "isToken" : false
           }
         ]
@@ -17,11 +17,11 @@
       "S" : {
         "prod" : [
           {
-            "id" : "C",
+            "name" : "C",
             "isToken" : false
           },
           {
-            "id" : "C",
+            "name" : "C",
             "isToken" : false
           }
         ]
@@ -29,17 +29,17 @@
       "C" : {
         "prod1" : [
           {
-            "id" : "c",
+            "name" : "c",
             "isToken" : true
           },
           {
-            "id" : "C",
+            "name" : "C",
             "isToken" : false
           }
         ],
         "prod2" : [
           {
-            "id" : "d",
+            "name" : "d",
             "isToken" : true
           }
         ]
