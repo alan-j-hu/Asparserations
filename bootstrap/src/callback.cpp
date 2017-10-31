@@ -123,8 +123,11 @@ Callback::Payload Callback::call(generated::Token token,
       m_token_names.insert(string);
       return Payload();
     case Mode::Nonterminal:
-      m_nonterminal = &m_grammar.add_nonterminal(string);
-      return Payload();
+      if(m_token_names.find(string) == m_token_names.end()) {
+        m_nonterminal = &m_grammar.add_nonterminal(string);
+        return Payload();
+      }
+      throw std::runtime_error("Error: " + string + " is a token name");
     case Mode::Append:
       if(m_token_names.find(string) == m_token_names.end()) {
           m_symbols.push_back(&m_grammar.add_nonterminal(string));

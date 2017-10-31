@@ -235,13 +235,19 @@ $callback& callback)
     err = result.first;
     if(result.second) {
       if(action.second.first != nullptr) {
-        m_stack.emplace_back(
-          new Node(callback.call(action.first,
-                                   std::string(result.first.begin,
-                                               result.first.end)),
-                   result.first),
-          action.second.first
-        );
+        try {
+          m_stack.emplace_back(
+            new Node(callback.call(action.first,
+                                     std::string(result.first.begin,
+                                                 result.first.end)),
+                     result.first),
+            action.second.first
+          );
+        } catch(std::runtime_error& e) {
+          throw std::runtime_error(std::to_string(lex_state.lines) + ":"
+            + std::to_string(lex_state.end - lex_state.last_newline) + ": "
+            + e.what());
+        }
         return;
       }
       if(!action.second.second.empty()) {
@@ -273,10 +279,14 @@ $callback& callback)
       m_stack.pop_back();
     }
     auto vec = std::vector<Node*>(popped.rbegin(), popped.rend());
-    node = new Node(callback.call(production.nonterminal,
-                                  production.production,
-                                  vec),
-                    vec);
+    try {
+      node = new Node(callback.call(production.nonterminal,
+                                    production.production,
+                                    vec),
+                      vec);
+    } catch(std::runtime_error& e) {
+      throw std::runtime_error(std::string("Error: ") + e.what());
+    }
   }
   if(production.nonterminal == Nonterminal::_accept_) {
     m_root = node;
