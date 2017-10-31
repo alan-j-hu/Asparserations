@@ -19,7 +19,6 @@ namespace {
   enum class Argument
   {
     Argument,
-    Optional_Argument,
     No_Argument
   };
 }
@@ -33,6 +32,8 @@ int main(int argc, char** argv)
   std::string root = "Root";
   std::vector<std::string> positional_args;
   std::map<char,Argument> flags {
+    {'v', Argument::No_Argument},
+    {'h', Argument::No_Argument},
     {'o', Argument::Argument},
     {'r', Argument::Argument},
     {'l', Argument::No_Argument},
@@ -40,6 +41,8 @@ int main(int argc, char** argv)
   };
   std::map<std::string,const std::pair<const char,Argument>*>
     option_abbreviations {
+      {"version", &*flags.find('v')},
+      {"help", &*flags.find('h')},
       {"out", &*flags.find('o')},
       {"root", &*flags.find('r')},
       {"lalr", &*flags.find('l')},
@@ -105,13 +108,25 @@ int main(int argc, char** argv)
     }
   }
 
-  if(positional_args.size() < 1) {
-    std::cerr << "No file provided" << std::endl;
-    return -1;
-  }
-
   for(auto& pair : flag_values) {
     switch(pair.first) {
+    case 'v':
+      std::cout <<
+        "Asparserations v1.0.0\n"
+        "Copyright 2017 TheAspiringHacker, MIT License (Expat variant)"
+                << std::endl;
+      return 0;
+    case 'h':
+      std::cout <<
+        "Usage: asparserations [flags...] grammar-file\n"
+        "-v, --version     Display the version.\n"
+        "-h, --help        Display this message.\n"
+        "-r, --root <name> Specify the root nonterminal.\n"
+        "-o, --out <file>  Specify the output filename (default a.out.json).\n"
+        "-l, --lalr        Use LALR(1) instead of LR(1).\n"
+        "-d, --debug       Include the item set kernels with the output.\n"
+        << std::flush;
+      return 0;
     case 'l':
       use_lalr = true;
       break;
@@ -135,6 +150,10 @@ int main(int argc, char** argv)
     }
   }
 
+  if(positional_args.size() < 1) {
+    std::cerr << "No file provided" << std::endl;
+    return -1;
+  }
   std::ifstream grammar_file(positional_args[0],
 			     std::ifstream::in | std::ifstream::ate);
   auto size = grammar_file.tellg();
