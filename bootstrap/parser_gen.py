@@ -244,9 +244,8 @@ $callback& callback)
             action.second.first
           );
         } catch(std::runtime_error& e) {
-          throw std::runtime_error(std::to_string(lex_state.lines) + ":"
-            + std::to_string(lex_state.end - lex_state.last_newline) + ": "
-            + e.what());
+          throw std::runtime_error(std::to_string(err.lines) + ":"
+            + std::to_string(err.end - 1 - err.last_newline) + ": " + e.what());
         }
         return;
       }
