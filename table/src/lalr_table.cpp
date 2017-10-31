@@ -55,13 +55,13 @@ LALR_Table::LALR_Table(Grammar& grammar)
       auto result2 = result.first->second.merge(transition.second);
       if(result.second) {
         ++index;
+        m_item_set_state_pairs.emplace_back(&result.first->second.item_set(),
+                                            &result.first->second.state());
       } else {
         m_states.pop_back();
       }
       if(result2) {
         queue.push_back(&*result.first);
-	m_item_set_state_pairs.emplace_back(&result.first->second.item_set(),
-                                            &result.first->second.state());
       }
       pair->second.state().add_transition(&transition.first.get(),
        	                                  &result.first->second.state());
