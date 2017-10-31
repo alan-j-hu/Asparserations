@@ -38,6 +38,32 @@ Lexer::expect(generated::Token token, const generated::Lexer_State& state)
     } while(result);
     return std::make_pair(s, true);
 
+  case generated::Token::Prime_Identifier:
+    result = match("'", s);
+    if(!result) {
+      return std::make_pair(s, false);
+    }
+    result = match_range('A', 'Z', s);
+    if(!result) {
+      result = match_range('a', 'z', s);
+    }
+    if(!result) {
+      return std::make_pair(s, false);
+    }
+    do {
+      result = match_range('A', 'Z', s);
+      if(!result) {
+        result = match_range('a', 'z', s);
+      }
+      if(!result) {
+        result = match_range('0','9', s);
+      }
+      if(!result) {
+        result = match("_", s);
+      }
+    } while(result);
+    return std::make_pair(s, true);
+
   case generated::Token::Colon:
     result = match(":", s);
     return std::make_pair(s, result);

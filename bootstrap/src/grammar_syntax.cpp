@@ -15,6 +15,7 @@ tokens {
 
 Symbol_List
   : Identifier Symbol_List # main
+  | Prime_Identifier Symbol_List # explicit_nt
   | # empty
   ;
 
@@ -62,6 +63,7 @@ Grammar asparserations::bootstrap::grammar_syntax()
   //Tokens
   Token& bar = grammar.add_token("Bar"); //|
   Token& identifier = grammar.add_token("Identifier"); //[A-Za-z_][A-Za-z0-9_]*
+  Token& prime_identifier = grammar.add_token("Prime_Identifier");
   Token& colon = grammar.add_token("Colon"); //:
   Token& comma = grammar.add_token("Comma");
   Token& semicolon = grammar.add_token("Semicolon"); //;
@@ -73,6 +75,7 @@ Grammar asparserations::bootstrap::grammar_syntax()
   //Nonterminals
   Nonterminal& symbol_list = grammar.add_nonterminal("Symbol_List");
   symbol_list.add_production("main", {&identifier, &symbol_list});
+  symbol_list.add_production("explicit_nt", {&prime_identifier, &symbol_list});
   symbol_list.add_production("empty", {});
 
   Nonterminal& production = grammar.add_nonterminal("Production");

@@ -26,32 +26,34 @@ Callback::Payload Callback::call(generated::Nonterminal nonterminal,
     case generated::Production::_root_:
       return Payload();
     default:
-      throw std::runtime_error("Unknown production " + Parser::production_to_string(production) + " in _accept_");
+      throw std::runtime_error("Unknown production "
+        + Parser::production_to_string(production) + " in _accept_");
     }
   case generated::Nonterminal::Root:
     switch(production) {
     case generated::Production::main:
       return Payload();
     default:
-      throw std::runtime_error("Unknown production " + Parser::production_to_string(production) + "in root");
+      throw std::runtime_error("Unknown production "
+        + Parser::production_to_string(production) + "in root");
     }
   case generated::Nonterminal::Identifier_List:
     switch(production) {
     case generated::Production::recursive_case:
-      return Payload();
     case generated::Production::base_case:
       return Payload();
     default:
-      throw std::runtime_error("Unknown production " + Parser::production_to_string(production) + " in Identifier_List");
+      throw std::runtime_error("Unknown production "
+        + Parser::production_to_string(production) + " in Identifier_List");
     }
   case generated::Nonterminal::Nonterminal_List:
     switch(production) {
     case generated::Production::main:
-      return Payload();
     case generated::Production::empty:
       return Payload();
     default:
-      throw std::runtime_error("Unknown production " + Parser::production_to_string(production) + " in Nonterminal_List");
+      throw std::runtime_error("Unknown production "
+        + Parser::production_to_string(production) + " in Nonterminal_List");
     }
   case generated::Nonterminal::Nonterminal:
     switch(production) {
@@ -61,16 +63,17 @@ Callback::Payload Callback::call(generated::Nonterminal nonterminal,
                   	                         children[0]->state().end));
       return Payload();
     default:
-      throw std::runtime_error("Unknown production " + Parser::production_to_string(production) + " in Nonterminal");
+      throw std::runtime_error("Unknown production "
+        + Parser::production_to_string(production) + " in Nonterminal");
     }
   case generated::Nonterminal::Production_List:
     switch(production) {
     case generated::Production::recursive_case:
-      return Payload();
     case generated::Production::base_case:
       return Payload();
     default:
-      throw std::runtime_error("Unknown production in " + Parser::production_to_string(production) + " Production_List");
+      throw std::runtime_error("Unknown production in "
+        + Parser::production_to_string(production) + " Production_List");
     }
   case generated::Nonterminal::Production:
     switch(production) {
@@ -85,16 +88,18 @@ Callback::Payload Callback::call(generated::Nonterminal nonterminal,
       m_symbols = std::vector<const Symbol*>();
       return Payload();
     default:
-      throw std::runtime_error("Unknown production " + Parser::production_to_string(production) + " in Production");
+      throw std::runtime_error("Unknown production "
+        + Parser::production_to_string(production) + " in Production");
     }
   case generated::Nonterminal::Symbol_List:
     switch(production) {
     case generated::Production::main:
-      return Payload();
+    case generated::Production::explicit_nt:
     case generated::Production::empty:
       return Payload();
     default:
-      throw std::runtime_error("Unknown production " + Parser::production_to_string(production) + " in Symbol_List");
+      throw std::runtime_error("Unknown production "
+        + Parser::production_to_string(production) + " in Symbol_List");
     }
   default:
     throw std::runtime_error("Unknown nonterminal");
@@ -127,6 +132,10 @@ Callback::Payload Callback::call(generated::Token token,
       }
       return Payload();
     }
+    return Payload();
+  case generated::Token::Prime_Identifier:
+    m_symbols.push_back(&m_grammar
+      .add_nonterminal(std::string(string, 1, std::string::npos)));
     return Payload();
   case generated::Token::Colon:
     m_mode = Mode::Append;
