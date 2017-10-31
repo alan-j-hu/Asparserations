@@ -94,7 +94,7 @@ Callback::Payload Callback::call(generated::Nonterminal nonterminal,
   case generated::Nonterminal::Symbol_List:
     switch(production) {
     case generated::Production::main:
-    case generated::Production::explicit_nt:
+    case generated::Production::explicit_tok:
     case generated::Production::empty:
       return Payload();
     default:
@@ -109,6 +109,7 @@ Callback::Payload Callback::call(generated::Nonterminal nonterminal,
 Callback::Payload Callback::call(generated::Token token,
 				 const std::string& string)
 {
+  std::string tok_name;
   switch(token) {
   case generated::Token::_end_:
     return Payload();
@@ -134,8 +135,12 @@ Callback::Payload Callback::call(generated::Token token,
     }
     return Payload();
   case generated::Token::Prime_Identifier:
-    m_symbols.push_back(&m_grammar
-      .add_nonterminal(std::string(string, 1, std::string::npos)));
+    tok_name = std::string(string, 1, std::string::npos);
+    if(m_token_names.find(tok_name) == m_token_names.end()) {
+      throw std::runtime_error("Undefined token: " + tok_name);
+    } else {
+      m_symbols.push_back(&m_grammar.token_at(tok_name));
+    }
     return Payload();
   case generated::Token::Colon:
     m_mode = Mode::Append;

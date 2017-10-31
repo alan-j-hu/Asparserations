@@ -15,7 +15,7 @@ tokens {
 
 Symbol_List
   : Identifier Symbol_List # main
-  | Prime_Identifier Symbol_List # explicit_nt
+  | Prime_Identifier Symbol_List # explicit_tok
   | # empty
   ;
 
@@ -75,7 +75,7 @@ Grammar asparserations::bootstrap::grammar_syntax()
   //Nonterminals
   Nonterminal& symbol_list = grammar.add_nonterminal("Symbol_List");
   symbol_list.add_production("main", {&identifier, &symbol_list});
-  symbol_list.add_production("explicit_nt", {&prime_identifier, &symbol_list});
+  symbol_list.add_production("explicit_tok", {&prime_identifier, &symbol_list});
   symbol_list.add_production("empty", {});
 
   Nonterminal& production = grammar.add_nonterminal("Production");

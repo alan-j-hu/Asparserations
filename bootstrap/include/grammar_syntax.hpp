@@ -15,7 +15,7 @@ tokens {
 
 Symbol_List
   : Identifier Symbol_List # main
-  | Prime_Identifer Symbol_List # explicit_nt
+  | Prime_Identifer Symbol_List # explicit_tok
   | # empty
   ;
 
