@@ -114,19 +114,16 @@ Callback::Payload Callback::call(generated::Token token,
     switch(m_mode) {
     case Mode::Token:
       m_grammar.add_token(string);
+      m_token_names.insert(string);
       return Payload();
     case Mode::Nonterminal:
       m_nonterminal = &m_grammar.add_nonterminal(string);
       return Payload();
     case Mode::Append:
-      try {
-        m_symbols.push_back(&m_grammar.token_at(string));
-      } catch(const std::out_of_range& e) {
-        try {
-          m_symbols.push_back(&m_grammar.nonterminal_at(string));
-        } catch(const std::out_of_range& e) {
+      if(m_token_names.find(string) == m_token_names.end()) {
           m_symbols.push_back(&m_grammar.add_nonterminal(string));
-        }
+      } else {
+        m_symbols.push_back(&m_grammar.token_at(string));
       }
       return Payload();
     }

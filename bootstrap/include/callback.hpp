@@ -4,6 +4,7 @@
 #include "../../grammar/include/grammar.hpp"
 #include "../../grammar/include/nonterminal.hpp"
 #include "../../grammar/include/production.hpp"
+#include <set>
 #include <string>
 #include <vector>
 
@@ -33,6 +34,7 @@ namespace asparserations {
       grammar::Nonterminal* m_nonterminal;
       grammar::Production* m_production;
       std::vector<const grammar::Symbol*> m_symbols;
+      std::set<std::string> m_token_names;
     };
   }
 }
