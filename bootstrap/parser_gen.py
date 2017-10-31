@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 import argparse
+import collections
 import json
 import string
 import sys
@@ -415,7 +416,8 @@ def main():
     argparser.add_argument("dest")
 
     args = argparser.parse_args()
-    table = json.load(open(args.json, "r"))
+    table = json.load(open(args.json, "r"),\
+                      object_pairs_hook=collections.OrderedDict)
     config = json.load(open(args.config, "r"))
     dest = args.dest
     header_file = open(dest + "/include/" + config["class_name"] + ".hpp", "w+")
