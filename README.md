@@ -37,6 +37,7 @@ I've decided to learn CMake by using it for this project. Use it by running:
     $ git clone https://github.com/TheAspiringHacker/Asparserations.git
     $ cd Asparserations
     $ mkdir build
+    $ cd build
     $ cmake ../
     $ make
 The resulting binary is `build/bin/asparserations`.
