@@ -31,6 +31,22 @@ This project requires G++, GNU Make, and Python 3 in order to build from source.
 The binary file is saved to `~/local/bin` and can be invoked by typing
 `asparserations [flags...] grammar_file_name`.
 
+### Installing with CMake
+I've decided to learn CMake by using it for this project. Use it by running:
+
+    $ git clone https://github.com/TheAspiringHacker/Asparserations.git
+    $ cd Asparserations
+    $ mkdir build
+    $ cmake ../
+    $ make
+The resulting binary is `build/bin/asparserations`.
+
+You can then run CPack:
+
+    $ cpack --config CPackConfig.cmake
+
+(You will have to move the binary to a location in your `PATH` yourself.)
+
 ## Trying it out
 Create a file called `grammar` in your favorite text editor:
 
