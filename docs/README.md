@@ -7,6 +7,6 @@ the symbol identifier in a production with a `'` to force the program to treat
 it as a token; an error will be signaled if the token does not exist.
 
 ## Special names:
- - `_end_` : The token signifying the end of the input
- - `_accept_` : The root nonterminal of the augmented grammar (the actual root)
- - `_root_` : The only production of the `_accept_` nonterminal
+ - `end_` : The token signifying the end of the input
+ - `accept_` : The root nonterminal of the augmented grammar (the actual root)
+ - `root_` : The only production of the `accept_` nonterminal
