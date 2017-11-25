@@ -287,7 +287,7 @@ $callback& callback)
       throw std::runtime_error(std::string("Error: ") + e.what());
     }
   }
-  if(production.nonterminal == Nonterminal::_accept_) {
+  if(production.nonterminal == Nonterminal::accept_) {
     m_root = node;
     return;
   }

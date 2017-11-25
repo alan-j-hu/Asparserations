@@ -21,9 +21,9 @@ Callback::Payload Callback::call(generated::Nonterminal nonterminal,
 {
   std::string id;
   switch(nonterminal) {
-  case generated::Nonterminal::_accept_:
+  case generated::Nonterminal::accept_:
     switch(production) {
-    case generated::Production::_root_:
+    case generated::Production::root_:
       return Payload();
     default:
       throw std::runtime_error("Unknown production "
@@ -111,7 +111,7 @@ Callback::Payload Callback::call(generated::Token token,
 {
   std::string tok_name;
   switch(token) {
-  case generated::Token::_end_:
+  case generated::Token::end_:
     return Payload();
   case generated::Token::Bar:
     m_mode = Mode::Append;

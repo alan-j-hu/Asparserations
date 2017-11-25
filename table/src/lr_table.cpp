@@ -17,7 +17,7 @@ LR_Table::LR_Table(Grammar& grammar)
 
   grammar.compute_first_sets();
 
-  Item_Set start_set({Item(grammar.accept().production_at("_root_"),
+  Item_Set start_set({Item(grammar.accept().production_at("root_"),
 			   0, grammar.end())});
   m_states.emplace_back(0);
   m_item_sets.insert(std::make_pair(start_set, &m_states.back()));

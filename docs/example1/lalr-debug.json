@@ -1,13 +1,13 @@
 {
   "grammar" : {
     "tokens" : [
-      "_end_",
+      "end_",
       "c",
       "d"
     ],
     "nonterminals" : {
-      "_accept_" : {
-        "_root_" : [
+      "accept_" : {
+        "root_" : [
           {
             "name" : "S",
             "isToken" : false
@@ -68,11 +68,11 @@
       "itemSet" : [
         {
           "production" : {
-            "nonterminal" : "_accept_",
-            "production" : "_root_"
+            "nonterminal" : "accept_",
+            "production" : "root_"
           },
           "marker" : 0,
-          "lookahead" : "_end_"
+          "lookahead" : "end_"
         }
       ]
     },
@@ -100,7 +100,7 @@
             "production" : "prod1"
           },
           "marker" : 1,
-          "lookahead" : "_end_"
+          "lookahead" : "end_"
         },
         {
           "production" : {
@@ -123,7 +123,7 @@
     {
       "index" : 2,
       "actions" : {
-        "_end_" : {
+        "end_" : {
           "shift" : null,
           "reductions" : [
             {
@@ -160,7 +160,7 @@
             "production" : "prod2"
           },
           "marker" : 1,
-          "lookahead" : "_end_"
+          "lookahead" : "end_"
         },
         {
           "production" : {
@@ -183,12 +183,12 @@
     {
       "index" : 3,
       "actions" : {
-        "_end_" : {
+        "end_" : {
           "shift" : null,
           "reductions" : [
             {
-              "nonterminal" : "_accept_",
-              "production" : "_root_"
+              "nonterminal" : "accept_",
+              "production" : "root_"
             }
           ]
         }
@@ -198,11 +198,11 @@
       "itemSet" : [
         {
           "production" : {
-            "nonterminal" : "_accept_",
-            "production" : "_root_"
+            "nonterminal" : "accept_",
+            "production" : "root_"
           },
           "marker" : 1,
-          "lookahead" : "_end_"
+          "lookahead" : "end_"
         }
       ]
     },
@@ -230,14 +230,14 @@
             "production" : "prod"
           },
           "marker" : 1,
-          "lookahead" : "_end_"
+          "lookahead" : "end_"
         }
       ]
     },
     {
       "index" : 5,
       "actions" : {
-        "_end_" : {
+        "end_" : {
           "shift" : null,
           "reductions" : [
             {
@@ -274,7 +274,7 @@
             "production" : "prod1"
           },
           "marker" : 2,
-          "lookahead" : "_end_"
+          "lookahead" : "end_"
         },
         {
           "production" : {
@@ -297,7 +297,7 @@
     {
       "index" : 6,
       "actions" : {
-        "_end_" : {
+        "end_" : {
           "shift" : null,
           "reductions" : [
             {
@@ -316,7 +316,7 @@
             "production" : "prod"
           },
           "marker" : 2,
-          "lookahead" : "_end_"
+          "lookahead" : "end_"
         }
       ]
     }

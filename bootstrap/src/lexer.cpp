@@ -92,7 +92,7 @@ Lexer::expect(generated::Token token, const generated::Lexer_State& state)
     result = match("#", s);
     return std::make_pair(s, result);
 
-  case generated::Token::_end_:
+  case generated::Token::end_:
     result = (*s.end == '\0');
     return std::make_pair(s, result);
   }

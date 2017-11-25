@@ -20,10 +20,10 @@ LALR_Table::LALR_Table(Grammar& grammar)
   m_item_sets = {
     {
       {
-        Item_Core { grammar.accept().production_at("_root_"), 0 }
+        Item_Core { grammar.accept().production_at("root_"), 0 }
       },
         LALR_State(m_states.back(),
-                   Item_Set({ Item(grammar.accept().production_at("_root_"),
+                   Item_Set({ Item(grammar.accept().production_at("root_"),
                                    0, grammar.end())}))
     }
   };

@@ -6,10 +6,10 @@ using namespace asparserations;
 using namespace grammar;
 
 Grammar::Grammar(const std::string& start)
-  : m_end(*this, "_end_", 0), m_accept(*this, "_accept_", 0)
+  : m_end(*this, "end_", 0), m_accept(*this, "accept_", 0)
 {
   m_start_symbol = &add_nonterminal(start);
-  m_accept.add_production("_root_", {m_start_symbol});
+  m_accept.add_production("root_", {m_start_symbol});
 }
 
 Grammar::Grammar(Grammar&& old)
@@ -107,7 +107,7 @@ void Grammar::set_start_symbol(Nonterminal& start)
 {
   if(&start.grammar() == this) {
     m_start_symbol = &start;
-    m_accept.production_at("_root_").set_symbol(0, start);
+    m_accept.production_at("root_").set_symbol(0, start);
   }
 }
 

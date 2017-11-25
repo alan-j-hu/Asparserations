@@ -1,13 +1,13 @@
 {
   "grammar" : {
     "tokens" : [
-      "_end_",
+      "end_",
       "c",
       "d"
     ],
     "nonterminals" : {
-      "_accept_" : {
-        "_root_" : [
+      "accept_" : {
+        "root_" : [
           {
             "name" : "S",
             "isToken" : false
@@ -89,7 +89,7 @@
     {
       "index" : 2,
       "actions" : {
-        "_end_" : {
+        "end_" : {
           "shift" : null,
           "reductions" : [
             {
@@ -124,12 +124,12 @@
     {
       "index" : 3,
       "actions" : {
-        "_end_" : {
+        "end_" : {
           "shift" : null,
           "reductions" : [
             {
-              "nonterminal" : "_accept_",
-              "production" : "_root_"
+              "nonterminal" : "accept_",
+              "production" : "root_"
             }
           ]
         }
@@ -160,7 +160,7 @@
     {
       "index" : 5,
       "actions" : {
-        "_end_" : {
+        "end_" : {
           "shift" : null,
           "reductions" : [
             {
@@ -195,7 +195,7 @@
     {
       "index" : 6,
       "actions" : {
-        "_end_" : {
+        "end_" : {
           "shift" : null,
           "reductions" : [
             {
