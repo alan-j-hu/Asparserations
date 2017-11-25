@@ -52,12 +52,12 @@
       "actions" : {
         "c" : {
           "shift" : 1,
-          "reduces" : [
+          "reductions" : [
           ]
         },
         "d" : {
           "shift" : 2,
-          "reduces" : [
+          "reductions" : [
           ]
         }
       },
@@ -72,12 +72,12 @@
       "actions" : {
         "c" : {
           "shift" : 1,
-          "reduces" : [
+          "reductions" : [
           ]
         },
         "d" : {
           "shift" : 2,
-          "reduces" : [
+          "reductions" : [
           ]
         }
       },
@@ -91,7 +91,7 @@
       "actions" : {
         "_end_" : {
           "shift" : null,
-          "reduces" : [
+          "reductions" : [
             {
               "nonterminal" : "C",
               "production" : "prod2"
@@ -100,7 +100,7 @@
         },
         "c" : {
           "shift" : null,
-          "reduces" : [
+          "reductions" : [
             {
               "nonterminal" : "C",
               "production" : "prod2"
@@ -109,7 +109,7 @@
         },
         "d" : {
           "shift" : null,
-          "reduces" : [
+          "reductions" : [
             {
               "nonterminal" : "C",
               "production" : "prod2"
@@ -126,7 +126,7 @@
       "actions" : {
         "_end_" : {
           "shift" : null,
-          "reduces" : [
+          "reductions" : [
             {
               "nonterminal" : "_accept_",
               "production" : "_root_"
@@ -143,12 +143,12 @@
       "actions" : {
         "c" : {
           "shift" : 1,
-          "reduces" : [
+          "reductions" : [
           ]
         },
         "d" : {
           "shift" : 2,
-          "reduces" : [
+          "reductions" : [
           ]
         }
       },
@@ -162,7 +162,7 @@
       "actions" : {
         "_end_" : {
           "shift" : null,
-          "reduces" : [
+          "reductions" : [
             {
               "nonterminal" : "C",
               "production" : "prod1"
@@ -171,7 +171,7 @@
         },
         "c" : {
           "shift" : null,
-          "reduces" : [
+          "reductions" : [
             {
               "nonterminal" : "C",
               "production" : "prod1"
@@ -180,7 +180,7 @@
         },
         "d" : {
           "shift" : null,
-          "reduces" : [
+          "reductions" : [
             {
               "nonterminal" : "C",
               "production" : "prod1"
@@ -197,7 +197,7 @@
       "actions" : {
         "_end_" : {
           "shift" : null,
-          "reduces" : [
+          "reductions" : [
             {
               "nonterminal" : "S",
               "production" : "prod"

@@ -168,7 +168,7 @@ void JSON_Generator::m_generate_actions(
 	 : std::to_string(action.second.first->index()))
       + ",";
     m_break_and_indent();
-    m_code += "\"reduces\" : [";
+    m_code += "\"reductions\" : [";
     ++m_indent_depth;
     bool needs_comma2 = false;
     for(auto& production : action.second.second) {

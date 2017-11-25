@@ -372,7 +372,7 @@ def gen_state(template, state, config):
         reduce_strs = map(lambda x :
                           "&m_productions->" + x["nonterminal"]
                           + "_" + x["production"],\
-                          action["reduces"])
+                          action["reductions"])
         reduce_str = ",\n          ".join(reduce_strs)
         action_str += reduce_str + "\n        }}\n      }"
         actions.append(action_str)
