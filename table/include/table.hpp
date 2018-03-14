@@ -25,6 +25,7 @@ namespace asparserations {
       virtual const std::list<State>& states() const=0;
       virtual const std::vector<std::pair<const Item_Set*,const State*>>&
         item_set_state_pairs() const=0;
+      virtual ~Table() = default;
     };
     /**
        Computes the closed set of items
