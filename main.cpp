@@ -114,7 +114,7 @@ int main(int argc, char** argv)
     case 'v':
       std::cout <<
         "Asparserations v1.0.0\n"
-        "Copyright 2017 TheAspiringHacker, MIT License (Expat variant)"
+        "Copyright 2017-2018 TheAspiringHacker, MIT License (Expat variant)"
                 << std::endl;
       return 0;
     case 'h':
