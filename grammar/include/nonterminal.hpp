@@ -27,6 +27,7 @@ namespace asparserations {
       virtual bool derives_empty_string() const=0;
       virtual Production& add_production(const std::string&,
 		               		 std::vector<const Symbol*>)=0;
+      virtual ~Nonterminal() = default;
     protected:
       Nonterminal()=default;
       Nonterminal(Nonterminal&&)=default;

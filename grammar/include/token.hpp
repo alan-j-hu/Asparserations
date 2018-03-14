@@ -20,6 +20,7 @@ namespace asparserations {
       virtual const std::list<Production>& productions() const=0;
       virtual bool is_token() const=0;
       virtual bool derives_empty_string() const=0;
+      virtual ~Token() = default;
     };
     bool operator<(const Token&, const Token&);
   }
