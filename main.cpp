@@ -10,6 +10,7 @@
 #include <ios>
 #include <iostream>
 #include <map>
+#include <memory>
 #include <stdexcept>
 #include <string>
 #include <utility>
@@ -155,50 +156,46 @@ int main(int argc, char** argv)
     return -1;
   }
   std::ifstream grammar_file(positional_args[0],
-			     std::ifstream::in | std::ifstream::ate);
+                             std::ifstream::in | std::ifstream::ate);
   auto size = grammar_file.tellg();
   if(!grammar_file || size == -1) {
     std::cerr << "Unable to open file: " << positional_args[0] << std::endl;
     return -1;
   }
-  // std::string::data() doesn't return mutable char* until C++17, so I need my
-  // own char* pointer
-  char* temp_heap_data = nullptr;
   try {
-    temp_heap_data = new char[size];
+    // std::string::data() doesn't return mutable char* until C++17, so I need
+    // my own char* pointer
+    std::unique_ptr<char[]> temp_heap_data(new char[size]);
+    grammar_file.seekg(std::ios_base::beg);
+    grammar_file.read(temp_heap_data.get(), size);
+    std::string grammar_str(temp_heap_data.get(), temp_heap_data.get() + size);
+
+    asparserations::grammar::Grammar grammar(root);
+    asparserations::bootstrap::Lexer lexer;
+    asparserations::bootstrap::Callback callback(grammar);
+    asparserations::generated::Parser parser;
+
+    // Discard the Node* return value; all necessary info is in the callback obj
+    // TODO: Use std::unique_ptr instead
+    delete parser.parse(grammar_str, lexer, callback);
+    std::unique_ptr<asparserations::table::Table> table = (
+      use_lalr ? std::unique_ptr<asparserations::table::Table>(
+                   new asparserations::table::LALR_Table(grammar)
+      )
+               : std::unique_ptr<asparserations::table::Table>(
+                   new asparserations::table::LR_Table(grammar)
+      )
+    );
+    asparserations::codegen::JSON_Generator code(*table, true, debug);
+    std::ofstream output_file(output_filename);
+    output_file.write(code.code().data(), code.code().size());
   } catch(std::bad_alloc& ex) {
     grammar_file.close();
     std::cerr << "Failed to allocate memory." << std::endl;
     return -1;
-  }
-  grammar_file.seekg(std::ios_base::beg);
-  grammar_file.read(temp_heap_data, size);
-  std::string grammar_str(temp_heap_data, temp_heap_data + size);
-  // Can I use move semantics so that grammar takes ownership of heap pointer,
-  // rather than copying it, then making me delete it?
-  delete temp_heap_data;
-
-  asparserations::grammar::Grammar grammar(root);
-  asparserations::bootstrap::Lexer lexer;
-  asparserations::bootstrap::Callback callback(grammar);
-  asparserations::generated::Parser parser;
-
-  try {
-    // Discard the Node* return value; all necessary info is in the callback obj
-    delete parser.parse(grammar_str, lexer, callback);
   } catch(std::runtime_error& e) {
     std::cerr << e.what() << std::endl;
     return -1;
   }
-  asparserations::table::Table* table;
-  if(use_lalr) {
-    table = new asparserations::table::LALR_Table(grammar);
-  } else {
-    table = new asparserations::table::LR_Table(grammar);
-  }
-  asparserations::codegen::JSON_Generator code(*table, true, debug);
-  std::ofstream output_file(output_filename);
-  output_file.write(code.code().data(), code.code().size());
-  delete table;
   return 0;
 }
