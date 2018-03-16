@@ -15,6 +15,7 @@ header_template = """
 #include <set>
 #include <utility>
 #include <vector>
+#include<iostream>
 $header_front
 
 $begin_namespace
@@ -49,26 +50,25 @@ class Node
 {
   public:
     Node(const $payload&, const Lexer_State&);
-    Node(const $payload&, const std::vector<Node*>&);
+    Node(const $payload&, std::vector<std::unique_ptr<Node>>);
     const $payload& payload() const;
-    const std::vector<Node*>& children() const;
+    const std::vector<std::unique_ptr<Node>>& children() const;
     const Lexer_State& state() const;
-    ~Node();
+    virtual ~Node() = default;
   private:
     $payload m_payload;
-    std::vector<Node*> m_children;
+    std::vector<std::unique_ptr<Node>> m_children;
     Lexer_State m_state;
 };
 
 class $class_name
 {
 public:
-
   $class_name();
-  Node* parse(const std::string&, $lexer&, $callback&);
+  std::unique_ptr<Node> parse(const std::string&, $lexer&, $callback&);
   static std::string nonterminal_to_string(Nonterminal);
   static std::string production_to_string(Production);
-  ~$class_name();
+  virtual ~$class_name() = default;
 private:
 
   struct Mangled_Production
@@ -92,13 +92,10 @@ private:
   };
 
   std::vector<State> m_states;
-  std::vector<std::pair<Node*,const State*>> m_stack;
+  std::vector<std::pair<std::unique_ptr<Node>,const State*>> m_stack;
   std::unique_ptr<Productions> m_productions;
-  Node* m_root;
-
-  void m_reset();
-  void m_process(const State&, const Lexer_State&, $lexer&, $callback&);
-  void m_reduce(const Mangled_Production&, $callback&);
+  void m_process(const State&, const Lexer_State&, $lexer&, $callback&, std::unique_ptr<Node>&);
+  void m_reduce(const Mangled_Production&, $callback&, std::unique_ptr<Node>&);
 };
 $end_namespace
 
@@ -106,7 +103,9 @@ $end_namespace
 """
 
 src_template = """
+#include <algorithm>
 #include <stdexcept>
+#include <utility>
 #include "../include/$class_name.hpp"
 $src_front
 
@@ -126,18 +125,18 @@ $namespace::Node::Node(const $payload& payload,
   : m_payload(payload), m_state(state) {}
 
 $namespace::Node::Node(const $payload& payload,
-                       const std::vector<Node*>& children)
+                       std::vector<std::unique_ptr<Node>> children)
 {
   if(children.empty())
     throw std::runtime_error("Zero children,"
                              "call Node(const char*, const char*) instead");
   m_payload = payload;
-  m_children = children;
+  m_children = std::move(children);
   m_state = $namespace::Lexer_State {
-    children.front()->state().begin,
-    children.back()->state().end,
-    children.back()->state().lines,
-    children.back()->state().last_newline
+    m_children.front()->state().begin,
+    m_children.back()->state().end,
+    m_children.back()->state().lines,
+    m_children.back()->state().last_newline
   };
 }
 
@@ -146,7 +145,8 @@ const $payload& $namespace::Node::payload() const
   return m_payload;
 }
 
-const std::vector<$namespace::Node*>& $namespace::Node::children() const
+const std::vector<std::unique_ptr<$namespace::Node>>&
+$namespace::Node::children() const
 {
   return m_children;
 }
@@ -156,38 +156,33 @@ const $namespace::Lexer_State& $namespace::Node::state() const
   return m_state;
 }
 
-$namespace::Node::~Node()
-{
-  for(Node* node : m_children) delete node;
-}
-
 $namespace::$class_name::Productions::Productions()
   : $mangled_productions_src
 {
 }
 
 $namespace::$class_name::$class_name()
-  : m_productions(new Productions()), m_root(nullptr), m_states($state_count)
+  : m_productions(new Productions()), m_states($state_count)
 {
   $states
 }
 
-$namespace::Node*
+std::unique_ptr<$namespace::Node>
 $namespace::$class_name::parse(const std::string& input,
                                $lexer& lexer,
                                $callback& callback)
 {
-  m_reset();
+  std::unique_ptr<Node> root;
   m_process(m_states.front(),
-            $namespace::Lexer_State{input.data(), input.data(), 
+            $namespace::Lexer_State{input.data(), input.data(),
                                     1, input.data() - 1},
-            lexer,
-            callback);
+            lexer, callback, root);
   while(!m_stack.empty()) {
     m_process(*m_stack.back().second,
-              $namespace::next(m_stack.back().first->state()), lexer, callback);
+              $namespace::next(m_stack.back().first->state()),
+              lexer, callback, root);
   }
-  return m_root;
+  return root;
 }
 
 std::string
@@ -208,26 +203,12 @@ $namespace::$class_name::production_to_string($namespace::Production p)
   throw std::runtime_error("Unknown production");
 }
 
-$namespace::$class_name::~$class_name()
-{
-  for(auto& pair : m_stack) {
-    delete pair.first;
-  }
-}
-
-void $namespace::$class_name::m_reset()
-{
-  for(auto& pair : m_stack) {
-    delete pair.first;
-  }
-  m_stack = {};
-}
-
 void $namespace::$class_name::m_process(
-  const State& state,
+  const $namespace::$class_name::State& state,
   const $namespace::Lexer_State& lex_state,
   $lexer& lexer,
-$callback& callback)
+  $callback& callback,
+  std::unique_ptr<$namespace::Node>& root)
 {
   $namespace::Lexer_State err;
   for(auto& action : state.actions) {
@@ -237,10 +218,10 @@ $callback& callback)
       if(action.second.first != nullptr) {
         try {
           m_stack.emplace_back(
-            new Node(callback.call(action.first,
+            std::unique_ptr<$namespace::Node>(new Node(callback.call(action.first,
                                      std::string(result.first.begin,
                                                  result.first.end)),
-                     result.first),
+                     result.first)),
             action.second.first
           );
         } catch(std::runtime_error& e) {
@@ -250,7 +231,7 @@ $callback& callback)
         return;
       }
       if(!action.second.second.empty()) {
-        m_reduce(**action.second.second.begin(), callback);
+        m_reduce(**action.second.second.begin(), callback, root);
         return;
       }
     }
@@ -260,35 +241,34 @@ $callback& callback)
 }
 
 void $namespace::$class_name::m_reduce(
-const $namespace::$class_name::Mangled_Production& production,
-$callback& callback)
+  const $namespace::$class_name::Mangled_Production& production,
+  $callback& callback,
+  std::unique_ptr<$namespace::Node>& root)
 {
   if(m_stack.empty()) throw std::runtime_error("Can't reduce empty stack");
-  Node* node = nullptr;
+  std::unique_ptr<$namespace::Node> node = nullptr;
   if(production.child_count == 0) {
-    node = new Node(callback.call(production.nonterminal,
+    node = std::unique_ptr<$namespace::Node>(new Node(callback.call(production.nonterminal,
                                   production.production,
                                   {}),
-                    $namespace::next(m_stack.back().first->state()));
+                    $namespace::next(m_stack.back().first->state())));
   } else {
-    std::vector<Node*> popped;
+    std::vector<std::unique_ptr<Node>> popped;
     for(int i = 0; i < production.child_count; ++i) {
       if(m_stack.empty()) throw std::runtime_error("Stack underflow");
-      popped.push_back(m_stack.back().first);
+      popped.push_back(std::move(m_stack.back().first));
       m_stack.pop_back();
     }
-    auto vec = std::vector<Node*>(popped.rbegin(), popped.rend());
+    std::reverse(popped.begin(), popped.end());
     try {
-      node = new Node(callback.call(production.nonterminal,
-                                    production.production,
-                                    vec),
-                      vec);
+      auto temp = callback.call(production.nonterminal, production.production, popped);
+      node = std::unique_ptr<$namespace::Node>(new Node(temp, std::move(popped)));
     } catch(std::runtime_error& e) {
       throw std::runtime_error(std::string("Error: ") + e.what());
     }
   }
   if(production.nonterminal == Nonterminal::accept_) {
-    m_root = node;
+    root = std::move(node);
     return;
   }
   const State* state;
@@ -301,7 +281,7 @@ $callback& callback)
   if(iter == m_stack.back().second->gotos.end()) {
     throw std::runtime_error("Unknown nonterminal");
   }
-  m_stack.emplace_back(node, iter->second);
+  m_stack.emplace_back(std::move(node), iter->second);
 }
 
 """

@@ -175,9 +175,8 @@ int main(int argc, char** argv)
     asparserations::bootstrap::Callback callback(grammar);
     asparserations::generated::Parser parser;
 
-    // Discard the Node* return value; all necessary info is in the callback obj
-    // TODO: Use std::unique_ptr instead
-    delete parser.parse(grammar_str, lexer, callback);
+    // All necessary info is in the callback obj
+    parser.parse(grammar_str, lexer, callback);
     std::unique_ptr<asparserations::table::Table> table = (
       use_lalr ? std::unique_ptr<asparserations::table::Table>(
                    new asparserations::table::LALR_Table(grammar)

@@ -4,6 +4,7 @@
 #include "../../grammar/include/grammar.hpp"
 #include "../../grammar/include/nonterminal.hpp"
 #include "../../grammar/include/production.hpp"
+#include <memory>
 #include <set>
 #include <string>
 #include <vector>
@@ -24,7 +25,7 @@ namespace asparserations {
       };
       Callback(grammar::Grammar&);
       Payload call(generated::Nonterminal, generated::Production,
-                   const std::vector<generated::Node*>&);
+                   const std::vector<std::unique_ptr<generated::Node>>&);
       Payload call(generated::Token, const std::string&);
       const grammar::Grammar& grammar() const;
     private:

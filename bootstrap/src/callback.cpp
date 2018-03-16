@@ -2,8 +2,6 @@
 #include "../../autogen/include/Parser.hpp"
 #include <stdexcept>
 
-#include <iostream>
-
 using namespace asparserations;
 using namespace bootstrap;
 using namespace grammar;
@@ -15,9 +13,9 @@ Callback::Callback(Grammar& grammar)
     m_nonterminal(nullptr),
     m_production(nullptr) {}
 
-Callback::Payload Callback::call(generated::Nonterminal nonterminal,
-				 generated::Production production,
-		                 const std::vector<Node*>& children)
+Callback::Payload Callback::call(
+  generated::Nonterminal nonterminal, generated::Production production,
+  const std::vector<std::unique_ptr<Node>>& children)
 {
   std::string id;
   switch(nonterminal) {
