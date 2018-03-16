@@ -14,6 +14,8 @@ grammar parser, is included in the bootstrap folder.
   generator/monadic!)
 
 ## Options
+- `--version`, `-v` - Prints the software version
+- `--help`, `-h` - Prints the help
 - `--out`, `-o` - Specifies the output file (a.out.json by default)
 - `--root`, `-r` - Specifies the root node (Root by default)
 - `--lalr`, `-l` - Use LALR(1) (experimental)

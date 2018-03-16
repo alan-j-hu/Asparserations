@@ -15,7 +15,7 @@ header_template = """
 #include <set>
 #include <utility>
 #include <vector>
-#include<iostream>
+
 $header_front
 
 $begin_namespace
