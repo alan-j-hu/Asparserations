@@ -48,10 +48,16 @@ Root
   ;
  */
 
+#ifndef BOOTSTRAP_GRAMMAR_SYNTAX_H_
+#define BOOTSTRAP_GRAMMAR_SYNTAX_H_
+
 #include "../../grammar/include/grammar.hpp"
+#include <memory>
 
 namespace asparserations {
   namespace bootstrap {
-    asparserations::grammar::Grammar grammar_syntax();
+    std::unique_ptr<asparserations::grammar::Grammar> grammar_syntax();
   }
 }
+
+#endif
