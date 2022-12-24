@@ -4,6 +4,7 @@
 #include "../../grammar/include/symbol.hpp"
 #include "../../grammar/include/token.hpp"
 #include <utility>
+#include <stdexcept>
 
 using namespace asparserations;
 using namespace grammar;
